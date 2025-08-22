@@ -1,4 +1,5 @@
 class ApplicationSpecificPreferences :
+	"""This class encodes some application-specific preferences. Currently, it is a random variable, called importance, that gives a positive value to each element of the sample space: tn (for true negative), fp (for false positive), fn (for false negative), and tp (for true positive). See :cite:t:`Pierard2025Foundations` for more information on this topic."""
 
 	def __init__ ( self, itn, ifp, ifn, itp, name=None )
 	# All >= 0, not all == 0.
@@ -13,7 +14,7 @@ class ApplicationSpecificPreferences :
 	
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 	
 	
 	
@@ -104,7 +105,7 @@ class RankingScore :
 	
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 	
 	
 	
@@ -143,7 +144,7 @@ class PerformanceOrderingInducedByOneScore : # It is a preorder
 	
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 
 
 
@@ -172,7 +173,7 @@ class TwoClassClassificationPerformance :
 	
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 
 class FiniteSetOfTwoClassClassificationPerformances ( list[TwoClassClassificationPerformance] ) :
 	# TODO: list or dict ?
@@ -194,7 +195,7 @@ class FiniteSetOfTwoClassClassificationPerformances ( list[TwoClassClassificatio
 	
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 	
 class AbstractDistributionOfTwoClassClassificationPerformances ( ABC ) :
 
@@ -209,7 +210,7 @@ class AbstractDistributionOfTwoClassClassificationPerformances ( ABC ) :
 	@abstractmethod
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 
 class UniformDistributionOfTwoClassClassificationPerformances ( AbstractDistributionOfTwoClassClassificationPerformances )
 
@@ -253,53 +254,53 @@ class AbstractParameterization ( ABC ) :
 	@abstractmethod
 	def getValueParameter2 ( self, rankingScore ) -> float
 	
-	def locateRankingScore ( score ) -> PointInTile                    # ***
-	def locateTrueNegativeRate () -> PointInTile                                 # Use ***
-	def locateTruePositiveRate () -> PointInTile                                 # Use ***
-	def locateSpecificity () -> PointInTile                                      # Use ***
-	def locateSelectivity () -> PointInTile                                      # Use ***
-	def locateSensitivity () -> PointInTile                                      # Use ***
-	def locateNegativePredictiveValue () -> PointInTile                          # Use ***
-	def locatePositivePredictiveValue () -> PointInTile                          # Use ***
-	def locatePrecision () -> PointInTile                                        # Use ***
-	def locateInversePrecision () -> PointInTile                                 # Use ***
-	def locateRecall () -> PointInTile                                           # Use ***
-	def locateInverseRecall () -> PointInTile                                    # Use ***
-	def locateIntersectionOverUnion () -> PointInTile                            # Use ***
-	def locateInverseIntersectionOverUnion () -> PointInTile                     # Use ***
-	def locateJaccard () -> PointInTile                                          # Use ***
-	def locateInverseJaccard () -> PointInTile                                   # Use ***
-	def locateTanimotoCoefficient () -> PointInTile                              # Use ***
-	def locateSimilarity () -> PointInTile                                       # Use ***
-	def locateCriticalSuccessIndex () -> PointInTile                             # Use ***
-	def locateF ( beta=1.0 ) -> PointInTile                                      # Use ***
-	def locateInverseF ( beta=1.0 ) -> PointInTile                               # Use ***
-	def locateDiceSørensenCoefficient () -> PointInTile                          # Use ***
-	def locateZijdenbosSimilarityIndex () -> PointInTile                         # Use ***
-	def locateCzekanowskiBinaryIndex () -> PointInTile                           # Use ***
-	def locateAccuracy () -> PointInTile                                         # Use ***
-	def locateMatchingCoefficient () -> PointInTile                              # Use ***
-	def locateBennettS () -> PointInTile
+	def locateRankingScore ( self, score ) -> PointInTile                    # ***
+	def locateTrueNegativeRate ( self ) -> PointInTile                           # Use ***
+	def locateTruePositiveRate ( self ) -> PointInTile                           # Use ***
+	def locateSpecificity ( self ) -> PointInTile                                # Use ***
+	def locateSelectivity ( self ) -> PointInTile                                # Use ***
+	def locateSensitivity ( self ) -> PointInTile                                # Use ***
+	def locateNegativePredictiveValue ( self ) -> PointInTile                    # Use ***
+	def locatePositivePredictiveValue ( self ) -> PointInTile                    # Use ***
+	def locatePrecision ( self ) -> PointInTile                                  # Use ***
+	def locateInversePrecision ( self ) -> PointInTile                           # Use ***
+	def locateRecall ( self ) -> PointInTile                                     # Use ***
+	def locateInverseRecall ( self ) -> PointInTile                              # Use ***
+	def locateIntersectionOverUnion ( self ) -> PointInTile                      # Use ***
+	def locateInverseIntersectionOverUnion ( self ) -> PointInTile               # Use ***
+	def locateJaccard ( self ) -> PointInTile                                    # Use ***
+	def locateInverseJaccard ( self ) -> PointInTile                             # Use ***
+	def locateTanimotoCoefficient ( self ) -> PointInTile                        # Use ***
+	def locateSimilarity ( self ) -> PointInTile                                 # Use ***
+	def locateCriticalSuccessIndex ( self ) -> PointInTile                       # Use ***
+	def locateF ( self, beta=1.0 ) -> PointInTile                                # Use ***
+	def locateInverseF ( self, beta=1.0 ) -> PointInTile                         # Use ***
+	def locateDiceSørensenCoefficient ( self ) -> PointInTile                    # Use ***
+	def locateZijdenbosSimilarityIndex ( self ) -> PointInTile                   # Use ***
+	def locateCzekanowskiBinaryIndex ( self ) -> PointInTile                     # Use ***
+	def locateAccuracy ( self ) -> PointInTile                                   # Use ***
+	def locateMatchingCoefficient ( self ) -> PointInTile                        # Use ***
+	def locateBennettS ( self ) -> PointInTile
 	
-	def locateStandardizedNegativePredictiveValue ( priorPos ) -> PointInTile
-	def locateStandardizedPositivePredictiveValue ( priorPos ) -> PointInTile
-	def locateNegativeLikelihoodRatioComplement ( priorPos ) -> PointInTile
-	def locatePositiveLikelihoodRatio ( priorPos ) -> PointInTile
-	def locateSkewInvariantVersionOfF ( priorPos ) -> PointInTile                # Use ***
-	def locateWeightedAccuracy ( priorPos, weightPos ) -> PointInTile            # Use ***
-	def locateBalancedAccuracy ( priorPos ) -> PointInTile                       # Use ***
-	def locateYoudenJ ( priorPos ) -> PointInTile
-	def locatePeirceSkillScore ( priorPos ) -> PointInTile
-	def locateInformedness ( priorPos ) -> PointInTile
-	def locateCohenKappa ( priorPos ) -> PointInTile
-	def locateHeidkeSkillScore ( priorPos ) -> PointInTile
-	def locateProbabilityTrueNegative ( priorPos ) -> PointInTile                # Use ***
-	def locateProbabilityFalsePositiveComplenent ( priorPos ) -> PointInTile     # Use ***
-	def locateProbabilityFalseNegativeComplenent ( priorPos ) -> PointInTile     # Use ***
-	def locateProbabilityTruePositive ( priorPos ) -> PointInTile                # Use ***
-	def locateDetectionRate ( priorPos ) -> PointInTile                          # Use ***
-	def locateRejectionRate ( priorPos ) -> PointInTile                          # Use ***
-	def locateNormalizedConfusionMatrixDeterminent ( priorPos ) -> PointInTile
+	def locateStandardizedNegativePredictiveValue ( self, priorPos ) -> PointInTile
+	def locateStandardizedPositivePredictiveValue ( self, priorPos ) -> PointInTile
+	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile
+	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile
+	def locateSkewInvariantVersionOfF ( self, priorPos ) -> PointInTile          # Use ***
+	def locateWeightedAccuracy ( self, priorPos, weightPos ) -> PointInTile      # Use ***
+	def locateBalancedAccuracy ( self, priorPos ) -> PointInTile                 # Use ***
+	def locateYoudenJ ( self, priorPos ) -> PointInTile
+	def locatePeirceSkillScore ( self, priorPos ) -> PointInTile
+	def locateInformedness ( self, priorPos ) -> PointInTile
+	def locateCohenKappa ( self, priorPos ) -> PointInTile
+	def locateHeidkeSkillScore ( self, priorPos ) -> PointInTile
+	def locateProbabilityTrueNegative ( self, priorPos ) -> PointInTile          # Use ***
+	def locateProbabilityFalsePositiveComplenent ( self, priorPos ) -> PointInTile # Use ***
+	def locateProbabilityFalseNegativeComplenent ( self, priorPos ) -> PointInTile # Use ***
+	def locateProbabilityTruePositive ( self, priorPos ) -> PointInTile          # Use ***
+	def locateDetectionRate ( self, priorPos ) -> PointInTile                    # Use ***
+	def locateRejectionRate ( self, priorPos ) -> PointInTile                    # Use ***
+	def locateNormalizedConfusionMatrixDeterminent ( self, priorPos ) -> PointInTile
 	
 	def locateMarkedness ( ratePos ) -> PointInTile
 	def locateClaytonSkillScore ( ratePos ) -> PointInTile
@@ -309,9 +310,9 @@ class AbstractParameterization ( ABC ) :
 	@abstractmethod
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 	
-	def unitTest ()
+	def unitTest ( self )
 
 
 class ParameterizationDefault ( AbstractParameterization ) :
@@ -340,22 +341,29 @@ class ParameterizationAdaptedToPredictionRates ( AbstractParameterization ) :
 class AbstractTile ( ABC ) :
 	"""This is the base class for all Tiles."""
 	
-	def __init__ ( self, parameterization )
+	def __init__ ( self, parameterization, resolution=1001, colormap )
 	
 	@abstractmethod
-	def getDefinition ( self )
+	def getDefinition ( self ) -> str
 	
 	@abstractmethod
-	def getExplanation ( self )
+	def getExplanation ( self ) -> str
 	
-	def getParameterization ( self )
+	def getParameterization ( self ) -> AbstractParameterization
 	
-	def getAnnotations ( self ) # generator
+	def getResolution ( self ) -> int
+	
+	def getVecParam1 ( self ) -> nparray
+	def getVecParam2 ( self ) -> nparray 
+	def getMat ( self ) -> nparray
+	
+	def getColormap ( self )
+	
+	def genAnnotations ( self ) # generator
 	
 	def addAnnotation ( self, annotation )
 	
 	def delAnnotation ( self, annotation )
-	
 	
 	@abstractmethod
 	def plot ( self, fig, ax )
@@ -366,60 +374,46 @@ class AbstractTile ( ABC ) :
 	@abstractmethod
 	def getName ( self )
 	
-	def __str__ ()
+	def __str__ ( self )
 	
 class AbstractNumericTile ( AbstractTile ) :
 	
 	def __init__ ( self )
 
 	@abstractmethod
-	def getLowerBound ()
+	def getLowerBound ( self )
 
 	@abstractmethod
-	def getUpperBound ()
+	def getUpperBound ( self )
 
 	@abstractmethod
-	def minimize () -> PointInTile
+	def minimize ( self ) -> PointInTile
 	
 	@abstractmethod
-	def maximize () -> PointInTile
+	def maximize ( self ) -> PointInTile
 	
 	@abstractmethod
-	def intergate () -> float
+	def intergate ( self ) -> float
+	
+	@staticmethod
+	def getDefaultColormapForValueTiles ()
+	
+	@staticmethod
+	def getDefaultColormapForRankingTiles ()
+	
+	@staticmethod
+	def getDefaultColormapForCorrelationTiles ()
 	
 class AbstractSymbolicTile ( AbstractTile ) :
 	
 	def __init__ ( self ) # TODO: how can we specify the color code?
 
 	@abstractmethod
-	def getCodomain () -> set
+	def getCodomain ( self ) -> set
 	
 
 
 
-
-
-
-
-
-class ValueTile ( AbstractNumericTile ) :
-	
-	def __init__ ( self, performance )
-	
-	def getVUT () -> float
-	
-class CorrelationTile ( AbstractNumericTile ) :
-	
-	def __init__ ( self, performances, score )
-	
-class RankingTile ( AbstractNumericTile ) :
-	
-	def __init__ ( self, entities, entity ) # TODO: do we need a class for Entity or is Performance enough ?
-	
-class EntityTile ( AbstractSymbolicTile ) :
-	
-	def __init__ ( self, ?????????? )
-	
 	
 
 
@@ -428,21 +422,69 @@ class EntityTile ( AbstractSymbolicTile ) :
 
 
 
+class AbstractAnalysis ( ABC ) :
 
+	def __init__ ( self, parameterization, resolution=1001 )
+	
+	def genTiles ( self ) # generator
+	
+class AnalysisForTheoreticalAnalyst ( AbstractAnalysis ) :
 
+	def __init__ ( self, performances, score, parameterization, resolution=1001, options )
 
+	def getPearsonCorrelationTile ( self ) -> AbstractNumericTile
+	
+	def getKendallCorrelationTile ( self ) -> AbstractNumericTile
+	
+	def getSpearmanCorrelationTile ( self ) -> AbstractNumericTile
 
+class AnalysisForMethodDesigner ( AbstractAnalysis ) :
 
-class AnalysisForRanking ( AbstractAnalysis? ) :
+	def __init__ ( self, performance, competitors, parameterization, resolution=1001, options )
+	
+	def getNoSkillTile ( self ) -> AbstractNumericTile
+	
+	def getBaselineValueTile ( self ) -> AbstractNumericTile
+	
+	def getStateOfTheArtValueTile ( self ) -> AbstractNumericTile
+	
+	def getValueTile ( self ) -> AbstractNumericTile
+	
+	def getRankingTile ( self ) -> AbstractNumericTile
+	
+	def plotInROC ( self, fig, ax ) # and options ?
+	
+	def getAdvice ( self, language ) -> str # language can be: txt, html, latex
+	
+class AnalysisForBenchmarker ( AbstractAnalysis ) :
 
-	def __init__ ( self, parameterization, resolution=1024, maxCacheSize=1024**3,  )
+	def __init__ ( self, performances, parameterization, resolution=1001, options )
+	
+	def plotInROC ( self, fig, ax ) # and options ?
+	
+	def getValueTile ( self, entity ) -> AbstractNumericTile
+	
+	def getNoSkillTile ( self ) -> AbstractNumericTile
+	
+	def getRelativeSkillTile ( self ) -> AbstractNumericTile
+	
+	def getRankingTile ( self, entity ) -> AbstractNumericTile
+	
+	def getAdviceBasedOnRankingTiles ( self, language ) -> str # language can be: txt, html, latex
+	
+	def getEntityTile ( self, rank ) -> AbstractSymbolicTile
+	
+	def getAdviceBasedOnEntityTiles ( self, language ) -> str # language can be: txt, html, latex
+	
+class AnalysisForAppDeveloper ( AbstractAnalysis ) :
 
-
-
-
-
-
-
-
+	def __init__ ( self, min_a, max_a, min_b, max_b, performances, parameterization, resolution=1001, options )
+	
+	def getEntityTile ( self, rank ) -> AbstractSymbolicTile
+	
+	def getValueTile ( self, entity ) -> AbstractNumericTile
+	
+	def getAdvice ( self, language ) -> str # language can be: txt, html, latex
+	
 
 
