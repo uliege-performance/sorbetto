@@ -28,15 +28,25 @@ class RankingScore :
 	def getImportance () -> ApplicationSpecificPreferences
 	
 	def isCanonical ( tol=1e-8 ) -> bool
+		"""
+		See :cite:t:`Pierard2024TheTile-arxiv`, Definition 1.
+		"""
 	
-	def plotInROC ( self, fig, ax, priorPos )
+	def toPABDC () -> RankingScore
+		"""
+		See :cite:t:`Pierard2024TheTile-arxiv`, Example 3.
+		"""
+	
+	def drawInROC ( self, fig, ax, priorPos )
+	
+	def asPencilInROC ( self, priorPos ) -> Pencil
 	
 	def __call__ ( self, performance ) -> float # should check constraint
 	
 	@abstractmethod
-	def getTrueNegativeRate () -> RankingScore
+	def getTrueNegativeRate () -> RankingScore                    # See paper 1, sec A.7.3
 	@abstractmethod
-	def getTruePositiveRate () -> RankingScore
+	def getTruePositiveRate () -> RankingScore                    # See paper 1, sec A.7.3
 	@abstractmethod
 	def getSpecificity () -> RankingScore
 	@abstractmethod
@@ -44,9 +54,9 @@ class RankingScore :
 	@abstractmethod
 	def getSensitivity () -> RankingScore
 	@abstractmethod
-	def getNegativePredictiveValue () -> RankingScore
+	def getNegativePredictiveValue () -> RankingScore             # See paper 1, sec A.7.3
 	@abstractmethod
-	def getPositivePredictiveValue () -> RankingScore
+	def getPositivePredictiveValue () -> RankingScore             # See paper 1, sec A.7.3
 	@abstractmethod
 	def getPrecision () -> RankingScore
 	@abstractmethod
@@ -80,7 +90,7 @@ class RankingScore :
 	@abstractmethod
 	def getCzekanowskiBinaryIndex () -> RankingScore
 	@abstractmethod
-	def getAccuracy () -> RankingScore
+	def getAccuracy () -> RankingScore                            # See paper 1, sec A.7.3
 	@abstractmethod
 	def getMatchingCoefficient () -> RankingScore
 	
@@ -90,14 +100,17 @@ class RankingScore :
 	def getWeightedAccuracy ( priorPos, weightPos ) -> RankingScore           # constraint
 	@abstractmethod
 	def getBalancedAccuracy ( priorPos ) -> RankingScore                      # constraint
+	                                                              # See paper 1, sec A.7.4
 	@abstractmethod
 	def getProbabilityTrueNegative ( priorPos ) -> RankingScore               # constraint
+	                                                              # See paper 1, sec A.7.4
 	@abstractmethod
 	def getProbabilityFalsePositiveComplenent ( priorPos ) -> RankingScore    # constraint
 	@abstractmethod
 	def getProbabilityFalseNegativeComplenent ( priorPos ) -> RankingScore    # constraint
 	@abstractmethod
 	def getProbabilityTruePositive ( priorPos ) -> RankingScore               # constraint
+	                                                              # See paper 1, sec A.7.4
 	@abstractmethod
 	def getDetectionRate ( priorPos ) -> RankingScore                         # constraint
 	@abstractmethod
@@ -113,20 +126,59 @@ class RankingScore :
 	
 	
 
-class PerformanceOrderingInducedByOneScore : # It is a preorder
+class AbstractHomogeneousBinaryRelationOnPerformances :
+
+	def __init__ ( self, name=None, known_properties=None )
+
+	# TODO: should we have some tolerance ? Instead of bool, one could have {yes, perhaps, no}.
+	@abstractmethod
+	def __call__ ( self, p1, p2 ) -> bool
+	
+	@abstractmethod
+	def isReflexive ( self ) -> bool
+	@abstractmethod
+	def isIrreflexive ( self ) -> bool
+	@abstractmethod
+	def isTransitive ( self ) -> bool
+	@abstractmethod
+	def isSymmetric ( self ) -> bool
+	@abstractmethod
+	def isAsymmetric ( self ) -> bool
+	@abstractmethod
+	def isAntisymmetric ( self ) -> bool
+	@abstractmethod
+	def isEquivalence ( self ) -> bool
+	@abstractmethod
+	def isPreorder ( self ) -> bool
+	@abstractmethod
+	def isOrder ( self ) -> bool
+	@abstractmethod
+	def isPartialOrder ( self ) -> bool
+	@abstractmethod
+	def isTotalOrder ( self ) -> bool
+	
+	def __invert__ ( self )
+	def __and__ ( self, other )
+	def __or__ ( self, other )
+	
+	def getName ( self )
+	
+	def __str__ ( self )
+	
+	
+
+class PerformanceOrderingInducedByOneScore ( AbstractHomogeneousBinaryRelationOnPerformances ) : # It is a preorder
 
 	def __init__ ( self, score, name=None )
 	# warning if score is not a RankingScore.
 	
-	def __call__ ( self, p1, p2 ) -> bool # Theorem 1 of paper 1.
-	
-	# TODO: should we have some tolerance ? Instead of bool, one could have {yes, perhaps, no}.
+	def __call__ ( self, p1, p2 ) -> bool # Theorem 1 of :cite:t:`Pierard2025Foundations`.
 	
 	# We have four cases depending on the results of self(p1, p2) and self(p2, p1).
-	def equivalent ( self, p1, p2 ) -> bool
-	def better ( self, p1, p2 ) -> bool
-	def worse ( self, p1, p2 ) -> bool
-	def incomparable ( self, p1, p2 ) -> bool
+	def getRelationEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
+	def getRelationBetter ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
+	def getRelationWorse ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
+	def getRelationIncomparable ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
 	
 	# TODO: do we want the 10 relationships?
 	# - we can choose if we accept equivalent
@@ -137,9 +189,9 @@ class PerformanceOrderingInducedByOneScore : # It is a preorder
 	# - we need to accept at least one;
 	# - we need to not accept at least one;
 	# - and accepting only one is already in the four above methods.
-	def worseOrEquivalent ( self, p1, p2 ) -> bool
-	def betterOrEquivalent ( self, p1, p2 ) -> bool
-	def comparable ( self, p1, p2 ) -> bool
+	def getRelationWorseOrEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
+	def getRelationBetterOrEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
+	def getRelationComparable ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances
 	# TODO ...
 	
 	def getName ( self )
@@ -162,13 +214,17 @@ class TwoClassClassificationPerformance :
 	def pfn ( self ) -> float # P({fn})
 	def ptp ( self ) -> float # P({tp})
 	
+	def isNoSkill ( self, tol ) -> bool
+	def isAboveNoSkills ( self, tol ) -> bool
+	def isBelowNoSkills ( self, tol ) -> bool
+	
 	def __eq__ ( self, other ) # use some tolerance ?
 	def __ne__ ( self, other ) # use some tolerance ?
 
 	@staticmethod
 	def buildFromRankingScoreValues ( name, * pairsOfRankingScoresAndValues, tol=1e-3 ) -> Self
 	
-	def plotInROC ( self, fig, ax )
+	def drawInROC ( self, fig, ax )
 	def getValueTile ( self, parameterization ) # and options ?
 	
 	def getName ( self )
@@ -188,7 +244,7 @@ class FiniteSetOfTwoClassClassificationPerformances ( list[TwoClassClassificatio
 	
 	def getRange ( self, score ) -> tuple[float, float]
 	
-	def plotInROC ( self, fig, ax ) # and options ?
+	def drawInROC ( self, fig, ax ) # and options ?
 	
 	def getWorstValueTile ( self, parameterization ) # and options ?
 	def getBestValueTile ( self, parameterization ) # and options ?
@@ -201,11 +257,13 @@ class AbstractDistributionOfTwoClassClassificationPerformances ( ABC ) :
 
 	def __init__ ( self )
 	
+	# def getSupport () -> ???
+	
 	@abstractmethod
 	def drawAtRandom ( self, numPerformances ) -> FiniteSetOfTwoClassClassificationPerformances
 	
 	@abstractmethod
-	def getMean ( self ) -> TwoClassClassificationPerformances
+	def getMean ( self ) -> FiniteSetOfTwoClassClassificationPerformances
 
 	@abstractmethod
 	def getName ( self )
@@ -213,15 +271,103 @@ class AbstractDistributionOfTwoClassClassificationPerformances ( ABC ) :
 	def __str__ ( self )
 
 class UniformDistributionOfTwoClassClassificationPerformances ( AbstractDistributionOfTwoClassClassificationPerformances )
+	
+	def sampleOnRegularGrid ( self, grid_size ) -> FiniteSetOfTwoClassClassificationPerformances
 
 class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors ( AbstractDistributionOfTwoClassClassificationPerformances )
+	
+	def sampleOnRegularGrid ( self, grid_size ) -> FiniteSetOfTwoClassClassificationPerformances
 
 class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionRates ( AbstractDistributionOfTwoClassClassificationPerformances )
+	
+	def sampleOnRegularGrid ( self, grid_size ) -> FiniteSetOfTwoClassClassificationPerformances
 
 
 
 
 
+
+
+
+def AbstractOperationOnTwoClassClassificationPerformances ( ABC ) :
+
+	def __init__ ( self, name=None )
+	
+	@abstractmethod
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+	
+	def getName ( self )
+	
+	def __str__ ( self )
+
+def OpFilter ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2025Foundations`, Property 1.
+	"""
+
+	def __init__ ( self, importances, name=None )
+	
+	def getImportances ( self ) -> ApplicationSpecificPreferences
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+
+def OpNoSkill  ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 2.2.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+
+def OpClassPriorShift ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.2.
+	See :cite:t:`Sipka2022TheHitchhikerGuide`
+	"""
+
+	def __init__ ( self, srcPriorPos, dstPriorPos, name=None )
+	
+	def getSrcPriorPos ( self ) -> float
+	def getDstPriorPos ( self ) -> float
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+	
+def OpChangePredictedClass ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+	
+def OpChangeGroundtruthClass ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+
+def OpSwapPredictedAndGroundtruthClasses ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
+
+def OpSwapNegativeAndPositiveClasses ( AbstractOperationOnTwoClassClassificationPerformances ) :
+	"""
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	def __call__ ( self, performance ) -> TwoClassClassificationPerformance
 
 
 
@@ -282,17 +428,24 @@ class AbstractParameterization ( ABC ) :
 	def locateMatchingCoefficient ( self ) -> PointInTile                        # Use ***
 	def locateBennettS ( self ) -> PointInTile
 	
+	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+	def locateSimilarityCoefficientsT ( self ) -> PointInTile
+	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+	def locateSimilarityCoefficientsS ( self ) -> PointInTile
+	
 	def locateStandardizedNegativePredictiveValue ( self, priorPos ) -> PointInTile
 	def locateStandardizedPositivePredictiveValue ( self, priorPos ) -> PointInTile
 	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile
+	                                                              # See paper 1, sec A.7.4
 	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile
+	                                                              # See paper 1, sec A.7.4
 	def locateSkewInvariantVersionOfF ( self, priorPos ) -> PointInTile          # Use ***
 	def locateWeightedAccuracy ( self, priorPos, weightPos ) -> PointInTile      # Use ***
 	def locateBalancedAccuracy ( self, priorPos ) -> PointInTile                 # Use ***
 	def locateYoudenJ ( self, priorPos ) -> PointInTile
 	def locatePeirceSkillScore ( self, priorPos ) -> PointInTile
-	def locateInformedness ( self, priorPos ) -> PointInTile
-	def locateCohenKappa ( self, priorPos ) -> PointInTile
+	def locateInformedness ( self, priorPos ) -> PointInTile      # See paper 1, sec A.7.4
+	def locateCohenKappa ( self, priorPos ) -> PointInTile        # See paper 1, sec A.7.4
 	def locateHeidkeSkillScore ( self, priorPos ) -> PointInTile
 	def locateProbabilityTrueNegative ( self, priorPos ) -> PointInTile          # Use ***
 	def locateProbabilityFalsePositiveComplenent ( self, priorPos ) -> PointInTile # Use ***
@@ -316,21 +469,62 @@ class AbstractParameterization ( ABC ) :
 
 
 class ParameterizationDefault ( AbstractParameterization ) :
-	"""This is the parameterization described in: Sébastien Piérard, Anaïs Halin, Anthony Cioppa, Adrien Deliège, and Marc Van Droogenbroeck. The Tile: A 2D map of ranking scores for two-class classification. arXiv, abs/2412.04309, 2024."""
+	"""
+	This is the parameterization described in :cite:t:`Pierard2024TheTile-arxiv`.
+	"""
 	
 	def __init__ ( self )
 	
 class ParameterizationAdaptedToClassPriors ( AbstractParameterization ) :
-	"""Not yet published. Experimental. In Sébastien's mind.'"""
+	"""
+	Not yet published. Experimental. In Sébastien's mind.'
+	"""
 	
 	def __init__ ( self )
 	
 class ParameterizationAdaptedToPredictionRates ( AbstractParameterization ) :
-	"""Not yet published. Experimental. In Sébastien's mind."""
+	"""
+	Not yet published. Experimental. In Sébastien's mind.'
+	"""
 	
 	def __init__ ( self )
 
 
+
+
+
+
+class AbstractAnnotation ( ABC ) :
+	"""
+	This is the base class for all annotations, which are things that are drawn on top of Tiles.
+	"""
+	
+	def __init__ ( self, name )
+	
+	@abstractmethod
+	def draw ( self, tile, fig, ax )
+
+	def getName ( self )
+	
+	def __str__ ( self )
+	
+class AnnotationPoint ( AbstractAnnotation ) :
+
+	def __init__ ( self, point_or_score_or_ordering_or_preferences, label, ... ) # options for fontsize, fontcolor, markersize, markercolor, marker, etc.
+	
+	def getPoint ( self )
+	
+	def getLabel ( self )
+	
+class AnnotationCurve ( AbstractAnnotation ) :
+
+	def __init__ ( self, curve, label, ... ) # options for color, linestyle, linewidth
+	
+	def getCurve ( self )
+
+
+
+.......................
 
 
 
@@ -339,9 +533,16 @@ class ParameterizationAdaptedToPredictionRates ( AbstractParameterization ) :
 
 
 class AbstractTile ( ABC ) :
-	"""This is the base class for all Tiles."""
+	"""
+	This is the base class for all Tiles.
+	Tiles with the default parameterization are studied in detail in :cite:t:`Pierard2024TheTile-arxiv`.
+	Various flavors of Tiles are described in :cite:t:`Halin2024AHitchhikers-arxiv-arxiv` and :cite:t:`Pierard2025AMethodology`.
+	"""
 	
-	def __init__ ( self, parameterization, resolution=1001, colormap )
+	# TODO : Is is AbstractTile or AbstractFlavor ? Not crystal clear ...
+	# Maybe a Tile is a pair of Parameterization and Flavor ?
+	
+	def __init__ ( self, name, parameterization, resolution=1001, colormap )
 	
 	@abstractmethod
 	def getDefinition ( self ) -> str
@@ -359,6 +560,8 @@ class AbstractTile ( ABC ) :
 	
 	def getColormap ( self )
 	
+	# annotations : List [ Annotation ]
+	
 	def genAnnotations ( self ) # generator
 	
 	def addAnnotation ( self, annotation )
@@ -366,19 +569,18 @@ class AbstractTile ( ABC ) :
 	def delAnnotation ( self, annotation )
 	
 	@abstractmethod
-	def plot ( self, fig, ax )
+	def draw ( self, fig, ax )
 	
 	@abstractmethod
 	def __call__ ( self, param1, param2 )
 
-	@abstractmethod
 	def getName ( self )
 	
 	def __str__ ( self )
 	
 class AbstractNumericTile ( AbstractTile ) :
 	
-	def __init__ ( self )
+	def __init__ ( self, name, parameterization, resolution=1001, colormap )
 
 	@abstractmethod
 	def getLowerBound ( self )
@@ -406,11 +608,19 @@ class AbstractNumericTile ( AbstractTile ) :
 	
 class AbstractSymbolicTile ( AbstractTile ) :
 	
-	def __init__ ( self ) # TODO: how can we specify the color code?
+	def __init__ ( self, name, parameterization, resolution=1001, colormap ) # TODO: how can we specify the color code?
 
 	@abstractmethod
 	def getCodomain ( self ) -> set
 	
+class ValueTile ( AbstractNumericTile ) :
+
+	def getVUT ( self )
+		"""
+		See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.1.
+		"""
+	
+	def asPencil ( self ) -> Pencil
 
 
 
@@ -452,15 +662,15 @@ class AnalysisForMethodDesigner ( AbstractAnalysis ) :
 	
 	def getRankingTile ( self ) -> AbstractNumericTile
 	
-	def plotInROC ( self, fig, ax ) # and options ?
+	def drawInROC ( self, fig, ax ) # and options ?
 	
-	def getAdvice ( self, language ) -> str # language can be: txt, html, latex
+	def getAdvice ( self, fmt ) -> str # fmt can be: txt, html, latex
 	
 class AnalysisForBenchmarker ( AbstractAnalysis ) :
 
 	def __init__ ( self, performances, parameterization, resolution=1001, options )
 	
-	def plotInROC ( self, fig, ax ) # and options ?
+	def drawInROC ( self, fig, ax ) # and options ?
 	
 	def getValueTile ( self, entity ) -> AbstractNumericTile
 	
@@ -470,11 +680,11 @@ class AnalysisForBenchmarker ( AbstractAnalysis ) :
 	
 	def getRankingTile ( self, entity ) -> AbstractNumericTile
 	
-	def getAdviceBasedOnRankingTiles ( self, language ) -> str # language can be: txt, html, latex
+	def getAdviceBasedOnRankingTiles ( self, fmt ) -> str # fmt can be: txt, html, latex
 	
 	def getEntityTile ( self, rank ) -> AbstractSymbolicTile
 	
-	def getAdviceBasedOnEntityTiles ( self, language ) -> str # language can be: txt, html, latex
+	def getAdviceBasedOnEntityTiles ( self, fmt ) -> str # fmt can be: txt, html, latex
 	
 class AnalysisForAppDeveloper ( AbstractAnalysis ) :
 
@@ -484,7 +694,7 @@ class AnalysisForAppDeveloper ( AbstractAnalysis ) :
 	
 	def getValueTile ( self, entity ) -> AbstractNumericTile
 	
-	def getAdvice ( self, language ) -> str # language can be: txt, html, latex
+	def getAdvice ( self, fmt ) -> str # fmt can be: txt, html, latex
 	
 
 
