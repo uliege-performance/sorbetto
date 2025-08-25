@@ -17,8 +17,49 @@ class ApplicationSpecificPreferences :
 	def __str__ ( self )
 	
 	
+
+
+
+class Entity :
+
+	def __init__ ( self, name, color, performance )
+	
+	def getName ( self ) -> str
+	
+	def getColor ( self ) # -> tuple | list | nparray ?
+	
+	def evaluate ( self ) -> TwoClassClassificationPerformance
+	
+	def __str__ ( self )
 	
 	
+
+
+	
+class Ranking :
+	"""
+	See Axiom 1 in :cite:t:`Pierard2025Foundations`.
+	"""
+	
+	def __init__ ( self, entities_and_performances, performance_ordering, name=None )
+	
+	def getEntities ( self ) -> iterable
+	
+	def getMinRank ( self, entity ) -> int
+	
+	def getMaxRank ( self, entity ) -> int
+	
+	def getAvgRank ( self, entity ) -> float
+	
+	def getEntitiesAtRank ( self, rank:int ) -> list
+	
+	def getName ( self )
+	
+	def __str__ ( self )
+
+
+
+
 	
 
 class RankingScore :
@@ -39,14 +80,22 @@ class RankingScore :
 	
 	def drawInROC ( self, fig, ax, priorPos )
 	
-	def asPencilInROC ( self, priorPos ) -> Pencil
+	def getPencilInROC ( self, priorPos ) -> Pencil
 	
 	def __call__ ( self, performance ) -> float # should check constraint
 	
 	@abstractmethod
-	def getTrueNegativeRate () -> RankingScore                    # See paper 1, sec A.7.3
+	def getTrueNegativeRate () -> RankingScore                                            # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+		"""
+		True Negative Rate (TNR).
+		Synonyms: specificity, selectivity, inverse recall.
+		"""
 	@abstractmethod
-	def getTruePositiveRate () -> RankingScore                    # See paper 1, sec A.7.3
+	def getTruePositiveRate () -> RankingScore                                            # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+		"""
+		True Positive Rate (TPR).
+		Synonyms: sensitivity, recall.
+		"""
 	@abstractmethod
 	def getSpecificity () -> RankingScore
 	@abstractmethod
@@ -54,9 +103,17 @@ class RankingScore :
 	@abstractmethod
 	def getSensitivity () -> RankingScore
 	@abstractmethod
-	def getNegativePredictiveValue () -> RankingScore             # See paper 1, sec A.7.3
+	def getNegativePredictiveValue () -> RankingScore                                     # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+		"""
+		Negative Predictive Value (NPV).
+		Synonym: inverse precision
+		"""
 	@abstractmethod
-	def getPositivePredictiveValue () -> RankingScore             # See paper 1, sec A.7.3
+	def getPositivePredictiveValue () -> RankingScore                                     # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+		"""
+		Positive Predictive Value (PPV).
+		Synonym: precision
+		"""
 	@abstractmethod
 	def getPrecision () -> RankingScore
 	@abstractmethod
@@ -71,6 +128,10 @@ class RankingScore :
 	def getInverseIntersectionOverUnion () -> RankingScore
 	@abstractmethod
 	def getJaccard () -> RankingScore
+		"""
+		Jaccard's coefficient.
+		Synonyms: Tanimoto coefficient, similarity, Intersection over Union (IoU), critical success index :cite:t:`Hogan2010Equitability`, and G-measure :cite:t:`Flach2003TheGeometry` (not to be confused with the G-measure of :cite:t:`Canbek2017Binary` and other authors).
+		"""
 	@abstractmethod
 	def getInverseJaccard () -> RankingScore
 	@abstractmethod
@@ -80,7 +141,7 @@ class RankingScore :
 	@abstractmethod
 	def getCriticalSuccessIndex () -> RankingScore
 	@abstractmethod
-	def getF ( beta=1.0 ) -> RankingScore
+	def getF ( beta=1.0 ) -> RankingScore                                                 # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.2.
 	@abstractmethod
 	def getInverseF ( beta=1.0 ) -> RankingScore
 	@abstractmethod
@@ -90,31 +151,35 @@ class RankingScore :
 	@abstractmethod
 	def getCzekanowskiBinaryIndex () -> RankingScore
 	@abstractmethod
-	def getAccuracy () -> RankingScore                            # See paper 1, sec A.7.3
+	def getAccuracy () -> RankingScore                                                    # See :cite:t:`Pierard2025Foundations`, Section A.7.3
 	@abstractmethod
 	def getMatchingCoefficient () -> RankingScore
 	
 	@abstractmethod
-	def getSkewInvariantVersionOfF ( priorPos ) -> RankingScore               # constraint
+	def getSkewInsensitiveVersionOfF ( priorPos ) -> RankingScore                         # TODO: implement constraint
+		"""
+		The skew-insensitive version of $\scoreFOne$.
+		Defined in cite:t:`Flach2003TheGeometry`.
+		"""
 	@abstractmethod
-	def getWeightedAccuracy ( priorPos, weightPos ) -> RankingScore           # constraint
+	def getWeightedAccuracy ( priorPos, weightPos ) -> RankingScore                       # TODO: implement constraint. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
 	@abstractmethod
-	def getBalancedAccuracy ( priorPos ) -> RankingScore                      # constraint
-	                                                              # See paper 1, sec A.7.4
+	def getBalancedAccuracy ( priorPos ) -> RankingScore                                  # TODO: implement constraint
+	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 	@abstractmethod
-	def getProbabilityTrueNegative ( priorPos ) -> RankingScore               # constraint
-	                                                              # See paper 1, sec A.7.4
+	def getProbabilityTrueNegative ( priorPos ) -> RankingScore                           # TODO: implement constraint
+	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 	@abstractmethod
-	def getProbabilityFalsePositiveComplenent ( priorPos ) -> RankingScore    # constraint
+	def getProbabilityFalsePositiveComplenent ( priorPos ) -> RankingScore                # TODO: implement constraint
 	@abstractmethod
-	def getProbabilityFalseNegativeComplenent ( priorPos ) -> RankingScore    # constraint
+	def getProbabilityFalseNegativeComplenent ( priorPos ) -> RankingScore                # TODO: implement constraint
 	@abstractmethod
-	def getProbabilityTruePositive ( priorPos ) -> RankingScore               # constraint
-	                                                              # See paper 1, sec A.7.4
+	def getProbabilityTruePositive ( priorPos ) -> RankingScore                           # TODO: implement constraint
+	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 	@abstractmethod
-	def getDetectionRate ( priorPos ) -> RankingScore                         # constraint
+	def getDetectionRate ( priorPos ) -> RankingScore                                     # TODO: implement constraint
 	@abstractmethod
-	def getRejectionRate ( priorPos ) -> RankingScore                         # constraint
+	def getRejectionRate ( priorPos ) -> RankingScore                                     # TODO: implement constraint
 	
 	def getName ( self )
 	
@@ -157,7 +222,7 @@ class AbstractHomogeneousBinaryRelationOnPerformances :
 	@abstractmethod
 	def isTotalOrder ( self ) -> bool
 	
-	def __invert__ ( self )
+	def __invert__ ( self ) # dual
 	def __and__ ( self, other )
 	def __or__ ( self, other )
 	
@@ -322,7 +387,7 @@ def OpNoSkill  ( AbstractOperationOnTwoClassClassificationPerformances ) :
 
 def OpClassPriorShift ( AbstractOperationOnTwoClassClassificationPerformances ) :
 	"""
-	See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.2.
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.2 and Lemma 5.
 	See :cite:t:`Sipka2022TheHitchhikerGuide`
 	"""
 
@@ -335,7 +400,7 @@ def OpClassPriorShift ( AbstractOperationOnTwoClassClassificationPerformances ) 
 	
 def OpChangePredictedClass ( AbstractOperationOnTwoClassClassificationPerformances ) :
 	"""
-	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1 and Lemma 1.
 	"""
 
 	def __init__ ( self, name=None )
@@ -344,7 +409,7 @@ def OpChangePredictedClass ( AbstractOperationOnTwoClassClassificationPerformanc
 	
 def OpChangeGroundtruthClass ( AbstractOperationOnTwoClassClassificationPerformances ) :
 	"""
-	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1 and Lemma 2.
 	"""
 
 	def __init__ ( self, name=None )
@@ -353,7 +418,7 @@ def OpChangeGroundtruthClass ( AbstractOperationOnTwoClassClassificationPerforma
 
 def OpSwapPredictedAndGroundtruthClasses ( AbstractOperationOnTwoClassClassificationPerformances ) :
 	"""
-	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1 and Lemma 3.
 	"""
 
 	def __init__ ( self, name=None )
@@ -362,7 +427,7 @@ def OpSwapPredictedAndGroundtruthClasses ( AbstractOperationOnTwoClassClassifica
 
 def OpSwapNegativeAndPositiveClasses ( AbstractOperationOnTwoClassClassificationPerformances ) :
 	"""
-	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1.
+	See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.1 and Lemma 4.
 	"""
 
 	def __init__ ( self, name=None )
@@ -400,65 +465,151 @@ class AbstractParameterization ( ABC ) :
 	@abstractmethod
 	def getValueParameter2 ( self, rankingScore ) -> float
 	
-	def locateRankingScore ( self, score ) -> PointInTile                    # ***
-	def locateTrueNegativeRate ( self ) -> PointInTile                           # Use ***
-	def locateTruePositiveRate ( self ) -> PointInTile                           # Use ***
-	def locateSpecificity ( self ) -> PointInTile                                # Use ***
-	def locateSelectivity ( self ) -> PointInTile                                # Use ***
-	def locateSensitivity ( self ) -> PointInTile                                # Use ***
-	def locateNegativePredictiveValue ( self ) -> PointInTile                    # Use ***
-	def locatePositivePredictiveValue ( self ) -> PointInTile                    # Use ***
-	def locatePrecision ( self ) -> PointInTile                                  # Use ***
-	def locateInversePrecision ( self ) -> PointInTile                           # Use ***
-	def locateRecall ( self ) -> PointInTile                                     # Use ***
-	def locateInverseRecall ( self ) -> PointInTile                              # Use ***
-	def locateIntersectionOverUnion ( self ) -> PointInTile                      # Use ***
-	def locateInverseIntersectionOverUnion ( self ) -> PointInTile               # Use ***
-	def locateJaccard ( self ) -> PointInTile                                    # Use ***
-	def locateInverseJaccard ( self ) -> PointInTile                             # Use ***
-	def locateTanimotoCoefficient ( self ) -> PointInTile                        # Use ***
-	def locateSimilarity ( self ) -> PointInTile                                 # Use ***
-	def locateCriticalSuccessIndex ( self ) -> PointInTile                       # Use ***
-	def locateF ( self, beta=1.0 ) -> PointInTile                                # Use ***
-	def locateInverseF ( self, beta=1.0 ) -> PointInTile                         # Use ***
-	def locateDiceSørensenCoefficient ( self ) -> PointInTile                    # Use ***
-	def locateZijdenbosSimilarityIndex ( self ) -> PointInTile                   # Use ***
-	def locateCzekanowskiBinaryIndex ( self ) -> PointInTile                     # Use ***
-	def locateAccuracy ( self ) -> PointInTile                                   # Use ***
-	def locateMatchingCoefficient ( self ) -> PointInTile                        # Use ***
+	def locateRankingScore ( self, score ) -> PointInTile                                 # This is ***
+	
+	# See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
+	def locateCohenCorrected ( self, score:RankingScore ) -> PointInTile
+	
+	def locateTrueNegativeRate ( self ) -> PointInTile                                    # Use ***
+	def locateTruePositiveRate ( self ) -> PointInTile                                    # Use ***
+	def locateSpecificity ( self ) -> PointInTile                                         # Use ***
+	def locateSelectivity ( self ) -> PointInTile                                         # Use ***
+	def locateSensitivity ( self ) -> PointInTile                                         # Use ***
+	def locateNegativePredictiveValue ( self ) -> PointInTile                             # Use ***
+	def locatePositivePredictiveValue ( self ) -> PointInTile                             # Use ***
+	def locatePrecision ( self ) -> PointInTile                                           # Use ***
+	def locateInversePrecision ( self ) -> PointInTile                                    # Use ***
+	def locateRecall ( self ) -> PointInTile                                              # Use ***
+	def locateInverseRecall ( self ) -> PointInTile                                       # Use ***
+	def locateIntersectionOverUnion ( self ) -> PointInTile                               # Use ***
+	def locateInverseIntersectionOverUnion ( self ) -> PointInTile                        # Use ***
+	def locateJaccard ( self ) -> PointInTile                                             # Use ***. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+	def locateInverseJaccard ( self ) -> PointInTile                                      # Use ***
+	def locateTanimotoCoefficient ( self ) -> PointInTile                                 # Use ***
+	def locateSimilarity ( self ) -> PointInTile                                          # Use ***
+	def locateCriticalSuccessIndex ( self ) -> PointInTile                                # Use ***
+	def locateF ( self, beta=1.0 ) -> PointInTile                                         # Use ***. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+	def locateInverseF ( self, beta=1.0 ) -> PointInTile                                  # Use ***
+	def locateDiceSørensenCoefficient ( self ) -> PointInTile                             # Use ***
+		"""
+		Dice-Sørensen coefficient.
+		Synonym: F-one $\scoreFOne$.
+		$\scoreFOne=\nicefrac{2\scoreJaccardPos}{\scoreJaccardPos+1}$
+		"""
+	def locateZijdenbosSimilarityIndex ( self ) -> PointInTile                            # Use ***
+	def locateCzekanowskiBinaryIndex ( self ) -> PointInTile                              # Use ***
+	def locateAccuracy ( self ) -> PointInTile                                            # Use ***
+	def locateMatchingCoefficient ( self ) -> PointInTile                                 # Use ***
 	def locateBennettS ( self ) -> PointInTile
+		"""
+		Bennett's $S$.
+		This score is related to the accuracy $A$ by $S=2A-1$.
+		Reference: :cite:t:`Warrens2012TheEffect`.
+		"""
 	
 	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
 	def locateSimilarityCoefficientsT ( self ) -> PointInTile
+		"""
+		Similarity coefficients of the family $T_\theta$, as defined in :cite:t:`Gower1986Metric`.
+		"""
 	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
 	def locateSimilarityCoefficientsS ( self ) -> PointInTile
+		"""
+		Similarity coefficients of the family $S_\theta$, as defined in :cite:t:`Gower1986Metric`.
+		"""
+	# See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+	def locateSimilarityCoefficients ( self ) -> CurveInTile
+		"""
+		Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
+		"""
 	
-	def locateStandardizedNegativePredictiveValue ( self, priorPos ) -> PointInTile
-	def locateStandardizedPositivePredictiveValue ( self, priorPos ) -> PointInTile
-	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile
-	                                                              # See paper 1, sec A.7.4
-	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile
-	                                                              # See paper 1, sec A.7.4
-	def locateSkewInvariantVersionOfF ( self, priorPos ) -> PointInTile          # Use ***
-	def locateWeightedAccuracy ( self, priorPos, weightPos ) -> PointInTile      # Use ***
-	def locateBalancedAccuracy ( self, priorPos ) -> PointInTile                 # Use ***
-	def locateYoudenJ ( self, priorPos ) -> PointInTile
+	def locateStandardizedNegativePredictiveValue ( self, priorPos ) -> PointInTile       # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+		"""
+		Standardized Negative Predictive Value (SNPV).
+		Defined in :cite:t:`Heston2011Standardizing`.
+		$\scoreSNPV=\frac{\scoreTNR}{\scoreTNR+\scoreFNR}=\frac{\scoreNPV\priorpos}{\scoreNPV(\priorpos-\priorneg)+\priorneg}$
+		"""
+	def locateStandardizedPositivePredictiveValue ( self, priorPos ) -> PointInTile       # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+		"""
+		Standardized Positive Predictive Value (SPPV).
+		Defined in :cite:t:`Heston2011Standardizing`.
+		$\scoreSPPV=\frac{\scoreTPR}{\scoreFPR+\scoreTPR}=\frac{\scorePPV\priorneg}{\scorePPV(\priorneg-\priorpos)+\priorpos}$
+		"""
+	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile         # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+		"""
+		Negative Likelihood Ratio.
+		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2011Evaluation,Brown2006ROC`
+		"""
+	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile                   # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+		"""
+		Positive Likelihood Ratio.
+		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2011Evaluation,Brown2006ROC,Altman1994Diagnostic`
+		"""
+	def locateSkewInsensitiveVersionOfF ( self, priorPos ) -> PointInTile                 # Use ***
+		"""
+		The skew-insensitive version of $\scoreFOne$.
+		Defined in cite:t:`Flach2003TheGeometry`.
+		"""
+	def locateWeightedAccuracy ( self, priorPos, weightPos ) -> PointInTile               # Use ***
+	def locateBalancedAccuracy ( self, priorPos ) -> PointInTile                          # Use ***
+	def locateYoudenJ ( self, priorPos ) -> PointInTile                                   # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+		"""
+		Youden's index or Youden's $\scoreYoudenJ$ statistic.
+		Defined in :cite:t:`Youden1950Index`
+		References: :cite:t:`Fluss2005Estimation`.
+		Related to the balanced accuracy by $\scoreYoudenJ=\scoreTNR+\scoreTPR-1=2\scoreBalancedAccuracy-1$.
+		Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
+		"""
 	def locatePeirceSkillScore ( self, priorPos ) -> PointInTile
-	def locateInformedness ( self, priorPos ) -> PointInTile      # See paper 1, sec A.7.4
-	def locateCohenKappa ( self, priorPos ) -> PointInTile        # See paper 1, sec A.7.4
+	def locateInformedness ( self, priorPos ) -> PointInTile                              # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+	def locateCohenKappa ( self, priorPos ) -> PointInTile                                # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
+		"""
+		Cohen's $\scoreCohenKappa$ statistic.
+		Defined in :cite:t:`Cohen1960ACoefficient`
+		References: :cite:t:`Kaymak2012TheAUK`
+		Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
+		"""
 	def locateHeidkeSkillScore ( self, priorPos ) -> PointInTile
-	def locateProbabilityTrueNegative ( self, priorPos ) -> PointInTile          # Use ***
-	def locateProbabilityFalsePositiveComplenent ( self, priorPos ) -> PointInTile # Use ***
-	def locateProbabilityFalseNegativeComplenent ( self, priorPos ) -> PointInTile # Use ***
-	def locateProbabilityTruePositive ( self, priorPos ) -> PointInTile          # Use ***
-	def locateDetectionRate ( self, priorPos ) -> PointInTile                    # Use ***
-	def locateRejectionRate ( self, priorPos ) -> PointInTile                    # Use ***
+	def locateProbabilityTrueNegative ( self, priorPos ) -> PointInTile                   # Use ***
+	def locateProbabilityFalsePositiveComplenent ( self, priorPos ) -> PointInTile        # Use ***
+	def locateProbabilityFalseNegativeComplenent ( self, priorPos ) -> PointInTile        # Use ***
+	def locateProbabilityTruePositive ( self, priorPos ) -> PointInTile                   # Use ***
+	def locateDetectionRate ( self, priorPos ) -> PointInTile                             # Use ***
+	def locateRejectionRate ( self, priorPos ) -> PointInTile                             # Use ***
 	def locateNormalizedConfusionMatrixDeterminent ( self, priorPos ) -> PointInTile
+		"""
+		The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$. 
+		Reference: :cite:t:`Wimmer2006APerson`.
+		"""
 	
-	def locateMarkedness ( ratePos ) -> PointInTile
-	def locateClaytonSkillScore ( ratePos ) -> PointInTile
+	def locateMarkedness ( self, ratePos ) -> PointInTile
+		"""
+		Markedness.
+		Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\scoreNPV+\scorePPV-1$.
+		Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
+		"""
+	def locateClaytonSkillScore ( self, ratePos ) -> PointInTile
 	
-	def locateScoresPuttingNoSkillPerformancesOnAnEqualFooting ( priorPos, ratePos ) -> Union[PointInTile, CurveInTile]
+	# See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6.
+	def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFooting ( self, priorPos, ratePos ) -> Union[PointInTile, CurveInTile]
+		# See Theorem 3 of future "paper 6".
+		# See Theorem 4 of future "paper 6".
+		# See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
+	
+	
+	def locateOrderingsInveredWithOpChangePredictedClass ( self ) -> CurveInTile
+		"""
+			$$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
+			= \left{ R_I : a(I) = b(I) \right}$$
+		"""
+		# See Theorem 1 of future "paper 6".
+	
+	def locateOrderingsInveredWithOpChangeGroundtruthClass ( self ) -> CurveInTile
+		"""
+			$$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
+			= \left{ R_I : a(I) + b(I) = 1 \right}$$
+		"""
+		# See Theorem 2 of future "paper 6".
 
 	@abstractmethod
 	def getName ( self )
@@ -478,16 +629,38 @@ class ParameterizationDefault ( AbstractParameterization ) :
 class ParameterizationAdaptedToClassPriors ( AbstractParameterization ) :
 	"""
 	Not yet published. Experimental. In Sébastien's mind.'
+	
+	
+	Using the parameterization adapted to class priors with performances corresponding to
+	the class priors $()\pi_-,\pi_+)$ is equivalent to using the default parameterization
+	after applying a target shift operation :cite:t:`Sipka2022TheHitchhikerGuide` on all 
+	performances in order to balance the class priors.
+	
+	See Theorem 5 of future "paper 6".
 	"""
 	
-	def __init__ ( self )
+	def __init__ ( self, priorPos )
+	
+	def getNegativeClassPrior () -> float
+	def getPositiveClassPrior () -> float
 	
 class ParameterizationAdaptedToPredictionRates ( AbstractParameterization ) :
 	"""
 	Not yet published. Experimental. In Sébastien's mind.'
+	
+	Using the parameterization adapted to prediction rates with performances corresponding
+	to the prediction rates $(\tau_-,\tau_+)$ is equivalent to using the default
+	parameterization after applying a target shift operation
+	:cite:t:`Sipka2022TheHitchhikerGuide` on all performances in order to balance the
+	prediction rates.
+	
+	See Theorem 6 of future "paper 6".
 	"""
 	
-	def __init__ ( self )
+	def __init__ ( self, ratePos )
+	
+	def getRateOfNegativePredictions () -> float
+	def getRateOfPositivePredictions () -> float
 
 
 
@@ -522,10 +695,71 @@ class AnnotationCurve ( AbstractAnnotation ) :
 	
 	def getCurve ( self )
 
+class AnnotationClassPriorShiftGrid ( AbstractAnnotation ) :
+	# See :cite:t:`Pierard2024TheTile-arxiv`, Section A.2.2 
+	# See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
+
+	def __init__ ( self, srcPriorPos, dstPriorPos, ... )
+	
+	def getSrcPriorPos ( self ) -> float
+	def getDstPriorPos ( self ) -> float
+	
+class AnnotationEntityName ( AbstractAnnotation ) :
+	
+	def __init__ ( self )
+	
+	
 
 
-.......................
 
+
+
+
+
+class AbstractFlavor ( ABC ) :
+	"""
+	A flavor is a function that gives something to show on a Tile for any given importance values.
+	"""
+
+	def __init__ ( self, name=None )
+	
+	@abstractmethod
+	def getDefinition ( self ) -> str
+	
+	@abstractmethod
+	def __call__ ( self, importances )
+	
+	@abstractmethod
+	def getDefaultColormap ( self )
+	
+	def getName ( self )
+	
+	def __str__ ( self )
+	
+class AbstractNumericFlavor ( AbstractFlavor ) :
+
+	def __init__ ( self, name=None )
+
+	@abstractmethod
+	def getLowerBound ( self )
+
+	@abstractmethod
+	def getUpperBound ( self )
+
+class AbstractSymbolicFlavor ( AbstractFlavor ) :
+
+	def __init__ ( self, name=None )
+
+	@abstractmethod
+	def getCodomain ( self ) -> set
+	
+	
+	
+	
+class ValueFlavor ( AbstractNumericFlavor )
+class CorrelationFlavor ( AbstractNumericFlavor )
+class RankingFlavor ( AbstractNumericFlavor )
+class EntityFlavor ( AbstractSymbolicFlavor )
 
 
 
@@ -539,18 +773,14 @@ class AbstractTile ( ABC ) :
 	Various flavors of Tiles are described in :cite:t:`Halin2024AHitchhikers-arxiv-arxiv` and :cite:t:`Pierard2025AMethodology`.
 	"""
 	
-	# TODO : Is is AbstractTile or AbstractFlavor ? Not crystal clear ...
-	# Maybe a Tile is a pair of Parameterization and Flavor ?
-	
-	def __init__ ( self, name, parameterization, resolution=1001, colormap )
-	
-	@abstractmethod
-	def getDefinition ( self ) -> str
+	def __init__ ( self, name, parameterization, flavor, resolution=1001, ... )
 	
 	@abstractmethod
 	def getExplanation ( self ) -> str
 	
 	def getParameterization ( self ) -> AbstractParameterization
+	
+	def getFlavor ( self ) -> AbstractFlavor
 	
 	def getResolution ( self ) -> int
 	
@@ -571,8 +801,7 @@ class AbstractTile ( ABC ) :
 	@abstractmethod
 	def draw ( self, fig, ax )
 	
-	@abstractmethod
-	def __call__ ( self, param1, param2 )
+	def __call__ ( self, param1, param2 ) # uses `flavor ( importances )`.
 
 	def getName ( self )
 	
@@ -580,13 +809,7 @@ class AbstractTile ( ABC ) :
 	
 class AbstractNumericTile ( AbstractTile ) :
 	
-	def __init__ ( self, name, parameterization, resolution=1001, colormap )
-
-	@abstractmethod
-	def getLowerBound ( self )
-
-	@abstractmethod
-	def getUpperBound ( self )
+	def __init__ ( self, name, parameterization, numeric_flavor, resolution=1001, ... )
 
 	@abstractmethod
 	def minimize ( self ) -> PointInTile
@@ -597,36 +820,37 @@ class AbstractNumericTile ( AbstractTile ) :
 	@abstractmethod
 	def intergate ( self ) -> float
 	
-	@staticmethod
-	def getDefaultColormapForValueTiles ()
-	
-	@staticmethod
-	def getDefaultColormapForRankingTiles ()
-	
-	@staticmethod
-	def getDefaultColormapForCorrelationTiles ()
-	
 class AbstractSymbolicTile ( AbstractTile ) :
 	
-	def __init__ ( self, name, parameterization, resolution=1001, colormap ) # TODO: how can we specify the color code?
-
-	@abstractmethod
-	def getCodomain ( self ) -> set
+	def __init__ ( self, name, parameterization, symbolic_flavor, resolution=1001, ... )
 	
+
+
+
+
 class ValueTile ( AbstractNumericTile ) :
 
 	def getVUT ( self )
 		"""
-		See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.1.
+		See :cite:t:`Pierard2024TheTile-arxiv`, Section 3.1. (with default parameterization)
 		"""
 	
 	def asPencil ( self ) -> Pencil
-
+	
+class CorrelationTile ( AbstractNumericTile )
+class RankingTile ( AbstractNumericTile )
+class EntityTile ( AbstractSymbolicTile )
 
 
 	
 
 
+
+class PointInTile :
+	pass
+	
+class CurveInTile :
+	pass
 	
 
 
@@ -639,6 +863,10 @@ class AbstractAnalysis ( ABC ) :
 	def genTiles ( self ) # generator
 	
 class AnalysisForTheoreticalAnalyst ( AbstractAnalysis ) :
+	"""
+	For an example, see :cite:t:`Pierard2024TheTile-arxiv`, Figure 4.
+	For an example, see :cite:t:`Pierard2024TheTile-arxiv`, Figure 7.
+	"""
 
 	def __init__ ( self, performances, score, parameterization, resolution=1001, options )
 
@@ -652,13 +880,13 @@ class AnalysisForMethodDesigner ( AbstractAnalysis ) :
 
 	def __init__ ( self, performance, competitors, parameterization, resolution=1001, options )
 	
-	def getNoSkillTile ( self ) -> AbstractNumericTile
+	def getNoSkillTile ( self ) -> AbstractNumericTile # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 9.
 	
 	def getBaselineValueTile ( self ) -> AbstractNumericTile
 	
 	def getStateOfTheArtValueTile ( self ) -> AbstractNumericTile
 	
-	def getValueTile ( self ) -> AbstractNumericTile
+	def getValueTile ( self ) -> ValueTile
 	
 	def getRankingTile ( self ) -> AbstractNumericTile
 	
@@ -672,9 +900,9 @@ class AnalysisForBenchmarker ( AbstractAnalysis ) :
 	
 	def drawInROC ( self, fig, ax ) # and options ?
 	
-	def getValueTile ( self, entity ) -> AbstractNumericTile
+	def getValueTile ( self, entity ) -> ValueTile
 	
-	def getNoSkillTile ( self ) -> AbstractNumericTile
+	def getNoSkillTile ( self ) -> AbstractNumericTile # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 9.
 	
 	def getRelativeSkillTile ( self ) -> AbstractNumericTile
 	
@@ -692,7 +920,7 @@ class AnalysisForAppDeveloper ( AbstractAnalysis ) :
 	
 	def getEntityTile ( self, rank ) -> AbstractSymbolicTile
 	
-	def getValueTile ( self, entity ) -> AbstractNumericTile
+	def getValueTile ( self, entity ) -> ValueTile
 	
 	def getAdvice ( self, fmt ) -> str # fmt can be: txt, html, latex
 	
