@@ -538,12 +538,12 @@ class AbstractParameterization ( ABC ) :
 	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile         # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
 		"""
 		Negative Likelihood Ratio.
-		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2011Evaluation,Brown2006ROC`
+		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
 		"""
 	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile                   # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
 		"""
 		Positive Likelihood Ratio.
-		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2011Evaluation,Brown2006ROC,Altman1994Diagnostic`
+		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
 		"""
 	def locateSkewInsensitiveVersionOfF ( self, priorPos ) -> PointInTile                 # Use ***
 		"""
@@ -770,7 +770,7 @@ class AbstractTile ( ABC ) :
 	"""
 	This is the base class for all Tiles.
 	Tiles with the default parameterization are studied in detail in :cite:t:`Pierard2024TheTile-arxiv`.
-	Various flavors of Tiles are described in :cite:t:`Halin2024AHitchhikers-arxiv-arxiv` and :cite:t:`Pierard2025AMethodology`.
+	Various flavors of Tiles are described in :cite:t:`Halin2024AHitchhikers-arxiv` and :cite:t:`Pierard2025AMethodology`.
 	"""
 	
 	def __init__ ( self, name, parameterization, flavor, resolution=1001, ... )
