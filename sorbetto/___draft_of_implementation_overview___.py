@@ -84,101 +84,101 @@ class RankingScore :
 	
 	def __call__ ( self, performance ) -> float # should check constraint
 	
-	@abstractmethod
+	@staticmethod
 	def getTrueNegativeRate () -> RankingScore                                            # See :cite:t:`Pierard2025Foundations`, Section A.7.3
 		"""
 		True Negative Rate (TNR).
 		Synonyms: specificity, selectivity, inverse recall.
 		"""
-	@abstractmethod
+	@staticmethod
 	def getTruePositiveRate () -> RankingScore                                            # See :cite:t:`Pierard2025Foundations`, Section A.7.3
 		"""
 		True Positive Rate (TPR).
 		Synonyms: sensitivity, recall.
 		"""
-	@abstractmethod
+	@staticmethod
 	def getSpecificity () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getSelectivity () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getSensitivity () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getNegativePredictiveValue () -> RankingScore                                     # See :cite:t:`Pierard2025Foundations`, Section A.7.3
 		"""
 		Negative Predictive Value (NPV).
 		Synonym: inverse precision
 		"""
-	@abstractmethod
+	@staticmethod
 	def getPositivePredictiveValue () -> RankingScore                                     # See :cite:t:`Pierard2025Foundations`, Section A.7.3
 		"""
 		Positive Predictive Value (PPV).
 		Synonym: precision
 		"""
-	@abstractmethod
+	@staticmethod
 	def getPrecision () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getInversePrecision () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getRecall () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getInverseRecall () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getIntersectionOverUnion () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getInverseIntersectionOverUnion () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getJaccard () -> RankingScore
 		"""
 		Jaccard's coefficient.
 		Synonyms: Tanimoto coefficient, similarity, Intersection over Union (IoU), critical success index :cite:t:`Hogan2010Equitability`, and G-measure :cite:t:`Flach2003TheGeometry` (not to be confused with the G-measure of :cite:t:`Canbek2017Binary` and other authors).
 		"""
-	@abstractmethod
+	@staticmethod
 	def getInverseJaccard () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getTanimotoCoefficient () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getSimilarity () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getCriticalSuccessIndex () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getF ( beta=1.0 ) -> RankingScore                                                 # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.2.
-	@abstractmethod
+	@staticmethod
 	def getInverseF ( beta=1.0 ) -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getDiceSørensenCoefficient () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getZijdenbosSimilarityIndex () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getCzekanowskiBinaryIndex () -> RankingScore
-	@abstractmethod
+	@staticmethod
 	def getAccuracy () -> RankingScore                                                    # See :cite:t:`Pierard2025Foundations`, Section A.7.3
-	@abstractmethod
+	@staticmethod
 	def getMatchingCoefficient () -> RankingScore
 	
-	@abstractmethod
+	@staticmethod
 	def getSkewInsensitiveVersionOfF ( priorPos ) -> RankingScore                         # TODO: implement constraint
 		"""
 		The skew-insensitive version of $\scoreFOne$.
 		Defined in cite:t:`Flach2003TheGeometry`.
 		"""
-	@abstractmethod
+	@staticmethod
 	def getWeightedAccuracy ( priorPos, weightPos ) -> RankingScore                       # TODO: implement constraint. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
-	@abstractmethod
+	@staticmethod
 	def getBalancedAccuracy ( priorPos ) -> RankingScore                                  # TODO: implement constraint
 	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-	@abstractmethod
+	@staticmethod
 	def getProbabilityTrueNegative ( priorPos ) -> RankingScore                           # TODO: implement constraint
 	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-	@abstractmethod
+	@staticmethod
 	def getProbabilityFalsePositiveComplenent ( priorPos ) -> RankingScore                # TODO: implement constraint
-	@abstractmethod
+	@staticmethod
 	def getProbabilityFalseNegativeComplenent ( priorPos ) -> RankingScore                # TODO: implement constraint
-	@abstractmethod
+	@staticmethod
 	def getProbabilityTruePositive ( priorPos ) -> RankingScore                           # TODO: implement constraint
 	                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-	@abstractmethod
+	@staticmethod
 	def getDetectionRate ( priorPos ) -> RankingScore                                     # TODO: implement constraint
-	@abstractmethod
+	@staticmethod
 	def getRejectionRate ( priorPos ) -> RankingScore                                     # TODO: implement constraint
 	
 	def getName ( self )
@@ -579,7 +579,7 @@ class AbstractParameterization ( ABC ) :
 	def locateNormalizedConfusionMatrixDeterminent ( self, priorPos ) -> PointInTile
 		"""
 		The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$. 
-		Reference: :cite:t:`Wimmer2006APerson`.
+		Some works using this score: :cite:t:`Wimmer2006APerson`.
 		"""
 	
 	def locateMarkedness ( self, ratePos ) -> PointInTile
@@ -710,7 +710,7 @@ class AnnotationEntityName ( AbstractAnnotation ) :
 	
 	
 
-
++ zones hachurées des no-skills.
 
 
 
