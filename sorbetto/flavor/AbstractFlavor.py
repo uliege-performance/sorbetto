@@ -1,21 +1,23 @@
 class AbstractFlavor(ABC):
     """
-    A flavor is a function that gives something to show on a Tile for any given importance values.
+    A flavor is a function that gives something to show on a Tile for any given
+    importance values.
     """
 
     def __init__(self, name=None):
-        return
+        assert isinstance(name, (str, type(None)))
+        self.name = name
 
     @abstractmethod
     def __call__(self, importances):
-        return
+        pass
 
     @abstractmethod
     def getDefaultColormap(self):
-        return
+        pass
 
     def getName(self):
-        return
+        return self.name
 
     def __str__(self):
-        return
+        return self.getName

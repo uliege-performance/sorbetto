@@ -5,9 +5,6 @@ class CorrelationFlavor(AbstractNumericFlavor):
     the correlation, using a defined correlation coefficient (e.g., Pearson's r),
     between a score $X$ and the Canonical Ranking Score $R_I$ corresponding to this
     importance.
-
-    Args:
-        AbstractNumericFlavor (_type_): _description_
     """
 
     def __init__(self, name=None):
