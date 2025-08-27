@@ -1,5 +1,5 @@
 from typing import Any
-from twoClassfication import TwoClassClassificationPerformance
+from ..performance.two_class_classfication import TwoClassClassificationPerformance
 
 
 class Entity:
@@ -36,9 +36,7 @@ class Entity:
 
 
 if __name__ == "__main__":
-    # This is a mock performance object for testing purposes.
-    # In a real scenario, you would import and instantiate your actual
-    # TwoClassClassificationPerformance class.
+    
     class MockPerformance:
         def __str__(self):
             return "MockPerformance(tn=0.9, fp=0.1, fn=0.05, tp=0.95)"
