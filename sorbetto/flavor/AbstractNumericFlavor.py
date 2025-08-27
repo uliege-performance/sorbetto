@@ -1,9 +1,11 @@
-class AbstractNumericFlavor ( AbstractFlavor ) :
+class AbstractNumericFlavor(AbstractFlavor):
+    def __init__(self, name=None):
+        return
 
-	def __init__ ( self, name=None )
+    @abstractmethod
+    def getLowerBound(self):
+        return
 
-	@abstractmethod
-	def getLowerBound ( self )
-
-	@abstractmethod
-	def getUpperBound ( self )
+    @abstractmethod
+    def getUpperBound(self):
+        return
