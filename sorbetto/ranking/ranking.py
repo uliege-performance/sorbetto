@@ -68,4 +68,7 @@ class RankingInducedByScore ( AbstractRanking ):
         :return: The list of all entities e such that min_rank(e) <= rank <= max_rank(e)
         """
 
-        raise NotImplementedError()
+        min_ranks_all = self.getAllMinRanks()
+        max_ranks_all = self.getAllMaxRanks()
+
+        return [entity for idx, entity in enumerate(self._entities) if min_ranks_all[idx] <= rank <= max_ranks_all[idx]]
