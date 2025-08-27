@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sorbetto"
+description = "A Python Library to Produce Classification Tiles With Different Flavors"
+readme = "README.md"
+dynamic = ["version"]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Sébastien Piérard et al.", email = "Sebastien.Pierard@gmail.com" },
+    { name = "Sébastien Piérard", email = "Sebastien.Pierard@gmail.com" },
+    { name = "Anaïs Halin", email = "anais.halin@gmail.com" },
+    { name = "François Marelli", email = "francois.marelli@umons.ac.be" },
+    { name = "Simon Pernas", email = "simonpernas@orange.fr" },
+    { name = "Jérôme Pierre", email = "jepi1202@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+]
+requires-python = ">=3.12"
+dependencies = ["numpy>=1.20.0", "matplotlib>=3.6.0", "scipy>=1.16.0"]
+
+[tool.setuptools.dynamic]
+version = { attr = "sorbetto.__version__" }
+readme = { file = ["README.md"] }
+
+[project.optional-dependencies]
+dev = ["ruff>=0.12", "pre-commit>=4.3"]
+
+docs = ["sphinx", "sphinx-rtd-theme"]
+
+[project.urls]
+Documentation = "https://cbi-toolbox.readthedocs.io/en/latest/"
+Source = "https://github.com/pierard/sorbetto"
+Issues = "https://github.com/pierard/sorbetto/issues"
