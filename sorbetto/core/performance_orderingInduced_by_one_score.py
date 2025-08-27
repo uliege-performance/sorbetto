@@ -1,5 +1,5 @@
 from relations import AbstractHomogeneousBinaryRelationOnPerformances
-from ..performance.two_class_classfication import TwoClassClassificationPerformance
+from ..performance.two_class_classification import TwoClassClassificationPerformance
 import numpy as np
 
 class PerformanceOrderingInducedByOneScore ( AbstractHomogeneousBinaryRelationOnPerformances ) : # It is a preorder

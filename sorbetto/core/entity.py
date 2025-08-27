@@ -1,5 +1,5 @@
 from typing import Any
-from ..performance.two_class_classfication import TwoClassClassificationPerformance
+from ..performance.two_class_classification import TwoClassClassificationPerformance
 
 
 class Entity:
