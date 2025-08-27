@@ -38,7 +38,12 @@ readme = { file = ["README.md"] }
 [project.optional-dependencies]
 dev = ["ruff>=0.12", "pre-commit>=4.3"]
 
-docs = ["sphinx", "sphinx-rtd-theme"]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinx-math-dollar",
+    "sphinxcontrib-bibtex",
+]
 
 [project.urls]
 Documentation = "https://cbi-toolbox.readthedocs.io/en/latest/"
