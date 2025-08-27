@@ -1,6 +1,6 @@
 class AbstractSymbolicFlavor(AbstractFlavor):
     """
-    A symbolic flavor is a function that gives a real number to show on a Tile for any
+    A symbolic flavor is a function that gives something to show on a Tile for any
     given importance values.
     """
 
