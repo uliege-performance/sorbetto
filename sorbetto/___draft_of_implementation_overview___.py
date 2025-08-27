@@ -64,7 +64,7 @@ class Ranking :
 
 class RankingScore :
 
-	def __init__ ( self, importance, constraint, name=None )
+	def __init__ ( self, importance, constraint=None, name=None )
 	
 	def getImportance () -> ApplicationSpecificPreferences
 	
@@ -145,7 +145,7 @@ class RankingScore :
 	@staticmethod
 	def getInverseF ( beta=1.0 ) -> RankingScore
 	@staticmethod
-	def getDiceSørensenCoefficient () -> RankingScore
+	def getDiceSorensenCoefficient () -> RankingScore
 	@staticmethod
 	def getZijdenbosSimilarityIndex () -> RankingScore
 	@staticmethod
@@ -439,228 +439,9 @@ def OpSwapNegativeAndPositiveClasses ( AbstractOperationOnTwoClassClassification
 
 
 
-class AbstractParameterization ( ABC ) :
-	"""This is the base class for all possible ways of mapping ranking scores (or, equivalently, importance values, tha is some application-related preferences) onto Tiles. All ranking scores inducing the same performance ordering should be mapped to the same point. It is recommended that the subclasses implement continuous mappings between the four importance values and the two parameters. Also, it is recommended that (1) the ranking scores giving no importance at all to the true positives are mapped to points on the left border (minimal value for the first parameter), (2) the ranking scores giving no importance at all to the true negatives are mapped to points on the right border (maximal value for the first parameter), (3) the ranking scores giving no importance at all to the false positives are mapped to points on the lower border (minimal value for the second parameter), and (4) the ranking scores giving no importance at all to the false negatives are mapped to points on the upper border (minimal value for the second parameter)."""
-
-	def __init__ ( self )
-
-	@abstractmethod
-	def getNameParameter1 ( self )
-
-	@abstractmethod
-	def getNameParameter2 ( self )
-
-	@abstractmethod
-	def getBoundsParameter1 ( self ) -> tuple[float, float]
-
-	@abstractmethod
-	def getBoundsParameter2 ( self ) -> tuple[float, float]
-
-	@abstractmethod
-	def getCanonicalRankingScore ( self, param1, param2 ) -> RankingScore
-
-	@abstractmethod
-	def getValueParameter1 ( self, rankingScore ) -> float
-
-	@abstractmethod
-	def getValueParameter2 ( self, rankingScore ) -> float
-	
-	def locateRankingScore ( self, score ) -> PointInTile                                 # This is ***
-	
-	# See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
-	def locateCohenCorrected ( self, score:RankingScore ) -> PointInTile
-	
-	def locateTrueNegativeRate ( self ) -> PointInTile                                    # Use ***
-	def locateTruePositiveRate ( self ) -> PointInTile                                    # Use ***
-	def locateSpecificity ( self ) -> PointInTile                                         # Use ***
-	def locateSelectivity ( self ) -> PointInTile                                         # Use ***
-	def locateSensitivity ( self ) -> PointInTile                                         # Use ***
-	def locateNegativePredictiveValue ( self ) -> PointInTile                             # Use ***
-	def locatePositivePredictiveValue ( self ) -> PointInTile                             # Use ***
-	def locatePrecision ( self ) -> PointInTile                                           # Use ***
-	def locateInversePrecision ( self ) -> PointInTile                                    # Use ***
-	def locateRecall ( self ) -> PointInTile                                              # Use ***
-	def locateInverseRecall ( self ) -> PointInTile                                       # Use ***
-	def locateIntersectionOverUnion ( self ) -> PointInTile                               # Use ***
-	def locateInverseIntersectionOverUnion ( self ) -> PointInTile                        # Use ***
-	def locateJaccard ( self ) -> PointInTile                                             # Use ***. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-	def locateInverseJaccard ( self ) -> PointInTile                                      # Use ***
-	def locateTanimotoCoefficient ( self ) -> PointInTile                                 # Use ***
-	def locateSimilarity ( self ) -> PointInTile                                          # Use ***
-	def locateCriticalSuccessIndex ( self ) -> PointInTile                                # Use ***
-	def locateF ( self, beta=1.0 ) -> PointInTile                                         # Use ***. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-	def locateInverseF ( self, beta=1.0 ) -> PointInTile                                  # Use ***
-	def locateDiceSørensenCoefficient ( self ) -> PointInTile                             # Use ***
-		"""
-		Dice-Sørensen coefficient.
-		Synonym: F-one $\scoreFOne$.
-		$\scoreFOne=\nicefrac{2\scoreJaccardPos}{\scoreJaccardPos+1}$
-		"""
-	def locateZijdenbosSimilarityIndex ( self ) -> PointInTile                            # Use ***
-	def locateCzekanowskiBinaryIndex ( self ) -> PointInTile                              # Use ***
-	def locateAccuracy ( self ) -> PointInTile                                            # Use ***
-	def locateMatchingCoefficient ( self ) -> PointInTile                                 # Use ***
-	def locateBennettS ( self ) -> PointInTile
-		"""
-		Bennett's $S$.
-		This score is related to the accuracy $A$ by $S=2A-1$.
-		Reference: :cite:t:`Warrens2012TheEffect`.
-		"""
-	
-	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
-	def locateSimilarityCoefficientsT ( self ) -> PointInTile
-		"""
-		Similarity coefficients of the family $T_\theta$, as defined in :cite:t:`Gower1986Metric`.
-		"""
-	# See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
-	def locateSimilarityCoefficientsS ( self ) -> PointInTile
-		"""
-		Similarity coefficients of the family $S_\theta$, as defined in :cite:t:`Gower1986Metric`.
-		"""
-	# See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
-	def locateSimilarityCoefficients ( self ) -> CurveInTile
-		"""
-		Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
-		"""
-	
-	def locateStandardizedNegativePredictiveValue ( self, priorPos ) -> PointInTile       # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-		"""
-		Standardized Negative Predictive Value (SNPV).
-		Defined in :cite:t:`Heston2011Standardizing`.
-		$\scoreSNPV=\frac{\scoreTNR}{\scoreTNR+\scoreFNR}=\frac{\scoreNPV\priorpos}{\scoreNPV(\priorpos-\priorneg)+\priorneg}$
-		"""
-	def locateStandardizedPositivePredictiveValue ( self, priorPos ) -> PointInTile       # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-		"""
-		Standardized Positive Predictive Value (SPPV).
-		Defined in :cite:t:`Heston2011Standardizing`.
-		$\scoreSPPV=\frac{\scoreTPR}{\scoreFPR+\scoreTPR}=\frac{\scorePPV\priorneg}{\scorePPV(\priorneg-\priorpos)+\priorpos}$
-		"""
-	def locateNegativeLikelihoodRatioComplement ( self, priorPos ) -> PointInTile         # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-		"""
-		Negative Likelihood Ratio.
-		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
-		"""
-	def locatePositiveLikelihoodRatio ( self, priorPos ) -> PointInTile                   # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-		"""
-		Positive Likelihood Ratio.
-		References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
-		"""
-	def locateSkewInsensitiveVersionOfF ( self, priorPos ) -> PointInTile                 # Use ***
-		"""
-		The skew-insensitive version of $\scoreFOne$.
-		Defined in cite:t:`Flach2003TheGeometry`.
-		"""
-	def locateWeightedAccuracy ( self, priorPos, weightPos ) -> PointInTile               # Use ***
-	def locateBalancedAccuracy ( self, priorPos ) -> PointInTile                          # Use ***
-	def locateYoudenJ ( self, priorPos ) -> PointInTile                                   # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
-		"""
-		Youden's index or Youden's $\scoreYoudenJ$ statistic.
-		Defined in :cite:t:`Youden1950Index`
-		References: :cite:t:`Fluss2005Estimation`.
-		Related to the balanced accuracy by $\scoreYoudenJ=\scoreTNR+\scoreTPR-1=2\scoreBalancedAccuracy-1$.
-		Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
-		"""
-	def locatePeirceSkillScore ( self, priorPos ) -> PointInTile
-	def locateInformedness ( self, priorPos ) -> PointInTile                              # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-	def locateCohenKappa ( self, priorPos ) -> PointInTile                                # See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
-		"""
-		Cohen's $\scoreCohenKappa$ statistic.
-		Defined in :cite:t:`Cohen1960ACoefficient`
-		References: :cite:t:`Kaymak2012TheAUK`
-		Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
-		"""
-	def locateHeidkeSkillScore ( self, priorPos ) -> PointInTile
-	def locateProbabilityTrueNegative ( self, priorPos ) -> PointInTile                   # Use ***
-	def locateProbabilityFalsePositiveComplenent ( self, priorPos ) -> PointInTile        # Use ***
-	def locateProbabilityFalseNegativeComplenent ( self, priorPos ) -> PointInTile        # Use ***
-	def locateProbabilityTruePositive ( self, priorPos ) -> PointInTile                   # Use ***
-	def locateDetectionRate ( self, priorPos ) -> PointInTile                             # Use ***
-	def locateRejectionRate ( self, priorPos ) -> PointInTile                             # Use ***
-	def locateNormalizedConfusionMatrixDeterminent ( self, priorPos ) -> PointInTile
-		"""
-		The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$. 
-		Some works using this score: :cite:t:`Wimmer2006APerson`.
-		"""
-	
-	def locateMarkedness ( self, ratePos ) -> PointInTile
-		"""
-		Markedness.
-		Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\scoreNPV+\scorePPV-1$.
-		Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
-		"""
-	def locateClaytonSkillScore ( self, ratePos ) -> PointInTile
-	
-	# See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6.
-	def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFooting ( self, priorPos, ratePos ) -> Union[PointInTile, CurveInTile]
-		# See Theorem 3 of future "paper 6".
-		# See Theorem 4 of future "paper 6".
-		# See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
-	
-	
-	def locateOrderingsInveredWithOpChangePredictedClass ( self ) -> CurveInTile
-		"""
-			$$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
-			= \left{ R_I : a(I) = b(I) \right}$$
-		"""
-		# See Theorem 1 of future "paper 6".
-	
-	def locateOrderingsInveredWithOpChangeGroundtruthClass ( self ) -> CurveInTile
-		"""
-			$$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
-			= \left{ R_I : a(I) + b(I) = 1 \right}$$
-		"""
-		# See Theorem 2 of future "paper 6".
-
-	@abstractmethod
-	def getName ( self )
-	
-	def __str__ ( self )
-	
-	def unitTest ( self )
 
 
-class ParameterizationDefault ( AbstractParameterization ) :
-	"""
-	This is the parameterization described in :cite:t:`Pierard2024TheTile-arxiv`.
-	"""
-	
-	def __init__ ( self )
-	
-class ParameterizationAdaptedToClassPriors ( AbstractParameterization ) :
-	"""
-	Not yet published. Experimental. In Sébastien's mind.'
-	
-	
-	Using the parameterization adapted to class priors with performances corresponding to
-	the class priors $()\pi_-,\pi_+)$ is equivalent to using the default parameterization
-	after applying a target shift operation :cite:t:`Sipka2022TheHitchhikerGuide` on all 
-	performances in order to balance the class priors.
-	
-	See Theorem 5 of future "paper 6".
-	"""
-	
-	def __init__ ( self, priorPos )
-	
-	def getNegativeClassPrior () -> float
-	def getPositiveClassPrior () -> float
-	
-class ParameterizationAdaptedToPredictionRates ( AbstractParameterization ) :
-	"""
-	Not yet published. Experimental. In Sébastien's mind.'
-	
-	Using the parameterization adapted to prediction rates with performances corresponding
-	to the prediction rates $(\tau_-,\tau_+)$ is equivalent to using the default
-	parameterization after applying a target shift operation
-	:cite:t:`Sipka2022TheHitchhikerGuide` on all performances in order to balance the
-	prediction rates.
-	
-	See Theorem 6 of future "paper 6".
-	"""
-	
-	def __init__ ( self, ratePos )
-	
-	def getRateOfNegativePredictions () -> float
-	def getRateOfPositivePredictions () -> float
+
 
 
 
