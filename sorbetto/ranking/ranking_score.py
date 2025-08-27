@@ -1,9 +1,9 @@
 from ..core.importance import Importance
 from ..performance.two_class_classification import TwoClassClassificationPerformance
 
-class RankingScore :
+class RankingScore:
 
-    def __init__ ( self, importance: Importance, constraint=None, name: str| None=None ):
+    def __init__ (self, importance: Importance, constraint=None, name: str| None=None):
         """
         Args:
             importance (Importance): _description_
@@ -36,16 +36,16 @@ class RankingScore :
     #     See :cite:t:`Pierard2024TheTile-arxiv`, Example 3.
     #     """
     
-    def drawInROC ( self, fig, ax, priorPos ):
+    def drawInROC (self, fig, ax, priorPos):
         return
     
     # def getPencilInROC ( self, priorPos ) -> Pencil:
     #     return
     
-    def __call__ ( self, performance ) -> float : # should check constraint
+    def __call__ (self, performance) -> float : # should check constraint
         satisfying = performance.ptn * self.importance.itn + performance.ptp * self.importance.itp
         unsatisfying = performance.pfp * self.importance.ifp + performance.pfn * self.importance.ifn
-        return satisfying / ( satisfying + unsatisfying )
+        return satisfying/(satisfying+unsatisfying)
     
     @staticmethod
     def getTrueNegativeRate () -> "RankingScore" :                                           # See :cite:t:`Pierard2025Foundations`, Section A.7.3
@@ -146,7 +146,7 @@ class RankingScore :
         return RankingScore.getIntersectionOverUnion ()
 
     @staticmethod
-    def getF ( beta=1.0 ) -> "RankingScore":                               # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getF (beta=1.0) -> "RankingScore":                               # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         if beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
         
@@ -155,7 +155,7 @@ class RankingScore :
         
                                                          
     @staticmethod
-    def getInverseF ( beta=1.0 ) -> "RankingScore":
+    def getInverseF (beta=1.0) -> "RankingScore":
         if beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
         
@@ -184,46 +184,46 @@ class RankingScore :
         return RankingScore.getAccuracy()
     
     @staticmethod
-    def getSkewInsensitiveVersionOfF ( priorPos ) -> "RankingScore":                         # TODO: implement constraint
+    def getSkewInsensitiveVersionOfF (priorPos) -> "RankingScore":                         # TODO: implement constraint
         """
         The skew-insensitive version of $\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
     @staticmethod
-    def getWeightedAccuracy ( priorPos, weightPos ) -> "RankingScore":                       # TODO: implement constraint. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
+    def getWeightedAccuracy (priorPos, weightPos) -> "RankingScore":                       # TODO: implement constraint. See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
         return
 
     @staticmethod
-    def getBalancedAccuracy ( priorPos ) -> "RankingScore":                                  # TODO: implement constraint
+    def getBalancedAccuracy (priorPos) -> "RankingScore":                                  # TODO: implement constraint
         return                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
     
     @staticmethod
-    def getProbabilityTrueNegative ( priorPos ) -> "RankingScore":                           # TODO: implement constraint
+    def getProbabilityTrueNegative (priorPos) -> "RankingScore":                           # TODO: implement constraint
         return                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
     
     @staticmethod
-    def getProbabilityFalsePositiveComplenent ( priorPos ) -> "RankingScore":               # TODO: implement constraint
+    def getProbabilityFalsePositiveComplenent (priorPos) -> "RankingScore":               # TODO: implement constraint
         return
     
     @staticmethod
-    def getProbabilityFalseNegativeComplenent ( priorPos ) -> "RankingScore":               # TODO: implement constraint
+    def getProbabilityFalseNegativeComplenent (priorPos) -> "RankingScore":               # TODO: implement constraint
         return
     
     @staticmethod
-    def getProbabilityTruePositive ( priorPos ) -> "RankingScore":                           # TODO: implement constraint
+    def getProbabilityTruePositive (priorPos) -> "RankingScore":                           # TODO: implement constraint
         return                                                                                      # See :cite:t:`Pierard2025Foundations`, Section A.7.4
    
     @staticmethod
-    def getDetectionRate ( priorPos ) -> "RankingScore":                                     # TODO: implement constraint
+    def getDetectionRate (priorPos) -> "RankingScore":                                     # TODO: implement constraint
         return
     
     @staticmethod
-    def getRejectionRate ( priorPos ) -> "RankingScore":                                     # TODO: implement constraint
+    def getRejectionRate (priorPos) -> "RankingScore":                                     # TODO: implement constraint
         return
     
-    def getName ( self ):
+    def getName (self):
         return self.name
     
-    def __str__ ( self ):
+    def __str__ (self):
         return f"Ranking Score: {self.name} with importance {str(self.importance)}"
     
