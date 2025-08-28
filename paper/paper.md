@@ -32,59 +32,35 @@ date: 5 September 2025
 bibliography: paper.bib
 ---
 
+[comment]: # (The paper should be between 250-1000 words. Authors submitting papers significantly longer than 1000 words may be asked to reduce the length of their paper.)
+
 # Summary
+[comment]: # (Summary of the high-level functionality of your software for a non-specialist reader. Avoid jargon in this section.)
 
 This is the summary. 
 
 # Statement of need
+[comment]: # (Statement of need section that clearly illustrates the research purpose of the software and places it in the context of related work.)
 
 `sorbetto` is a Python package for producing classification tiles with different flavors. 
 
-`sorbetto` was designed to be used by machine learning researchers. It has already been
-used in a number of scientific publications [@Pearson:2017]. 
-
-# Mathematics
-
-Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
-
-Double dollars make self-standing equations:
-
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.$$
-
-You can also use plain \LaTeX for equations
-\begin{equation}\label{eq:fourier}
-\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
-\end{equation}
-and refer to \autoref{eq:fourier} from text.
-
-# Citations
-
-Citations to entries in paper.bib should be in
-[rMarkdown](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
-format.
-
-If you want to cite a software repository URL (e.g. something on GitHub without a preferred
-citation) then you can do it with the example BibTeX entry below for @fidgit.
-
-For a quick reference, the following citation commands can be used:
-- `@author:2001`  ->  "Author et al. (2001)"
-- `[@author:2001]` -> "(Author et al., 2001)"
-- `[@author1:2001; @author2:2001]` -> "(Author1 et al., 2001; Author2 et al., 2002)"
-
-# Figures
+`sorbetto` was designed to be used by machine learning researchers. 
 
 Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
+![Caption for example figure.\label{fig:example}](figure.png){ width=20% }
 and referenced from text using \autoref{fig:example}.
 
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
+# Mention 
+[comment]: # (representative set of past or ongoing research projects using the software and recent scholarly publications enabled by it.)
+
+While the package has not yet been used in any scientific publications, it relies on foundations provided in recent publications [Pierard2025Foundations; Pierard2024TheTile-arxiv]. Besides, results from numerous publications already showcasing various tile flavors [Halin2024AHitchhikers-arxiv; Pierard2025AMethodology] could be replicated very easily thanks to this sorbetto package. 
+
+Ongoing research projects may involve additional features that may be included in future versions of the package. 
 
 # Acknowledgements
 
 We acknowledge contributions from...
+S. Piérard and A. Halin are funded by ARIAC, F. Marreli by ???, Simon Pernas by ???, and J. Pierre by ???. 
 
 # References
+[comment]: # (key references, including to other software addressing related needs. Note that the references should include full names of venues, e.g., journals and conferences, not abbreviations only understood in the context of a specific discipline.)
