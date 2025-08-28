@@ -36,7 +36,7 @@ version = { attr = "sorbetto.__version__" }
 readme = { file = ["README.md"] }
 
 [project.optional-dependencies]
-dev = ["ruff>=0.12", "pre-commit>=4.3"]
+dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
 
 dist = ["build", "twine"]
 
