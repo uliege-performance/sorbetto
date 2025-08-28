@@ -70,18 +70,10 @@ class Importance:
         if not isinstance(other, Importance):
             return False
 
+        # TODO should there be a close function with the tolerance, and equality be exact?
+        # If not, which tolerance to use? self.tol, other.tol, max(self.tol, other.tol), min(self.tol, other.tol)?
+
         return (
-            abs(self.itn - other.itn) <= self.tol
-            and abs(self.ifp - other.ifp) <= self.tol
-            and abs(self.ifn - other.ifn) <= self.tol
-            and abs(self.itp - other.itp) <= self.tol
-        )
-
-    def __ne__(self, other):
-        if not isinstance(other, Importance):
-            return True
-
-        return not (
             abs(self.itn - other.itn) <= self.tol
             and abs(self.ifp - other.ifp) <= self.tol
             and abs(self.ifn - other.ifn) <= self.tol
@@ -91,61 +83,3 @@ class Importance:
     def __str__(self):
         txt = f"[Importance] containing [TN:{self.itn}, FP:{self.ifp}, FN:{self.ifn}, TP:{self.itp}]"
         return txt
-
-
-if __name__ == "__main__":
-    # Test successful creation
-    prefs1 = Importance(1.0, 0.5, 0.2, 0.8, name="Prefs1")
-    print(f"Successfully created: {prefs1}")
-    assert prefs1.itn == 1.0
-    assert prefs1.ifp == 0.5
-    assert prefs1.ifn == 0.2
-    assert prefs1.itp == 0.8
-    assert prefs1.name == "Prefs1"
-
-    # Test string representation
-    expected_str = "[Importance] containing [TN:1.0, FP:0.5, FN:0.2, TP:0.8]"
-    assert str(prefs1) == expected_str
-    print("String representation test passed.")
-
-    # Test equality
-    prefs2 = Importance(1.0, 0.5, 0.2, 0.8, name="Prefs2")
-    assert prefs1 == prefs2
-    print("Equality test passed.")
-
-    # Test equality with tolerance
-    prefs3 = Importance(1.0, 0.5, 0.2, 0.8 + 1e-11, name="Prefs3")
-    assert prefs1 == prefs3
-    print("Equality with tolerance test passed.")
-
-    # Test inequality
-    prefs4 = Importance(1.0, 0.5, 0.2, 0.9, name="Prefs4")
-    assert prefs1 != prefs4
-    print("Inequality test passed.")
-
-    # Test inequality with different type
-    assert prefs1 != "not an Importance object"
-    print("Inequality with different type test passed.")
-
-    # Test validation: negative importance
-    try:
-        Importance(-1.0, 0.5, 0.2, 0.8)
-    except ValueError as e:
-        print(f"Caught expected error for negative importance: {e}")
-        assert "must be non-negative" in str(e)
-
-    # Test validation: all zero importance
-    # try:
-    #    Importance(0, 0, 0, 0)
-    # except ValueError as e:
-    #    print(f"Caught expected error for all-zero importance: {e}")
-    #    assert "at least one importance value must be positive" in str(e)
-
-    # Test validation: negative tolerance
-    # try:
-    #    Importance(1, 1, 1, 1, tol=-0.1)
-    # except ValueError as e:
-    #    print(f"Caught expected error for negative tolerance: {e}")
-    #    assert "tolerance must be non-negative" in str(e)
-
-    print("\nAll tests passed!")
