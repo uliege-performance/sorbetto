@@ -1,68 +1,71 @@
-from relations import AbstractHomogeneousBinaryRelationOnPerformances
-from ..performance.two_class_classification import TwoClassClassificationPerformance
 import numpy as np
 
-class PerformanceOrderingInducedByOneScore ( AbstractHomogeneousBinaryRelationOnPerformances ) : # It is a preorder
+from sorbetto.core.relations import AbstractHomogeneousBinaryRelationOnPerformances
+from sorbetto.performance.two_class_classification import (
+    TwoClassClassificationPerformance,
+)
 
-    def __init__ ( self, 
-                  score, 
-                  name=None ):
+
+class PerformanceOrderingInducedByOneScore(
+    AbstractHomogeneousBinaryRelationOnPerformances
+):  # It is a preorder
+    def __init__(self, score, name=None):
         self._score = score
 
         super().__init__(name)
-    # warning if score is not a RankingScore.
 
-    def getName ( self ):
-        return self._name
-    
-    def getScore(self):
+    # TODO warning if score is not a RankingScore.
+
+    @property
+    def score(self):
         return self._score
-    
 
-    def isReflexive ( self ) -> bool:
+    def isReflexive(self) -> bool:
         return True
-    
-    def isIrreflexive ( self ) -> bool:
+
+    def isIrreflexive(self) -> bool:
         return False
-    
-    def isTransitive ( self ) -> bool:
+
+    def isTransitive(self) -> bool:
         return True
-    
-    def isSymmetric ( self ) -> bool:
+
+    def isSymmetric(self) -> bool:
         # true only in degenerate cases
         return False
-    
-    def isAsymmetric ( self ) -> bool:
+
+    def isAsymmetric(self) -> bool:
         # maybe degenerate cases
         return False
-    
-    def isAntisymmetric ( self ) -> bool:
+
+    def isAntisymmetric(self) -> bool:
         return False
-    
-    def isEquivalence ( self ) -> bool:
-        raise NotImplementedError()
-    
-    def isPreorder ( self ) -> bool:
-        return True
-    
-    def isOrder ( self ) -> bool:
-        raise NotImplementedError()
-    
-    def isPartialOrder ( self ) -> bool:
-        raise NotImplementedError()
-    
-    def isTotalOrder ( self ) -> bool:
+
+    def isEquivalence(self) -> bool:
         raise NotImplementedError()
 
-    def __str__ ( self ):
+    def isPreorder(self) -> bool:
+        return True
+
+    def isOrder(self) -> bool:
+        raise NotImplementedError()
+
+    def isPartialOrder(self) -> bool:
+        raise NotImplementedError()
+
+    def isTotalOrder(self) -> bool:
+        raise NotImplementedError()
+
+    def __str__(self):
         return f"PerformanceOrderingInducedByOneScore(name={self._name}, score={self._score})"
 
-    def __call__ (self, 
-                  p1: TwoClassClassificationPerformance, 
-                  p2: TwoClassClassificationPerformance ) -> bool:
+    def __call__(
+        self,
+        p1: TwoClassClassificationPerformance,
+        p2: TwoClassClassificationPerformance,
+    ) -> bool:
         # Theorem 1 of :cite:t:`Pierard2025Foundations`.
 
-        if p1 == p2: 
+        if p1 == p2:
             return True
 
         v1 = self._score(p1)
@@ -75,24 +78,25 @@ class PerformanceOrderingInducedByOneScore ( AbstractHomogeneousBinaryRelationOn
 
         if v1 <= v2:
             return True
-        
+
         return False
 
-    
     # We have four cases depending on the results of self(p1, p2) and self(p2, p1).
-    #A.3.2
-    def getRelationEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+    # A.3.2
+    def getRelationEquivalent(self) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return self & self.getDual()
 
-    def getRelationBetter ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+    def getRelationBetter(self) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return (~self) & self.getDual()
 
-    def getRelationWorse ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+    def getRelationWorse(self) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return self & (~self.getDual())
-    
-    def getRelationIncomparable ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+
+    def getRelationIncomparable(
+        self,
+    ) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return (~self) & (~self.getDual())
-    
+
     # TODO: do we want the 10 relationships?
     # - we can choose if we accept equivalent
     # - we can choose if we accept better
@@ -103,13 +107,17 @@ class PerformanceOrderingInducedByOneScore ( AbstractHomogeneousBinaryRelationOn
     # - we need to not accept at least one;
     # - and accepting only one is already in the four above methods.
 
-    def getRelationWorseOrEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+    def getRelationWorseOrEquivalent(
+        self,
+    ) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return self.getRelationEquivalent() or self.getRelationWorse()
-    
-    def getRelationBetterOrEquivalent ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
+
+    def getRelationBetterOrEquivalent(
+        self,
+    ) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return self.getRelationEquivalent() or self.getRelationBetter()
-    
-    def getRelationComparable ( self ) -> AbstractHomogeneousBinaryRelationOnPerformances:
-        return not self.getRelationIncomparable()
-    
+
+    def getRelationComparable(self) -> AbstractHomogeneousBinaryRelationOnPerformances:
+        return ~self.getRelationIncomparable()
+
     # TODO ...

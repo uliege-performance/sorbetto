@@ -40,7 +40,7 @@ class Importance:
         self._ifn = ifn
         self._itp = itp
         self._name = name
-        self.tol = tol
+        self._tol = tol
 
     @property
     def itn(self) -> float:
@@ -58,7 +58,12 @@ class Importance:
     def itp(self) -> float:
         return self._itp
 
-    def getName(self):
+    @property
+    def tol(self) -> float:
+        return self._tol
+
+    @property
+    def name(self) -> str:
         return self._name
 
     def __eq__(self, other):
@@ -96,7 +101,7 @@ if __name__ == "__main__":
     assert prefs1.ifp == 0.5
     assert prefs1.ifn == 0.2
     assert prefs1.itp == 0.8
-    assert prefs1.getName() == "Prefs1"
+    assert prefs1.name == "Prefs1"
 
     # Test string representation
     expected_str = "[Importance] containing [TN:1.0, FP:0.5, FN:0.2, TP:0.8]"

@@ -1,9 +1,9 @@
 # import numpy as np
-import math
 import logging
+import math
 from typing import Self
-from ..core.importance import Importance
-from ..performance.two_class_classification import TwoClassClassificationPerformance
+
+from sorbetto.core.importance import Importance
 
 
 class RankingScore:
@@ -23,43 +23,44 @@ class RankingScore:
             raise TypeError(
                 f"importance must be an instance of Importance, got {type(importance)}"
             )
-        self.importance = importance
+        self._importance = importance
 
         if not callable(constraint):
             raise TypeError(f"constraint must be a callable, got {type(constraint)}")
-        self.constraint = constraint
+        self._constraint = constraint
 
-        self.name = name
+        self._name = name
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, name):
-        itn = self.importance.itn
-        ifp = self.importance.ifp
-        ifn = self.importance.ifn
-        itp = self.importance.itp
-        if name is None:
-            name = "R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
+    def name(self, value):
+        itn = self._importance.itn
+        ifp = self._importance.ifp
+        ifn = self._importance.ifn
+        itp = self._importance.itp
+        if value is None:
+            value = "R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
                 itn, ifp, ifn, itp
             )
-        elif not isinstance(name, str):
-            name = str(name)
-        self._name = name
+        elif not isinstance(value, str):
+            value = str(value)
+        self._name = value
 
-    def getImportance(self) -> Importance:
-        return self.importance
+    @property
+    def importance(self) -> Importance:
+        return self._importance
 
     def isCanonical(self, tol=1e-8) -> bool:
         """
         See :cite:t:`Pierard2024TheTile-arxiv`, Definition 1.
         """
-        itn = self.importance.itn
-        ifp = self.importance.ifp
-        ifn = self.importance.ifn
-        itp = self.importance.itp
+        itn = self._importance.itn
+        ifp = self._importance.ifp
+        ifn = self._importance.ifn
+        itp = self._importance.itp
         return math.isclose(itn + itp, 1.0, abs_tol=tol) and math.isclose(
             ifp + ifn, 1.0, abs_tol=tol
         )
@@ -77,17 +78,17 @@ class RankingScore:
         pass  # TODO: implement Seb
 
     def __call__(self, performance) -> float:
-        if not self.constraint(performance):
+        if not self._constraint(performance):
             logging.warning(
-                f"Performance {performance} does not satisfy the constraint of the ranking score {self.name}"
+                f"Performance {performance} does not satisfy the constraint of the ranking score {self._name}"
             )
         satisfying = (
-            performance.ptn * self.importance.itn
-            + performance.ptp * self.importance.itp
+            performance.ptn * self._importance.itn
+            + performance.ptp * self._importance.itp
         )
         unsatisfying = (
-            performance.pfp * self.importance.ifp
-            + performance.pfn * self.importance.ifn
+            performance.pfp * self._importance.ifp
+            + performance.pfn * self._importance.ifn
         )
         return satisfying / (satisfying + unsatisfying)
 
@@ -99,8 +100,8 @@ class RankingScore:
         True Negative Rate (TNR).
         Synonyms: specificity, selectivity, inverse recall.
         """
-        I = Importance(itn=1, ifp=1, ifn=0, itp=0)
-        return RankingScore(I, name="TNR")
+        importance = Importance(itn=1, ifp=1, ifn=0, itp=0)
+        return RankingScore(importance, name="TNR")
 
     @staticmethod
     def getTruePositiveRate() -> (
@@ -110,8 +111,8 @@ class RankingScore:
         True Positive Rate (TPR).
         Synonyms: sensitivity, recall.
         """
-        I = Importance(itn=0, ifp=0, ifn=1, itp=1)
-        return RankingScore(I, name="TPR")
+        importance = Importance(itn=0, ifp=0, ifn=1, itp=1)
+        return RankingScore(importance, name="TPR")
 
     @staticmethod
     def getSpecificity() -> "RankingScore":
@@ -139,8 +140,8 @@ class RankingScore:
         Negative Predictive Value (NPV).
         Synonym: inverse precision
         """
-        I = Importance(itn=1, ifp=0, ifn=1, itp=0)
-        return RankingScore(I, name="NPV")
+        importance = Importance(itn=1, ifp=0, ifn=1, itp=0)
+        return RankingScore(importance, name="NPV")
 
     @staticmethod
     def getPositivePredictiveValue() -> (
@@ -150,8 +151,8 @@ class RankingScore:
         Positive Predictive Value (PPV).
         Synonym: precision
         """
-        I = Importance(itn=0, ifp=1, ifn=0, itp=1)
-        return RankingScore(I, name="PPV")
+        importance = Importance(itn=0, ifp=1, ifn=0, itp=1)
+        return RankingScore(importance, name="PPV")
 
     @staticmethod
     def getPrecision() -> "RankingScore":
@@ -183,13 +184,13 @@ class RankingScore:
         Intersection over Union (IoU).
         Synonyms: Jaccard index, Jaccard similarity coefficient, Tanimoto coefficient, similarity, critical success index (CSI), threat score.
         """
-        I = Importance(itn=0, ifp=1, ifn=1, itp=1)
-        return RankingScore(I, name="IoU")
+        importance = Importance(itn=0, ifp=1, ifn=1, itp=1)
+        return RankingScore(importance, name="IoU")
 
     @staticmethod
     def getInverseIntersectionOverUnion() -> "RankingScore":
-        I = Importance(itn=1, ifp=1, ifn=1, itp=0)
-        return RankingScore(I, name="Inverse IoU")
+        importance = Importance(itn=1, ifp=1, ifn=1, itp=0)
+        return RankingScore(importance, name="Inverse IoU")
 
     @staticmethod
     def getJaccard() -> "RankingScore":
@@ -228,16 +229,20 @@ class RankingScore:
         if beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
 
-        I = Importance(itn=0, ifp=1 / (1 + beta**2), ifn=beta**2 / (1 + beta**2), itp=1)
-        return RankingScore(I, name=f"F{beta}")
+        importance = Importance(
+            itn=0, ifp=1 / (1 + beta**2), ifn=beta**2 / (1 + beta**2), itp=1
+        )
+        return RankingScore(importance, name=f"F{beta}")
 
     @staticmethod
     def getInverseF(beta=1.0) -> "RankingScore":
         if beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
 
-        I = Importance(itn=1, ifp=beta**2 / (1 + beta**2), ifn=1 / (1 + beta**2), itp=0)
-        return RankingScore(I, name=f"Inverse F{beta}")
+        importance = Importance(
+            itn=1, ifp=beta**2 / (1 + beta**2), ifn=1 / (1 + beta**2), itp=0
+        )
+        return RankingScore(importance, name=f"Inverse F{beta}")
 
     @staticmethod
     def getDiceSorensenCoefficient() -> "RankingScore":
@@ -261,8 +266,8 @@ class RankingScore:
     def getAccuracy() -> (
         "RankingScore"
     ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
-        I = Importance(itn=1, ifp=1, ifn=1, itp=1)
-        return RankingScore(I, name="A")
+        importance = Importance(itn=1, ifp=1, ifn=1, itp=1)
+        return RankingScore(importance, name="A")
 
     @staticmethod
     def getMatchingCoefficient() -> (
@@ -324,8 +329,5 @@ class RankingScore:
     def getRejectionRate(priorPos) -> "RankingScore":  # TODO: implement constraint
         pass
 
-    def getName(self):
-        return self.name
-
     def __str__(self):
-        return f"Ranking Score: {self.name} with importance {str(self.importance)}"
+        return f"Ranking Score: {self._name} with importance {str(self._importance)}"

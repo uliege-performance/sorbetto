@@ -1,16 +1,17 @@
 import numpy as np
-from .base import AbstractRanking
-from ..core.performance_orderingInduced_by_one_score import PerformanceOrderingInducedByOneScore
-        
+
+from sorbetto.core.performance_orderingInduced_by_one_score import (
+    PerformanceOrderingInducedByOneScore,
+)
+from sorbetto.ranking.abstract_ranking import AbstractRanking
 
 
-class RankingInducedByScore ( AbstractRanking ):
+class RankingInducedByScore(AbstractRanking):
     """
     See Axiom 1 in :cite:t:`Pierard2025Foundations`.
     """
 
     def __init__(self, entities, score, name=None):
-
         # Precompute a few things.
         vals = [score(entity.evaluate()) for entity in entities]
         vals = np.asarray(vals)
@@ -19,46 +20,44 @@ class RankingInducedByScore ( AbstractRanking ):
         idxs = np.argsort(vals)
 
         # keep the ordering in cache and create a link from entities to the sorted idxs
-        self.sorted_idx = idxs
-        self.dico_entities = {entity: idx for idx, entity in zip(idxs, entities)}
+        self._sorted_idx = idxs
+        self._dico_entities = {entity: idx for idx, entity in zip(idxs, entities)}
 
         N = len(self._entities)
 
         # num_lt = [ sum([v < val for v in vals]) for val in vals ]
-        num_lt = np.searchsorted(vals, vals, side='left', sorter=idxs)
+        num_lt = np.searchsorted(vals, vals, side="left", sorter=idxs)
         self._num_ge = N - num_lt
 
         # num_le = [ sum([v <= val for v in vals]) for val in vals ]
-        num_le = np.searchsorted(vals, vals, side='right', sorter=idxs)
+        num_le = np.searchsorted(vals, vals, side="right", sorter=idxs)
         self._num_gt = N - num_le
 
-        performance_ordering = PerformanceOrderingInducedByOneScore ( score )
+        performance_ordering = PerformanceOrderingInducedByOneScore(score)
 
         if name is None:
-            name = "ranking of {} entities induced by the score {}".format(len(entities), score.getName())
+            name = "ranking of {} entities induced by the score {}".format(
+                len(entities), score.name
+            )
 
-        super().__init__ (entities, performance_ordering, name)
+        super().__init__(entities, performance_ordering, name)
 
-    def getAllValues(self) -> np.ndarray:
+    @property
+    def values(self) -> np.ndarray:
         return self._vals
-
-    def getValue(self, entity) -> float:
-        
-        id_entity = self.dico_entities[entity]
-        return self._vals[id_entity]
 
     def getAllMinRanks(self) -> np.ndarray:
         return 1 + self._num_gt
 
     def getMinRank(self, entity) -> int:
-        id_entity = self.dico_entities[entity]
+        id_entity = self._dico_entities[entity]
         return 1 + self._num_gt[id_entity]
 
     def getAllMaxRanks(self) -> np.ndarray:
         return self._num_ge
 
     def getMaxRank(self, entity) -> int:
-        id_entity = self.dico_entities[entity]
+        id_entity = self._dico_entities[entity]
         return self._num_ge[id_entity]
 
     def getEntitiesAtRank(self, rank: int) -> list:
@@ -71,4 +70,8 @@ class RankingInducedByScore ( AbstractRanking ):
         min_ranks_all = self.getAllMinRanks()
         max_ranks_all = self.getAllMaxRanks()
 
-        return [entity for idx, entity in enumerate(self._entities) if min_ranks_all[idx] <= rank <= max_ranks_all[idx]]
+        return [
+            entity
+            for idx, entity in enumerate(self._entities)
+            if min_ranks_all[idx] <= rank <= max_ranks_all[idx]
+        ]

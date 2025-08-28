@@ -1,7 +1,9 @@
-from ..core.entity import Entity
 from abc import abstractmethod
 from collections.abc import Iterable as iterable
+
 import numpy as np
+
+from sorbetto.core.entity import Entity
 
 
 class AbstractRanking:
@@ -26,21 +28,21 @@ class AbstractRanking:
             name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.getName()}"
         self._name = name
 
-    def getEntities(self) -> iterable:
+    @property
+    def entities(self) -> iterable:
         return self._entities
 
-    def getPerformanceOrdering(self):
+    @property
+    def performance_ordering(self):
         return self._performance_ordering
-    
-    def getName(self):
+
+    @property
+    def name(self):
         return self._name
 
+    @property
     @abstractmethod
-    def getAllValues(self) -> np.ndarray:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def getValue(self, entity) -> float:
+    def values(self) -> np.ndarray:
         raise NotImplementedError()
 
     @abstractmethod
@@ -58,7 +60,7 @@ class AbstractRanking:
     @abstractmethod
     def getMaxRank(self, entity) -> int:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def getEntitiesAtRank(self, rank: int) -> list:
         raise NotImplementedError()
@@ -70,10 +72,10 @@ class AbstractRanking:
         return ranks
 
     def getAvgRank(self, entity) -> float:
-        min_ranks = self.getMinRanks(entity)
-        max_ranks = self.getMaxRanks(entity)
+        min_ranks = self.getMinRank(entity)
+        max_ranks = self.getMaxRank(entity)
         ranks = (min_ranks + max_ranks) * 0.5
         return ranks
 
     def __str__(self):
-        return self.getName()
+        return self.name
