@@ -1,23 +1,34 @@
+from abc import ABC, abstractmethod
+from typing import Any
+
+
 class AbstractFlavor(ABC):
     """
     A flavor is a function that gives something to show on a Tile for any given
     importance values.
     """
 
-    def __init__(self, name=None):
-        assert isinstance(name, (str, type(None)))
+    def __init__(self, name: str = "Default Flavor"):
+        assert isinstance(name, str)
         self.name = name
 
     @abstractmethod
-    def __call__(self, importances):
-        pass
+    def __call__(self, *args, **kwargs) -> Any: ...
 
     @abstractmethod
-    def getDefaultColormap(self):
-        pass
+    def getDefaultColormap(self) -> Any: ...
 
-    def getName(self):
-        return self.name
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, name: str) -> None:
+        self._name = name
+
+    @name.setter
+    def name(self, name: str):
+        self._name = name
 
     def __str__(self):
-        return self.getName
+        return self.name

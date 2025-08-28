@@ -1,17 +1,28 @@
+from abc import abstractmethod
+from typing import Any
+
+from sorbetto.flavor.abstract_flavor import AbstractFlavor
+
+
 class AbstractNumericFlavor(AbstractFlavor):
     """
     A numeric flavor is a function that gives a real number to show on a Tile for any
     given importance values.
     """
 
-    def __init__(self, name=None):
-        assert isinstance(name, (str, type(None)))
-        self.name = name
+    def __init__(self, name: str = "Default Numeric Flavor"):
+        super().__init__(name)
 
     @abstractmethod
-    def getLowerBound(self):
-        pass
+    def getLowerBound(self) -> Any: ...
 
     @abstractmethod
-    def getUpperBound(self):
-        pass
+    def getUpperBound(self) -> Any: ...
+
+    @property
+    def lowerBound(self):
+        return self.getLowerBound()
+
+    @property
+    def upperBound(self):
+        return self.getUpperBound()
