@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sorbetto"
-description = "A Python Library to Produce Classification Tiles With Different Flavors"
+description = "A Python Library for Producing Classification Tiles With Different Flavors"
 readme = "README.md"
 dynamic = ["version"]
 license = "Apache-2.0"
