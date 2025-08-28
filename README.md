@@ -22,12 +22,12 @@ files (`git status` to see which file are modified, `git add` to add them)
 
 ## generate documentation locally
 
-Make sure you installed the necessary dependencies for the docs:
+Make sure you installed the necessary dependencies for the doc:
 
 ```sh
 cd {{path to root of sorbetto}}
 
-pip install -e ".[docs]"
+pip install -e ".[doc]"
 ```
 
 The `-e` is not mandatory.
@@ -36,12 +36,12 @@ Then generate the html documentation:
 
 ```sh
 cd {{path to root of sorbetto}}
-cd docs
+cd doc
 
 make html
 ```
 
-The resulting documentation will be located at `docs/_build/html/index.html`.
+The resulting documentation will be located at `doc/_build/html/index.html`.
 
 It will be later possible to publish this documentation to `readthedocs.io`.
 

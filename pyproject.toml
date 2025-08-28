@@ -40,7 +40,7 @@ dev = ["ruff>=0.12", "pre-commit>=4.3"]
 
 dist = ["build", "twine"]
 
-docs = [
+doc = [
     "sphinx",
     "sphinx-rtd-theme",
     "sphinx-math-dollar",
