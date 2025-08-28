@@ -1,3 +1,5 @@
+import pytest
+
 from sorbetto.core.importance import Importance
 
 
@@ -26,32 +28,17 @@ def test_inequality():
 
 
 def test_invalid_values():
-    try:
+    with pytest.raises(ValueError):
         Importance(-1.0, 0.5, 0.2, 0.8)
-        assert False, "Expected ValueError for negative itn"
-    except ValueError:
-        pass
 
-    try:
+    with pytest.raises(ValueError):
         Importance(1.0, -0.5, 0.2, 0.8)
-        assert False, "Expected ValueError for negative ifp"
-    except ValueError:
-        pass
 
-    try:
+    with pytest.raises(ValueError):
         Importance(1.0, 0.5, -0.2, 0.8)
-        assert False, "Expected ValueError for negative ifn"
-    except ValueError:
-        pass
 
-    try:
+    with pytest.raises(ValueError):
         Importance(1.0, 0.5, 0.2, -0.8)
-        assert False, "Expected ValueError for negative itp"
-    except ValueError:
-        pass
 
-    try:
+    with pytest.raises(ValueError):
         Importance(0, 0, 0, 0)
-        assert False, "Expected ValueError for all zero importance values"
-    except ValueError:
-        pass
