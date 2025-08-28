@@ -51,12 +51,6 @@ def test_invalid_values():
         pass
 
     try:
-        Importance(1.0, 0.5, 0.2, 0.8, tol=-1e-10)
-        assert False, "Expected ValueError for negative tol"
-    except ValueError:
-        pass
-
-    try:
         Importance(0, 0, 0, 0)
         assert False, "Expected ValueError for all zero importance values"
     except ValueError:

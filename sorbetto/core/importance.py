@@ -6,6 +6,8 @@ class Importance:
     See :cite:t:`Pierard2025Foundations` for more information on this topic.
     """
 
+    tol = 1e-10
+
     def __init__(
         self,
         itn: float,
@@ -13,7 +15,6 @@ class Importance:
         ifn: float,
         itp: float,
         name: str = "I",
-        tol: float = 1e-10,
     ):
         assert isinstance(itn, (int, float))
         assert isinstance(ifp, (int, float))
@@ -30,17 +31,11 @@ class Importance:
                 f"At least one importance value must be positive. Received [TN:{itn}, FP:{ifp}, FN:{ifn}, TP:{itp}]"
             )
 
-        if tol < 0:
-            raise ValueError(
-                f"Tolerance must be non-negative. Received [Tolerance:{tol}]"
-            )
-
         self._itn = itn
         self._ifp = ifp
         self._ifn = ifn
         self._itp = itp
         self._name = name
-        self._tol = tol
 
     @property
     def itn(self) -> float:
@@ -59,19 +54,12 @@ class Importance:
         return self._itp
 
     @property
-    def tol(self) -> float:
-        return self._tol
-
-    @property
     def name(self) -> str:
         return self._name
 
     def __eq__(self, other):
         if not isinstance(other, Importance):
             return False
-
-        # TODO should there be a close function with the tolerance, and equality be exact?
-        # If not, which tolerance to use? self.tol, other.tol, max(self.tol, other.tol), min(self.tol, other.tol)?
 
         return (
             abs(self.itn - other.itn) <= self.tol

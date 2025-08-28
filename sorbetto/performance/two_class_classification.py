@@ -18,14 +18,13 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     See :cite:t:`Pierard2025Foundations` for more information on this topic."""
 
-    def __init__(
-        self, ptn, pfp, pfn, ptp, name: str = "Two class P", tol: float = 1e-10
-    ):
+    tol = 1e-10
+
+    def __init__(self, ptn, pfp, pfn, ptp, name: str = "Two class P"):
         self._ptn = ptn
         self._pfp = pfp
         self._pfn = pfn
         self._ptp = ptp
-        self.tol = tol
 
         super().__init__(name=name)
 
@@ -50,48 +49,23 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     def getMassFunction(self):
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
-    def isNoSkill(self, tol: float = 1e-10) -> bool:
-        """Check if TPR = FPR up to some tolerance
-
-        Args:
-            tol (float, optional): Tolerance level. Defaults to 1e-10.
-
-        Returns:
-            bool: Returns True if TPR = FPR within the specified tolerance, False otherwise.
-        """
-
+    def isNoSkill(self) -> bool:
         tpr = getTpr(self._ptp, self._pfn)
         fpr = getFpr(self._pfp, self._ptn)
 
-        return np.isclose(tpr, fpr, atol=tol)
+        return np.isclose(tpr, fpr, atol=self.tol)
 
-    def isAboveNoSkills(self, tol: float = 1e-10) -> bool:
-        """Check if TPR > FPR up to some tolerance
-
-        Args:
-            tol (float, optional): Tolerance level. Defaults to 1e-10.
-
-        Returns:
-            bool: Returns True if TPR > FPR within the specified tolerance, False otherwise.
-        """
+    def isAboveNoSkills(self) -> bool:
         tpr = getTpr(self._ptp, self._pfn)
         fpr = getFpr(self._pfp, self._ptn)
 
-        return (tpr - tol) >= fpr
+        return (tpr - self.tol) >= fpr
 
-    def isBelowNoSkills(self, tol: float = 1e-10) -> bool:
-        """Check if TPR < FPR up to some tolerance
-
-        Args:
-            tol (float, optional): Tolerance level. Defaults to 1e-10.
-
-        Returns:
-            bool: Returns True if TPR > FPR within the specified tolerance, False otherwise.
-        """
+    def isBelowNoSkills(self) -> bool:
         tpr = getTpr(self._ptp, self._pfn)
         fpr = getFpr(self._pfp, self._ptn)
 
-        return (tpr + tol) <= fpr
+        return (tpr + self.tol) <= fpr
 
     def __eq__(self, other):
         comps = np.isclose(
@@ -106,7 +80,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     @staticmethod
     def buildFromRankingScoreValues(
-        name, *pairsOfRankingScoresAndValues, tol=1e-3
+        name, *pairsOfRankingScoresAndValues
     ) -> "TwoClassClassificationPerformance":
         raise NotImplementedError()
 
