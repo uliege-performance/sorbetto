@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from sorbetto.geometry.curve_in_tile import CurveInTile
-from sorbetto.geometry.point_in_tile import PointInTile
+from sorbetto.geometry.quadratic_curve import QuadraticCurve
+from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
 
 
@@ -39,85 +39,85 @@ class AbstractParameterization(ABC):
     def getValueParameter2(self, rankingScore) -> float:
         pass
 
-    def locateRankingScore(self, rankingScore) -> PointInTile:
+    def locateRankingScore(self, rankingScore) -> Point:
         assert isinstance(rankingScore, RankingScore)
         param1 = self.getValueParameter1(rankingScore)
         param2 = self.getValueParameter2(rankingScore)
-        return PointInTile(self, param1, param2)
+        return Point(self, param1, param2)
 
-    def locateCohenCorrected(self, score: RankingScore) -> PointInTile:
+    def locateCohenCorrected(self, score: RankingScore) -> Point:
         """
         See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
         """
         raise NotImplementedError()  # TODO
 
-    def locateTrueNegativeRate(self) -> PointInTile:
+    def locateTrueNegativeRate(self) -> Point:
         return self.locateRankingScore(RankingScore.getTrueNegativeRate())
 
-    def locateTruePositiveRate(self) -> PointInTile:
+    def locateTruePositiveRate(self) -> Point:
         return self.locateRankingScore(RankingScore.getTruePositiveRate())
 
-    def locateSpecificity(self) -> PointInTile:
+    def locateSpecificity(self) -> Point:
         return self.locateRankingScore(RankingScore.getSpecificity())
 
-    def locateSelectivity(self) -> PointInTile:
+    def locateSelectivity(self) -> Point:
         return self.locateRankingScore(RankingScore.getSelectivity())
 
-    def locateSensitivity(self) -> PointInTile:
+    def locateSensitivity(self) -> Point:
         return self.locateRankingScore(RankingScore.getSensitivity())
 
-    def locateNegativePredictiveValue(self) -> PointInTile:
+    def locateNegativePredictiveValue(self) -> Point:
         return self.locateRankingScore(RankingScore.getNegativePredictiveValue())
 
-    def locatePositivePredictiveValue(self) -> PointInTile:
+    def locatePositivePredictiveValue(self) -> Point:
         return self.locateRankingScore(RankingScore.getPositivePredictiveValue())
 
-    def locatePrecision(self) -> PointInTile:
+    def locatePrecision(self) -> Point:
         return self.locateRankingScore(RankingScore.getPrecision())
 
-    def locateInversePrecision(self) -> PointInTile:
+    def locateInversePrecision(self) -> Point:
         return self.locateRankingScore(RankingScore.getInversePrecision())
 
-    def locateRecall(self) -> PointInTile:
+    def locateRecall(self) -> Point:
         return self.locateRankingScore(RankingScore.getRecall())
 
-    def locateInverseRecall(self) -> PointInTile:
+    def locateInverseRecall(self) -> Point:
         return self.locateRankingScore(RankingScore.getInverseRecall())
 
-    def locateIntersectionOverUnion(self) -> PointInTile:
+    def locateIntersectionOverUnion(self) -> Point:
         return self.locateRankingScore(RankingScore.getIntersectionOverUnion())
 
-    def locateInverseIntersectionOverUnion(self) -> PointInTile:
+    def locateInverseIntersectionOverUnion(self) -> Point:
         return self.locateRankingScore(RankingScore.getInverseIntersectionOverUnion())
 
-    def locateJaccard(self) -> PointInTile:
+    def locateJaccard(self) -> Point:
         """
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         return self.locateRankingScore(RankingScore.getJaccard())
 
-    def locateInverseJaccard(self) -> PointInTile:
+    def locateInverseJaccard(self) -> Point:
         return self.locateRankingScore(RankingScore.getInverseJaccard())
 
-    def locateTanimotoCoefficient(self) -> PointInTile:
+    def locateTanimotoCoefficient(self) -> Point:
         return self.locateRankingScore(RankingScore.getTanimotoCoefficient())
 
-    def locateSimilarity(self) -> PointInTile:
+    def locateSimilarity(self) -> Point:
         return self.locateRankingScore(RankingScore.getSimilarity())
 
-    def locateCriticalSuccessIndex(self) -> PointInTile:
+    def locateCriticalSuccessIndex(self) -> Point:
         return self.locateRankingScore(RankingScore.getCriticalSuccessIndex())
 
-    def locateF(self, beta=1.0) -> PointInTile:
+    def locateF(self, beta=1.0) -> Point:
         """
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         return self.locateRankingScore(RankingScore.getF(beta=beta))
 
-    def locateInverseF(self, beta=1.0) -> PointInTile:
+    def locateInverseF(self, beta=1.0) -> Point:
         return self.locateRankingScore(RankingScore.getInverseF(beta=beta))
 
-    def locateDiceSorensenCoefficient(self) -> PointInTile:
+    def locateDiceSorensenCoefficient(self) -> Point:
         """
         Dice-Sørensen coefficient.
         Synonym: F-one $\scoreFOne$.
@@ -125,19 +125,19 @@ class AbstractParameterization(ABC):
         """
         return self.locateRankingScore(RankingScore.getDiceSorensenCoefficient())
 
-    def locateZijdenbosSimilarityIndex(self) -> PointInTile:
+    def locateZijdenbosSimilarityIndex(self) -> Point:
         return self.locateRankingScore(RankingScore.getZijdenbosSimilarityIndex())
 
-    def locateCzekanowskiBinaryIndex(self) -> PointInTile:
+    def locateCzekanowskiBinaryIndex(self) -> Point:
         return self.locateRankingScore(RankingScore.getCzekanowskiBinaryIndex())
 
-    def locateAccuracy(self) -> PointInTile:
+    def locateAccuracy(self) -> Point:
         return self.locateRankingScore(RankingScore.getAccuracy())
 
-    def locateMatchingCoefficient(self) -> PointInTile:
+    def locateMatchingCoefficient(self) -> Point:
         return self.locateRankingScore(RankingScore.getMatchingCoefficient())
 
-    def locateBennettS(self) -> PointInTile:
+    def locateBennettS(self) -> Point:
         """
         Bennett's $S$.
         This score is related to the accuracy $A$ by $S=2A-1$.
@@ -145,28 +145,28 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateSimilarityCoefficientsT(self) -> PointInTile:
+    def locateSimilarityCoefficientsT(self) -> Point:
         """
         Similarity coefficients of the family $T_\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         raise NotImplementedError()  # TODO
 
-    def locateSimilarityCoefficientsS(self) -> PointInTile:
+    def locateSimilarityCoefficientsS(self) -> Point:
         """
         Similarity coefficients of the family $S_\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         raise NotImplementedError()  # TODO
 
-    def locateSimilarityCoefficients(self) -> CurveInTile:
+    def locateSimilarityCoefficients(self) -> QuadraticCurve:
         """
         Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
         See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         raise NotImplementedError()  # TODO
 
-    def locateStandardizedNegativePredictiveValue(self, priorPos) -> PointInTile:
+    def locateStandardizedNegativePredictiveValue(self, priorPos) -> Point:
         """
         Standardized Negative Predictive Value (SNPV).
         Defined in :cite:t:`Heston2011Standardizing`.
@@ -175,7 +175,7 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateStandardizedPositivePredictiveValue(self, priorPos) -> PointInTile:
+    def locateStandardizedPositivePredictiveValue(self, priorPos) -> Point:
         """
         Standardized Positive Predictive Value (SPPV).
         Defined in :cite:t:`Heston2011Standardizing`.
@@ -184,7 +184,7 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateNegativeLikelihoodRatioComplement(self, priorPos) -> PointInTile:
+    def locateNegativeLikelihoodRatioComplement(self, priorPos) -> Point:
         """
         Negative Likelihood Ratio.
         References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
@@ -192,7 +192,7 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locatePositiveLikelihoodRatio(self, priorPos) -> PointInTile:
+    def locatePositiveLikelihoodRatio(self, priorPos) -> Point:
         """
         Positive Likelihood Ratio.
         References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
@@ -200,22 +200,22 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateSkewInsensitiveVersionOfF(self, priorPos) -> PointInTile:
+    def locateSkewInsensitiveVersionOfF(self, priorPos) -> Point:
         """
         The skew-insensitive version of $\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
         return self.locateRankingScore(RankingScore.getSkewInsensitiveVersionOfF())
 
-    def locateWeightedAccuracy(self, priorPos, weightPos) -> PointInTile:
+    def locateWeightedAccuracy(self, priorPos, weightPos) -> Point:
         return self.locateRankingScore(
             RankingScore.getWeightedAccuracy(priorPos, weightPos)
         )
 
-    def locateBalancedAccuracy(self, priorPos) -> PointInTile:
+    def locateBalancedAccuracy(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getBalancedAccuracy(priorPos))
 
-    def locateYoudenJ(self, priorPos) -> PointInTile:
+    def locateYoudenJ(self, priorPos) -> Point:
         """
         Youden's index or Youden's $\scoreYoudenJ$ statistic.
         Defined in :cite:t:`Youden1950Index`
@@ -226,16 +226,16 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locatePeirceSkillScore(self, priorPos) -> PointInTile:
+    def locatePeirceSkillScore(self, priorPos) -> Point:
         raise NotImplementedError()  # TODO
 
-    def locateInformedness(self, priorPos) -> PointInTile:
+    def locateInformedness(self, priorPos) -> Point:
         """
         See :cite:t:`Pierard2025Foundations`, Section A.7.4
         """
         raise NotImplementedError()  # TODO
 
-    def locateCohenKappa(self, priorPos) -> PointInTile:
+    def locateCohenKappa(self, priorPos) -> Point:
         """
         Cohen's $\scoreCohenKappa$ statistic.
         Defined in :cite:t:`Cohen1960ACoefficient`
@@ -245,39 +245,39 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateHeidkeSkillScore(self, priorPos) -> PointInTile:
+    def locateHeidkeSkillScore(self, priorPos) -> Point:
         raise NotImplementedError()  # TODO
 
-    def locateProbabilityTrueNegative(self, priorPos) -> PointInTile:
+    def locateProbabilityTrueNegative(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getProbabilityTrueNegative())
 
-    def locateProbabilityFalsePositiveComplenent(self, priorPos) -> PointInTile:
+    def locateProbabilityFalsePositiveComplenent(self, priorPos) -> Point:
         return self.locateRankingScore(
             RankingScore.getProbabilityFalsePositiveComplenent()
         )
 
-    def locateProbabilityFalseNegativeComplenent(self, priorPos) -> PointInTile:
+    def locateProbabilityFalseNegativeComplenent(self, priorPos) -> Point:
         return self.locateRankingScore(
             RankingScore.getProbabilityFalseNegativeComplenent()
         )
 
-    def locateProbabilityTruePositive(self, priorPos) -> PointInTile:
+    def locateProbabilityTruePositive(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getProbabilityTruePositive())
 
-    def locateDetectionRate(self, priorPos) -> PointInTile:
+    def locateDetectionRate(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getDetectionRate())
 
-    def locateRejectionRate(self, priorPos) -> PointInTile:
+    def locateRejectionRate(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getRejectionRate())
 
-    def locateNormalizedConfusionMatrixDeterminent(self, priorPos) -> PointInTile:
+    def locateNormalizedConfusionMatrixDeterminent(self, priorPos) -> Point:
         """
         The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
         """
         raise NotImplementedError()  # TODO
 
-    def locateMarkedness(self, ratePos) -> PointInTile:
+    def locateMarkedness(self, ratePos) -> Point:
         """
         Markedness.
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\scoreNPV+\scorePPV-1$.
@@ -285,19 +285,19 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateClaytonSkillScore(self, ratePos) -> PointInTile:
+    def locateClaytonSkillScore(self, ratePos) -> Point:
         raise NotImplementedError()  # TODO
 
     # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6.
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFooting(
         self, priorPos, ratePos
-    ) -> PointInTile | CurveInTile:
+    ) -> Point | QuadraticCurve:
         # See Theorem 3 of future "paper 6".
         # See Theorem 4 of future "paper 6".
         # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
         raise NotImplementedError()  # TODO
 
-    def locateOrderingsInveredWithOpChangePredictedClass(self) -> CurveInTile:
+    def locateOrderingsInveredWithOpChangePredictedClass(self) -> QuadraticCurve:
         """
         $$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
         = \left{ R_I : a(I) = b(I) \right}$$
@@ -305,7 +305,7 @@ class AbstractParameterization(ABC):
         # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO
 
-    def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> CurveInTile:
+    def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> QuadraticCurve:
         """
         $$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
         = \left{ R_I : a(I) + b(I) = 1 \right}$$
