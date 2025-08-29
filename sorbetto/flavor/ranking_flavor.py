@@ -38,11 +38,11 @@ class RankingFlavor(AbstractNumericFlavor):
 
     def __call__(
         self,
-        importances: Importance,
+        importance: Importance,
         evaluated_entity_id: int,
     ):
         values = [
-            RankingScore(importances, constraint=None, name=None)(entity)
+            RankingScore(importance, constraint=None, name=None)(entity)
             for entity in self.entities
         ]
         # FIXME how to get the entities's performance ?

@@ -25,7 +25,7 @@ class CorrelationFlavor(AbstractNumericFlavor):
 
     def __call__(
         self,
-        importances: Importance,
+        importance: Importance,
         performances: list[TwoClassClassificationPerformance],
         X: Callable[
             [
@@ -47,7 +47,7 @@ class CorrelationFlavor(AbstractNumericFlavor):
             x_scores = [X(p) for p in performances]
 
         value_flavor = ValueFlavor()
-        value_scores = [value_flavor(importances, p) for p in performances]
+        value_scores = [value_flavor(importance, p) for p in performances]
 
         if correlation_coefficient == "pearsonr":
             return stats.pearsonr(x_scores, value_scores)

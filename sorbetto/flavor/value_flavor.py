@@ -17,9 +17,9 @@ class ValueFlavor(AbstractNumericFlavor):
         super().__init__(name)
 
     def __call__(
-        self, importances: Importance, performance: TwoClassClassificationPerformance
+        self, importance: Importance, performance: TwoClassClassificationPerformance
     ):
-        rs = RankingScore(importances, constraint=None, name=None)
+        rs = RankingScore(importance, constraint=None, name=None)
 
         return rs(performance)
 

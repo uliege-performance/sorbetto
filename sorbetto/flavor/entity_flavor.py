@@ -21,12 +21,12 @@ class EntityFlavor(AbstractSymbolicFlavor):
 
     def __call__(
         self,
-        importances: Importance,
+        importance: Importance,
         performances: list[TwoClassClassificationPerformance],
         rank: int,
     ):
         values = [
-            RankingScore(importances, constraint=None, name=None)(p)
+            RankingScore(importance, constraint=None, name=None)(p)
             for p in performances
         ]  # this is also computed in ranking flavor -> factored out and cached?
         rank_indices = np.argsort(values)  # this as well, but it is pretty cheap
