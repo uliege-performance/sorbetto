@@ -195,21 +195,28 @@ class RankingScore:
 
     def getPencilInROC(self, priorPos) -> Pencil: ...  # TODO: implement Seb
 
+    @staticmethod
+    def _compute(itn, ifp, ifn, itp, ptn, pfp, pfn, ptp) -> float:
+        satisfying = ptn * itn + ptp * itp
+        unsatisfying = pfp * ifp + pfn * ifn
+        return satisfying / (satisfying + unsatisfying)
+
     def __call__(self, performance) -> float:
         if self._constraint and not self._constraint(performance):
             logging.warning(
                 f"Performance {performance} does not satisfy the constraint of "
                 f"the ranking score {self._name}"
             )
-        satisfying = (
-            performance.ptn * self._importance.itn
-            + performance.ptp * self._importance.itp
+        return RankingScore._compute(
+            self._importance.itn,
+            self._importance.ifp,
+            self._importance.ifn,
+            self._importance.itp,
+            performance.ptn,
+            performance.pfp,
+            performance.pfn,
+            performance.ptp,
         )
-        unsatisfying = (
-            performance.pfp * self._importance.ifp
-            + performance.pfn * self._importance.ifn
-        )
-        return satisfying / (satisfying + unsatisfying)
 
     @staticmethod
     def getTrueNegativeRate() -> (
