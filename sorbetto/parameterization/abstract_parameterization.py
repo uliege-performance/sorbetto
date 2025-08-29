@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.point import Point
@@ -28,12 +30,48 @@ class AbstractParameterization(ABC):
     def getBoundsParameter2(self) -> tuple[float, float]:
         pass
 
-    @abstractmethod
-    def getCanonicalImportance(self, param1, param2) -> Importance:
-        pass
+    def getCanonicalImportance(self, param1: float, param2: float) -> Importance:
+        """Returns the canonical importance corresponding to the given parameters.
+
+        Default implementation calls the getCanonicalImportanceVectorized (abstract)
+        method.
+
+        Args:
+            param1 (float): The first parameter.
+            param2 (float): The second parameter.
+
+        Returns:
+            The canonical importance.
+        """
+        assert isinstance(param1, float)
+        assert isinstance(param2, float)
+
+        return Importance(
+            *self.getCanonicalImportanceVectorized(
+                np.array([param1]),
+                np.array([param2]),
+            )
+        )
 
     @abstractmethod
-    def getCanonicalRankingScore(self, param1, param2) -> RankingScore:
+    def getCanonicalImportanceVectorized(
+        self, param1: np.ndarray, param2: np.ndarray
+    ) -> np.ndarray:
+        """Computes a array of canonical importances values corresponding to
+        the given parameters.
+
+        This needs to be implemented by subclasses.
+
+        Args:
+            param1 (np.ndarray): The first parameter array.
+            param2 (np.ndarray): The second parameter array.
+
+        Returns:
+            an array of shape (N, 4) where N is the number of elements in param1 and param2.
+        """
+        ...
+
+    def getCanonicalRankingScore(self, param1: float, param2: float) -> RankingScore:
         importance = self.getCanonicalImportance(param1, param2)
         return RankingScore(importance)
 
