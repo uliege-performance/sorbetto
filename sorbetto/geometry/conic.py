@@ -1,7 +1,9 @@
-from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
-import numpy as np
 import math
+
 import jax
+import numpy as np
+
+from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 
 
 class Conic(AbstractGeometricObject2D):
@@ -86,7 +88,7 @@ class Conic(AbstractGeometricObject2D):
         """
         return self._f
 
-    def getMatrixRepresentation(self) -> np.nparray:
+    def getMatrixRepresentation(self) -> np.ndarray:
         """
         Computes the 3 by 3 matrix representation of the conic section.
         See https://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
@@ -427,6 +429,6 @@ class Conic(AbstractGeometricObject2D):
         draw_x_fct_of_y(self.getLargestX)
 
     def __str__(self) -> str:
-        return "{} ({:g}) x^2 + ({:g}) x y + ({:g}) y^2 + ({:g}) x + ({:g}) y + ({:g}) = 0".fomat(
-            self.classify(), self.a, self.b, self.c, self.d, self.e, self.f
-        )
+        return (
+            "{} ({:g}) x^2 + ({:g}) x y + ({:g}) y^2 + ({:g}) x + ({:g}) y + ({:g}) = 0"
+        ).format(self.classify(), self.a, self.b, self.c, self.d, self.e, self.f)

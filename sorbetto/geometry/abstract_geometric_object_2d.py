@@ -10,7 +10,7 @@ class AbstractGeometricObject2D(ABC):
         self._name = name
 
     @abstractmethod
-    def draw(self, fig, ax, bounds, **plt_kwargs) -> None: ...
+    def draw(self, fig, ax, extent, **plt_kwargs) -> None: ...
 
     @property
     def name(self) -> str:
