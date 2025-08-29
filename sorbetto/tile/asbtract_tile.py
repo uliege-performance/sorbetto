@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from sorbetto.parametrization.abstract_parametrization import AbstractParameterization
+
+import numpy as np
+
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
-from numpy import ndarray
+from sorbetto.parametrization.abstract_parametrization import AbstractParametrization
 
 
 class AbstractTile(ABC):
@@ -11,7 +13,18 @@ class AbstractTile(ABC):
     Various flavors of Tiles are described in :cite:t:`Halin2024AHitchhikers-arxiv` and :cite:t:`Pierard2025AMethodology`.
     """
 
-    def __init__(self, name, parameterization, flavor, resolution=1001):
+    def __init__(
+        self,
+        parametrization: AbstractParametrization,
+        flavor: AbstractFlavor,
+        resolution: int = 1001,
+        name: str | None = None,
+    ):
+        if not isinstance(parameterization, AbstractParameterization):
+            raise TypeError(
+                f"paramer must be an instance of Importance, got {type(importance)}"
+            )
+
         self._name = name
         self._parameterization = parameterization
         self._flavor = flavor
@@ -44,13 +57,13 @@ class AbstractTile(ABC):
 
     def getResolution(self) -> int: ...  # TODO
 
-    def getVecParam1(self) -> ndarray: ...  # TODO
+    def getVecParam1(self) -> np.ndarray: ...  # TODO
 
-    def getVecParam2(self) -> ndarray: ...  # TODO
+    def getVecParam2(self) -> np.ndarray: ...  # TODO
 
-    def getMat(self) -> ndarray: ...  # TODO
+    def getMat(self) -> np.ndarray: ...  # TODO
 
-    def getColormap(self) -> ndarray: ...  # TODO
+    def getColormap(self) -> np.ndarray: ...  # TODO
 
     # annotations : List [ Annotation ]
 
