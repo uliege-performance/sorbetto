@@ -1,3 +1,5 @@
+import numpy as np
+
 from sorbetto.core.importance import Importance
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.ranking.ranking_score import RankingScore
@@ -41,6 +43,27 @@ class ParameterizationDefault(AbstractParameterization):
         itp = a
 
         return Importance(itn, ifp, ifn, itp)
+
+    def getCanonicalImportanceVectorized(
+        self, param1: np.ndarray, param2: np.ndarray
+    ) -> np.ndarray:
+        assert isinstance(param1, np.ndarray)
+        assert isinstance(param2, np.ndarray)
+        assert np.all(param1 >= 0.0)
+        assert np.all(param1 <= 1.0)
+        assert np.all(param2 >= 0.0)
+        assert np.all(param2 <= 1.0)
+        assert param1.shape == param2.shape
+
+        a = param1
+        b = param2
+
+        itn = 1 - a
+        ifp = 1 - b
+        ifn = b
+        itp = a
+
+        return np.stack([itn, ifp, ifn, itp], axis=-1)
 
     def getValueParameter1(self, rankingScore) -> float:
         assert isinstance(rankingScore, RankingScore)

@@ -1,3 +1,5 @@
+import numpy as np
+
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.performance.two_class_classification import (
@@ -17,11 +19,32 @@ class ValueFlavor(AbstractNumericFlavor):
         super().__init__(name)
 
     def __call__(
-        self, importance: Importance, performance: TwoClassClassificationPerformance
-    ):
-        rs = RankingScore(importance, constraint=None, name=None)
+        self,
+        importance: Importance | np.ndarray,
+        performance: TwoClassClassificationPerformance,
+    ) -> float | np.ndarray:
+        if isinstance(importance, Importance):
+            itn = importance.itn
+            ifp = importance.ifp
+            ifn = importance.ifn
+            itp = importance.itp
+        elif isinstance(importance, np.ndarray):
+            assert importance.shape[1] == 4
+            itn = importance[:, 0]
+            ifp = importance[:, 1]
+            ifn = importance[:, 2]
+            itp = importance[:, 3]
 
-        return rs(performance)
+        return RankingScore._compute(
+            itn=itn,
+            ifp=ifp,
+            ifn=ifn,
+            itp=itp,
+            ptn=performance.ptn,
+            pfp=performance.pfp,
+            pfn=performance.pfn,
+            ptp=performance.ptp,
+        )
 
     def getDefaultColormap(self):
         return "gray"
