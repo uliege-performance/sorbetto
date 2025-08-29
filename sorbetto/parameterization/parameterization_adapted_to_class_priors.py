@@ -8,7 +8,7 @@ class ParameterizationAdaptedToClassPriors(AbstractParameterization):
 
 
     Using the parameterization adapted to class priors with performances corresponding to
-    the class priors $()\pi_-,\pi_+)$ is equivalent to using the default parameterization
+    the class priors $(\\pi_-,\\pi_+)$ is equivalent to using the default parameterization
     after applying a target shift operation :cite:t:`Sipka2022TheHitchhikerGuide` on all
     performances in order to balance the class priors.
 
@@ -30,10 +30,10 @@ class ParameterizationAdaptedToClassPriors(AbstractParameterization):
         return self._priorPos
 
     def getNameParameter1(self):
-        return r"a^{(\pi)}(I)"
+        return "a^{(\\pi)}(I)"
 
     def getNameParameter2(self):
-        return r"b^{(\pi)}(I)"
+        return "b^{(\\pi)}(I)"
 
     def getBoundsParameter1(self) -> tuple[float, float]:
         return 0.0, 1.0

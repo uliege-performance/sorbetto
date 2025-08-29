@@ -7,7 +7,7 @@ class ParameterizationAdaptedToPredictionRates(AbstractParameterization):
     Not yet published. Experimental. In Sébastien's mind.
 
     Using the parameterization adapted to prediction rates with performances corresponding
-    to the prediction rates $(\tau_-,\tau_+)$ is equivalent to using the default
+    to the prediction rates $(\\tau_-,\\tau_+)$ is equivalent to using the default
     parameterization after applying a target shift operation
     :cite:t:`Sipka2022TheHitchhikerGuide` on all performances in order to balance the
     prediction rates.

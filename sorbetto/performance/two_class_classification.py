@@ -12,9 +12,9 @@ def getFpr(fp, tn):
 
 
 class TwoClassClassificationPerformance(AbstractPerformance):
-    r"""A two-class (crisp) classification performance $P$ is a probability measure over the measurable space $(\Omega,\Sigma)$ where the sample (a.k.a. universe) is $\Omega=\{tn,fp,fn,tp\}$ and the event space is $\Sigma=2^\Omega$.
+    """A two-class (crisp) classification performance $P$ is a probability measure over the measurable space $(\\Omega,\\Sigma)$ where the sample (a.k.a. universe) is $\\Omega=\\{tn,fp,fn,tp\\}$ and the event space is $\\Sigma=2^\\Omega$.
     By convention, $tn$, $fp$, $fn$, and $tp$ represent the four cases that can arise: a true negative, a false positive, a false negative, and a true positive, respectively.
-    The four elementary probability measures $P(\{tn\})$, $P(\{fp\})$, $P(\{fn\})$, and $P(\{tp\})$ are the elements of the normalized confusion matrix.
+    The four elementary probability measures $P(\\{tn\\})$, $P(\\{fp\\})$, $P(\\{fn\\})$, and $P(\\{tp\\})$ are the elements of the normalized confusion matrix.
 
     See :cite:t:`Pierard2025Foundations` for more information on this topic."""
 

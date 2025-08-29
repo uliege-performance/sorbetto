@@ -79,13 +79,13 @@ class RankingScore:
         ...  # TODO: implement
 
     def drawInROC(self, fig, ax, priorPos: float) -> None:
-        r"""
+        """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
             fig (_type_): _description_
             ax (_type_): _description_
-            priorPos (float): prior of the positive class $\pi_+ \in (0,1)$
+            priorPos (float): prior of the positive class $\\pi_+ \\in (0,1)$
         """
 
         # Configure here what we want to show:

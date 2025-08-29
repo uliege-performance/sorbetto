@@ -124,10 +124,10 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getInverseF(beta=beta))
 
     def locateDiceSorensenCoefficient(self) -> Point:
-        r"""
+        """
         Dice-Sørensen coefficient.
-        Synonym: F-one $\scoreFOne$.
-        $\scoreFOne=\nicefrac{2\scoreJaccardPos}{\scoreJaccardPos+1}$
+        Synonym: F-one $\\scoreFOne$.
+        $\\scoreFOne=\\nicefrac{2\\scoreJaccardPos}{\\scoreJaccardPos+1}$
         """
         return self.locateRankingScore(RankingScore.getDiceSorensenCoefficient())
 
@@ -153,14 +153,14 @@ class AbstractParameterization(ABC):
 
     def locateSimilarityCoefficientsT(self) -> Point:
         """
-        Similarity coefficients of the family $T_\theta$, as defined in :cite:t:`Gower1986Metric`.
+        Similarity coefficients of the family $T_\\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         raise NotImplementedError()  # TODO
 
     def locateSimilarityCoefficientsS(self) -> Point:
         """
-        Similarity coefficients of the family $S_\theta$, as defined in :cite:t:`Gower1986Metric`.
+        Similarity coefficients of the family $S_\\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         raise NotImplementedError()  # TODO
@@ -173,19 +173,19 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateStandardizedNegativePredictiveValue(self, priorPos) -> Point:
-        r"""
+        """
         Standardized Negative Predictive Value (SNPV).
         Defined in :cite:t:`Heston2011Standardizing`.
-        $\scoreSNPV=\frac{\scoreTNR}{\scoreTNR+\scoreFNR}=\frac{\scoreNPV\priorpos}{\scoreNPV(\priorpos-\priorneg)+\priorneg}$
+        $\\scoreSNPV=\\frac{\\scoreTNR}{\\scoreTNR+\\scoreFNR}=\\frac{\\scoreNPV\\priorpos}{\\scoreNPV(\\priorpos-\\priorneg)+\\priorneg}$
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO
 
     def locateStandardizedPositivePredictiveValue(self, priorPos) -> Point:
-        r"""
+        """
         Standardized Positive Predictive Value (SPPV).
         Defined in :cite:t:`Heston2011Standardizing`.
-        $\scoreSPPV=\frac{\scoreTPR}{\scoreFPR+\scoreTPR}=\frac{\scorePPV\priorneg}{\scorePPV(\priorneg-\priorpos)+\priorpos}$
+        $\\scoreSPPV=\\frac{\\scoreTPR}{\\scoreFPR+\\scoreTPR}=\\frac{\\scorePPV\\priorneg}{\\scorePPV(\\priorneg-\\priorpos)+\\priorpos}$
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO
@@ -196,6 +196,7 @@ class AbstractParameterization(ABC):
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
+        # TODO add Gardner2006Receiver-operating to the bib
         raise NotImplementedError()  # TODO
 
     def locatePositiveLikelihoodRatio(self, priorPos) -> Point:
@@ -207,8 +208,8 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateSkewInsensitiveVersionOfF(self, priorPos) -> Point:
-        r"""
-        The skew-insensitive version of $\scoreFOne$.
+        """
+        The skew-insensitive version of $\\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
         return self.locateRankingScore(RankingScore.getSkewInsensitiveVersionOfF())
@@ -222,11 +223,11 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getBalancedAccuracy(priorPos))
 
     def locateYoudenJ(self, priorPos) -> Point:
-        r"""
-        Youden's index or Youden's $\scoreYoudenJ$ statistic.
+        """
+        Youden's index or Youden's $\\scoreYoudenJ$ statistic.
         Defined in :cite:t:`Youden1950Index`
         References: :cite:t:`Fluss2005Estimation`.
-        Related to the balanced accuracy by $\scoreYoudenJ=\scoreTNR+\scoreTPR-1=2\scoreBalancedAccuracy-1$.
+        Related to the balanced accuracy by $\\scoreYoudenJ=\\scoreTNR+\\scoreTPR-1=2\\scoreBalancedAccuracy-1$.
         Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
@@ -242,8 +243,8 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateCohenKappa(self, priorPos) -> Point:
-        r"""
-        Cohen's $\scoreCohenKappa$ statistic.
+        """
+        Cohen's $\\scoreCohenKappa$ statistic.
         Defined in :cite:t:`Cohen1960ACoefficient`
         References: :cite:t:`Kaymak2012TheAUK`
         Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
@@ -277,16 +278,16 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getRejectionRate())
 
     def locateNormalizedConfusionMatrixDeterminent(self, priorPos) -> Point:
-        r"""
-        The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$.
+        """
+        The determinant of the normalized confusion matrix is $\\scoreConfusionMatrixDeterminant=\\priorneg\\priorpos\\scoreYoudenJ$.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
         """
         raise NotImplementedError()  # TODO
 
     def locateMarkedness(self, ratePos) -> Point:
-        r"""
+        """
         Markedness.
-        Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\scoreNPV+\scorePPV-1$.
+        Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\\scoreNPV+\\scorePPV-1$.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
         raise NotImplementedError()  # TODO
@@ -304,17 +305,17 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
-        r"""
-        $$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
-        = \left{ R_I : a(I) = b(I) \right}$$
+        """
+        $$\\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right}
+        = \\left{ R_I : a(I) = b(I) \\right}$$
         """
         # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO
 
     def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
-        r"""
-        $$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
-        = \left{ R_I : a(I) + b(I) = 1 \right}$$
+        """
+        $$\\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right}
+        = \\left{ R_I : a(I) + b(I) = 1 \\right}$$
         """
         # See Theorem 2 of future "paper 6".
         raise NotImplementedError()  # TODO
