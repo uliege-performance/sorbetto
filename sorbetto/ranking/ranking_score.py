@@ -2,6 +2,8 @@
 import logging
 import math
 from typing import Self
+import numpy as np
+import matplotlib.pyplot as plt
 
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.pencil import Pencil
@@ -72,8 +74,120 @@ class RankingScore:
         """
         pass  # TODO: implement
 
-    def drawInROC(self, fig, ax, priorPos):
-        pass  # TODO: implement Seb
+    def drawInROC(self, fig, ax, priorPos: float) -> None:
+        """
+        See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
+
+        Args:
+            fig (_type_): _description_
+            ax (_type_): _description_
+            priorPos (float): prior of the positive class $\pi_+ \in (0,1)$
+        """
+
+        # Configure here what we want to show:
+        # TODO: create an argument for all of this instead of hardcoding it
+        show_values_map = True
+        show_iso_value_lines = True
+        show_colorbar = True
+        show_no_skills = True
+        show_priors = True
+        show_unbiased = True
+
+        # Check priors
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        # TNR, FPR, FNR, TPR
+        grid_size = 1001
+        vec_fpr = vec_tpr = np.linspace(0, 1, num=grid_size)
+        mat_fpr, mat_tpr = np.meshgrid(vec_fpr, vec_tpr, indexing="xy")
+        mat_tnr = 1 - mat_fpr
+        mat_fnr = 1 - mat_tpr
+
+        # PTN, PFP, PFN, PTP
+        mat_ptn = mat_tnr * priorNeg
+        mat_pfp = mat_fpr * priorNeg
+        mat_pfn = mat_fnr * priorPos
+        mat_ptp = mat_tpr * priorPos
+
+        # ITN, IFP, IFN, ITP
+        itn = self._importance.itn
+        ifp = self._importance.ifp
+        ifn = self._importance.ifn
+        itp = self._importance.itp
+
+        # Values taken by the scores
+        mat_satisfying = itn * mat_ptn + itp * mat_ptp
+        mat_unsatisfying = ifp * mat_pfp + ifn * mat_pfn
+        mat_values = mat_satisfying / (mat_satisfying + mat_unsatisfying)
+
+        if show_values_map:
+            extent = 0, 1, 0, 1
+            cmap = plt.cm.bone
+            im = ax.imshow(
+                mat_values,
+                extent=extent,
+                origin="lower",
+                interpolation="bilinear",
+                cmap=cmap,
+            )
+
+        if show_iso_value_lines:
+            cs = ax.contour(
+                vec_fpr,
+                vec_tpr,
+                mat_values,
+                levels=np.linspace(0, 1, 21),
+                colors="cornflowerblue",
+            )
+            ax.clabel(cs, inline=True, fontsize=8)
+
+        if show_values_map and show_colorbar:
+            fig.colorbar(im, ax=ax, label=self.getName())
+
+        if show_no_skills:
+            ax.plot([0, 1], [0, 1], "--", c="palevioletred")
+            ax.text(
+                0.5,
+                0.5,
+                "no-skill",
+                ha="center",
+                va="baseline",
+                rotation=45,
+                c="palevioletred",
+            )
+
+        if show_priors:
+            ax.plot(
+                [0, priorPos, priorPos], [priorPos, priorPos, 0], ":", c="palevioletred"
+            )
+
+        if show_unbiased:
+            if priorPos <= 0.5:
+                ax.plot([0, priorPos / priorNeg], [1, 0], "--", c="palevioletred")
+            else:
+                ax.plot([0, 1], [1, 1 - priorNeg / priorPos], "--", c="palevioletred")
+            x = 0.5 * priorPos
+            y = 0.5 + 0.5 * priorPos
+            a = math.atan2(priorNeg, -priorPos) * 180.0 / math.pi
+            ax.text(
+                x,
+                y,
+                "unbiased",
+                ha="center",
+                va="baseline",
+                rotation=a,
+                c="palevioletred",
+            )
+
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
+        ax.set_xlabel("False Positive Rate (FPR)")
+        ax.set_ylabel("True Positive Rate (TPR)")
+        ax.set_aspect("equal")
+        ax.set_title("ROC for $\pi_+={:g}".format(priorPos))
 
     def getPencilInROC(self, priorPos) -> Pencil:
         pass  # TODO: implement Seb
