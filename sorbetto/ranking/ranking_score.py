@@ -4,6 +4,7 @@ import math
 from typing import Self
 
 from sorbetto.core.importance import Importance
+from sorbetto.geometry.pencil import Pencil
 
 
 class RankingScore:
@@ -42,7 +43,7 @@ class RankingScore:
         ifn = self._importance.ifn
         itp = self._importance.itp
         if value is None:
-            value = "R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
+            value = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
                 itn, ifp, ifn, itp
             )
         elif not isinstance(value, str):
@@ -61,9 +62,9 @@ class RankingScore:
         ifp = self._importance.ifp
         ifn = self._importance.ifn
         itp = self._importance.itp
-        return math.isclose(itn + itp, 1.0, abs_tol=tol) and math.isclose(
-            ifp + ifn, 1.0, abs_tol=tol
-        )
+        canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
+        canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
+        return canonical_for_satisfying and canonical_for_unsatisfying
 
     def toPABDC(self) -> Self:
         """
@@ -74,7 +75,7 @@ class RankingScore:
     def drawInROC(self, fig, ax, priorPos):
         pass  # TODO: implement Seb
 
-    def getPencilInROC(self, priorPos):  # -> Pencil: # TODO: implement Pencil class
+    def getPencilInROC(self, priorPos) -> Pencil:
         pass  # TODO: implement Seb
 
     def __call__(self, performance) -> float:
