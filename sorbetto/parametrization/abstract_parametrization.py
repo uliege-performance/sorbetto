@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sorbetto.geometry.quadratic_curve import Conic
+from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -43,7 +43,7 @@ class AbstractParameterization(ABC):
         assert isinstance(rankingScore, RankingScore)
         param1 = self.getValueParameter1(rankingScore)
         param2 = self.getValueParameter2(rankingScore)
-        return Point(self, param1, param2)
+        return Point(param1, param2)
 
     def locateCohenCorrected(self, score: RankingScore) -> Point:
         """
@@ -118,7 +118,7 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getInverseF(beta=beta))
 
     def locateDiceSorensenCoefficient(self) -> Point:
-        """
+        r"""
         Dice-Sørensen coefficient.
         Synonym: F-one $\scoreFOne$.
         $\scoreFOne=\nicefrac{2\scoreJaccardPos}{\scoreJaccardPos+1}$
@@ -167,7 +167,7 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateStandardizedNegativePredictiveValue(self, priorPos) -> Point:
-        """
+        r"""
         Standardized Negative Predictive Value (SNPV).
         Defined in :cite:t:`Heston2011Standardizing`.
         $\scoreSNPV=\frac{\scoreTNR}{\scoreTNR+\scoreFNR}=\frac{\scoreNPV\priorpos}{\scoreNPV(\priorpos-\priorneg)+\priorneg}$
@@ -176,7 +176,7 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateStandardizedPositivePredictiveValue(self, priorPos) -> Point:
-        """
+        r"""
         Standardized Positive Predictive Value (SPPV).
         Defined in :cite:t:`Heston2011Standardizing`.
         $\scoreSPPV=\frac{\scoreTPR}{\scoreFPR+\scoreTPR}=\frac{\scorePPV\priorneg}{\scorePPV(\priorneg-\priorpos)+\priorpos}$
@@ -187,7 +187,7 @@ class AbstractParameterization(ABC):
     def locateNegativeLikelihoodRatioComplement(self, priorPos) -> Point:
         """
         Negative Likelihood Ratio.
-        References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
+        References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO
@@ -195,13 +195,13 @@ class AbstractParameterization(ABC):
     def locatePositiveLikelihoodRatio(self, priorPos) -> Point:
         """
         Positive Likelihood Ratio.
-        References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
+        References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO
 
     def locateSkewInsensitiveVersionOfF(self, priorPos) -> Point:
-        """
+        r"""
         The skew-insensitive version of $\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
@@ -216,7 +216,7 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getBalancedAccuracy(priorPos))
 
     def locateYoudenJ(self, priorPos) -> Point:
-        """
+        r"""
         Youden's index or Youden's $\scoreYoudenJ$ statistic.
         Defined in :cite:t:`Youden1950Index`
         References: :cite:t:`Fluss2005Estimation`.
@@ -236,7 +236,7 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateCohenKappa(self, priorPos) -> Point:
-        """
+        r"""
         Cohen's $\scoreCohenKappa$ statistic.
         Defined in :cite:t:`Cohen1960ACoefficient`
         References: :cite:t:`Kaymak2012TheAUK`
@@ -271,14 +271,14 @@ class AbstractParameterization(ABC):
         return self.locateRankingScore(RankingScore.getRejectionRate())
 
     def locateNormalizedConfusionMatrixDeterminent(self, priorPos) -> Point:
-        """
+        r"""
         The determinant of the normalized confusion matrix is $\scoreConfusionMatrixDeterminant=\priorneg\priorpos\scoreYoudenJ$.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
         """
         raise NotImplementedError()  # TODO
 
     def locateMarkedness(self, ratePos) -> Point:
-        """
+        r"""
         Markedness.
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\scoreNPV+\scorePPV-1$.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
@@ -298,7 +298,7 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
-        """
+        r"""
         $$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
         = \left{ R_I : a(I) = b(I) \right}$$
         """
@@ -306,7 +306,7 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO
 
     def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
-        """
+        r"""
         $$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
         = \left{ R_I : a(I) + b(I) = 1 \right}$$
         """
@@ -330,18 +330,18 @@ class AbstractParameterization(ABC):
         for trial in range(1000):
             param1 = random.random()
             param2 = random.random()
-            rankingScore = self.getCanonicalImportances(param1, param2)
+            rankingScore = self.getCanonicalRankingScore(param1, param2)
             assert isinstance(rankingScore, RankingScore)
             importance = rankingScore.importance
-            itn = importance.itn()
-            ifp = importance.ifp()
-            ifn = importance.ifn()
-            itp = importance.itp()
+            itn = importance.itn
+            ifp = importance.ifp
+            ifn = importance.ifn
+            itp = importance.itp
             assert itn >= 0
             assert ifp >= 0
             assert ifn >= 0
             assert itp >= 0
             assert math.isclose(itn + itp, 1)
             assert math.isclose(ifp + ifn, 1)
-            assert math.isclose(param1, self.getValueParam1(rankingScore))
-            assert math.isclose(param2, self.getValueParam2(rankingScore))
+            assert math.isclose(param1, self.getValueParameter1(rankingScore))
+            assert math.isclose(param2, self.getValueParameter2(rankingScore))
