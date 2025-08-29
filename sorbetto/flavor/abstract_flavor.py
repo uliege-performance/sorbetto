@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+import numpy as np
+
+from sorbetto.core.importance import Importance
+
 
 class AbstractFlavor(ABC):
     """
@@ -13,7 +17,7 @@ class AbstractFlavor(ABC):
         self.name = name
 
     @abstractmethod
-    def __call__(self, *args, **kwargs) -> Any: ...
+    def __call__(self, importance: Importance | np.ndarray, *args, **kwargs) -> Any: ...
 
     @abstractmethod
     def getDefaultColormap(self) -> Any: ...
@@ -24,10 +28,6 @@ class AbstractFlavor(ABC):
 
     @name.setter
     def name(self, name: str) -> None:
-        self._name = name
-
-    @name.setter
-    def name(self, name: str):
         self._name = name
 
     def __str__(self):
