@@ -36,7 +36,7 @@ class RankingScore:
                 )
         self._constraint = constraint
 
-        self._name = name
+        self.name = name
 
     @property
     def name(self):

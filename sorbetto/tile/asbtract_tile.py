@@ -20,21 +20,47 @@ class AbstractTile(ABC):
         resolution: int = 1001,
         name: str | None = None,
     ):
+        """
+        Args:
+            parameterization (AbstractParameterization): _description_
+            flavor (AbstractFlavor): _description_
+            resolution (int, optional): _description_. Defaults to 1001.
+            name (str | None, optional): _description_. Defaults to None.
+
+        Raises:
+            TypeError: _description_
+        """
         if not isinstance(parameterization, AbstractParameterization):
             raise TypeError(
                 f"parameterization must be an instance of AbstractParameterization, got {type(parameterization)}"
             )
-
-        self._name = name
         self._parameterization = parameterization
+
+        if not isinstance(flavor, AbstractFlavor):
+            raise TypeError(
+                f"flavor must be an instance of AbstractFlavor, got {type(flavor)}"
+            )
         self._flavor = flavor
+
+        if not isinstance(resolution, int):
+            raise TypeError(f"resolution must be an integer, got {type(resolution)}")
         self._resolution = resolution
+
+        self.name = name
         # other args
         ...  # TODO
 
     @property
     def name(self) -> str:
         return self._name
+
+    @name.setter
+    def name(self, value):
+        if value is None:
+            value = "Default name"
+        elif not isinstance(value, str):
+            value = str(value)
+        self._name = value
 
     @property
     def parameterization(self) -> AbstractParameterization:
