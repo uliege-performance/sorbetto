@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from sorbetto.tile.asbtract_tile import AbstractTile
+
 
 class AbstractAnnotation(ABC):
     """
@@ -26,7 +28,7 @@ class AbstractAnnotation(ABC):
         return self._name
 
     @abstractmethod
-    def draw(self, tile, fig, ax) -> None:
+    def draw(self, tile: AbstractTile, fig, ax) -> None:
         pass
 
     def __str__(self) -> str:
