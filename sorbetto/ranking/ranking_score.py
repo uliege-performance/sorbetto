@@ -28,8 +28,11 @@ class RankingScore:
             )
         self._importance = importance
 
-        if not callable(constraint):
-            raise TypeError(f"constraint must be a callable, got {type(constraint)}")
+        if constraint is not None:
+            if not callable(constraint):
+                raise TypeError(
+                    f"constraint must be a callable, got {type(constraint)}"
+                )
         self._constraint = constraint
 
         self._name = name
@@ -75,7 +78,7 @@ class RankingScore:
         pass  # TODO: implement
 
     def drawInROC(self, fig, ax, priorPos: float) -> None:
-        """
+        r"""
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
@@ -145,7 +148,7 @@ class RankingScore:
             ax.clabel(cs, inline=True, fontsize=8)
 
         if show_values_map and show_colorbar:
-            fig.colorbar(im, ax=ax, label=self.getName())
+            fig.colorbar(im, ax=ax, label=self.name)
 
         if show_no_skills:
             ax.plot([0, 1], [0, 1], "--", c="palevioletred")
@@ -187,7 +190,7 @@ class RankingScore:
         ax.set_xlabel("False Positive Rate (FPR)")
         ax.set_ylabel("True Positive Rate (TPR)")
         ax.set_aspect("equal")
-        ax.set_title("ROC for $\pi_+={:g}".format(priorPos))
+        ax.set_title("ROC for $\\pi_+={:g}$".format(priorPos))
 
     def getPencilInROC(self, priorPos) -> Pencil:
         pass  # TODO: implement Seb
@@ -397,7 +400,7 @@ class RankingScore:
         priorPos,
     ) -> "RankingScore":  # TODO: implement constraint
         """
-        The skew-insensitive version of $\scoreFOne$.
+        The skew-insensitive version of $\\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
         pass
