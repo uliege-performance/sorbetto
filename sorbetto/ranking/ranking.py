@@ -1,6 +1,6 @@
 import numpy as np
 
-from sorbetto.core.performance_orderingInduced_by_one_score import (
+from sorbetto.core.performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
 )
 from sorbetto.ranking.abstract_ranking import AbstractRanking
