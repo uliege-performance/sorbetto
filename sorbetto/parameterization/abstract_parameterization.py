@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from sorbetto.core.importance import Importance
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
@@ -28,8 +29,13 @@ class AbstractParameterization(ABC):
         pass
 
     @abstractmethod
-    def getCanonicalRankingScore(self, param1, param2) -> RankingScore:
+    def getCanonicalImportance(self, param1, param2) -> Importance:
         pass
+
+    @abstractmethod
+    def getCanonicalRankingScore(self, param1, param2) -> RankingScore:
+        importance = self.getCanonicalImportance(param1, param2)
+        return RankingScore(importance)
 
     @abstractmethod
     def getValueParameter1(self, rankingScore) -> float:

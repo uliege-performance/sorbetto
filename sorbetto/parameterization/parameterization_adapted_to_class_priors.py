@@ -1,5 +1,5 @@
+from sorbetto.core.importance import Importance
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
-from sorbetto.ranking.ranking_score import RankingScore
 
 
 class ParameterizationAdaptedToClassPriors(AbstractParameterization):
@@ -41,7 +41,7 @@ class ParameterizationAdaptedToClassPriors(AbstractParameterization):
     def getBoundsParameter2(self) -> tuple[float, float]:
         return 0.0, 1.0
 
-    def getCanonicalRankingScore(self, param1, param2) -> RankingScore: ...
+    def getCanonicalImportance(self, param1, param2) -> Importance: ...
 
     def getValueParameter1(self, rankingScore) -> float: ...
 

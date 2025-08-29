@@ -23,7 +23,7 @@ class ParameterizationDefault(AbstractParameterization):
     def getBoundsParameter2(self) -> tuple[float, float]:
         return 0.0, 1.0
 
-    def getCanonicalRankingScore(self, param1, param2) -> RankingScore:
+    def getCanonicalImportance(self, param1, param2) -> Importance:
         assert isinstance(param1, float)
         assert param1 >= 0.0
         assert param1 <= 1.0
@@ -40,8 +40,7 @@ class ParameterizationDefault(AbstractParameterization):
         ifn = b
         itp = a
 
-        importance = Importance(itn, ifp, ifn, itp)
-        return RankingScore(importance)
+        return Importance(itn, ifp, ifn, itp)
 
     def getValueParameter1(self, rankingScore) -> float:
         assert isinstance(rankingScore, RankingScore)
