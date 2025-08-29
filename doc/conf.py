@@ -30,10 +30,15 @@ apidoc_modules = [
     {
         "path": "../sorbetto",
         "destination": "api",
-        "separate_modules": False,
+        "separate_modules": True,
         "no_headings": False,
         "module_first": True,
-        "max_depth": 4,
+        "max_depth": 1,
+        "automodule_options": {
+            "members",
+            "undoc-members",
+            "show-inheritance",
+        },
     }
 ]
 
