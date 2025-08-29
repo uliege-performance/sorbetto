@@ -17,7 +17,7 @@ This is the documentation for `sorbetto`. It will be completed over time.
    references
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
    :caption: API reference:
 
    api/sorbetto

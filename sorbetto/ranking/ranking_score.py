@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from sorbetto.core.importance import Importance
-from sorbetto.geometry.pencil import Conic, Pencil
+from sorbetto.geometry.conic import Conic
+from sorbetto.geometry.pencil import Pencil
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
