@@ -1,4 +1,4 @@
-from sorbetto.analyses.abstract_analysis import AbstractAnalysis
+from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.tile.abstract_symbolic_tile import AbstractSymbolicTile
 from sorbetto.tile.value_tile import ValueTile
@@ -14,7 +14,7 @@ class AnalysisForAppDeveloper(AbstractAnalysis):
         performances,
         parameterization: AbstractParameterization,
         resolution=1001,
-        **kwargs_options,
+        **kwargs,
     ):
         ...  # TODO
         AbstractAnalysis.__init__(self, parameterization, resolution)

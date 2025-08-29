@@ -1,13 +1,11 @@
-from sorbetto.analyses.abstract_analysis import AbstractAnalysis
-from sorbetto.tile.abstract_symbolic_tile import AbstractSymbolicTile
+from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.tile.abstract_numeric_tile import AbstractNumericTile
+from sorbetto.tile.abstract_symbolic_tile import AbstractSymbolicTile
 from sorbetto.tile.value_tile import ValueTile
 
 
 class AnalysisForBenchmarker(AbstractAnalysis):
-    def __init__(
-        self, performances, parameterization, resolution=1001, **kwargs_options
-    ):
+    def __init__(self, performances, parameterization, resolution=1001, **kwargs):
         ...  # TODO
         AbstractAnalysis.__init__(self, parameterization, resolution)
 

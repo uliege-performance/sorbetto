@@ -1,4 +1,4 @@
-from sorbetto.analyses.abstract_analysis import AbstractAnalysis
+from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.tile.abstract_numeric_tile import AbstractNumericTile
 from sorbetto.tile.value_tile import ValueTile
 
@@ -10,7 +10,7 @@ class AnalysisForMethodDesigner(AbstractAnalysis):
         competitors,
         parameterization,
         resolution=1001,
-        **kwargs_options,
+        **kwargs,
     ):
         ...  # TODO
         AbstractAnalysis.__init__(self, parameterization, resolution)
