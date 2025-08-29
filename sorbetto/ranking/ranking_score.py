@@ -2,8 +2,9 @@
 import logging
 import math
 from typing import Self
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.pencil import Pencil
@@ -75,7 +76,7 @@ class RankingScore:
         """
         See :cite:t:`Pierard2024TheTile-arxiv`, Example 3.
         """
-        pass  # TODO: implement
+        ...  # TODO: implement
 
     def drawInROC(self, fig, ax, priorPos: float) -> None:
         r"""
@@ -128,7 +129,7 @@ class RankingScore:
 
         if show_values_map:
             extent = 0, 1, 0, 1
-            cmap = plt.cm.bone
+            cmap = plt.cm.bone  # type: ignore
             im = ax.imshow(
                 mat_values,
                 extent=extent,
@@ -148,7 +149,7 @@ class RankingScore:
             ax.clabel(cs, inline=True, fontsize=8)
 
         if show_values_map and show_colorbar:
-            fig.colorbar(im, ax=ax, label=self.name)
+            fig.colorbar(im, ax=ax, label=self.name)  # type: ignore
 
         if show_no_skills:
             ax.plot([0, 1], [0, 1], "--", c="palevioletred")
@@ -192,13 +193,13 @@ class RankingScore:
         ax.set_aspect("equal")
         ax.set_title("ROC for $\\pi_+={:g}$".format(priorPos))
 
-    def getPencilInROC(self, priorPos) -> Pencil:
-        pass  # TODO: implement Seb
+    def getPencilInROC(self, priorPos) -> Pencil: ...  # TODO: implement Seb
 
     def __call__(self, performance) -> float:
-        if not self._constraint(performance):
+        if self._constraint and not self._constraint(performance):
             logging.warning(
-                f"Performance {performance} does not satisfy the constraint of the ranking score {self._name}"
+                f"Performance {performance} does not satisfy the constraint of "
+                f"the ranking score {self._name}"
             )
         satisfying = (
             performance.ptn * self._importance.itn
@@ -403,49 +404,49 @@ class RankingScore:
         The skew-insensitive version of $\\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
-        pass
+        ...
 
     @staticmethod
     def getWeightedAccuracy(
         priorPos, weightPos
     ) -> "RankingScore":  # TODO: implement constraint.
-        pass  # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
+        ...  # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
 
     @staticmethod
     def getBalancedAccuracy(priorPos) -> "RankingScore":  # TODO: implement constraint
-        pass  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 
     @staticmethod
     def getProbabilityTrueNegative(
         priorPos,
     ) -> "RankingScore":  # TODO: implement constraint
-        pass  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 
     @staticmethod
     def getProbabilityFalsePositiveComplenent(
         priorPos,
     ) -> "RankingScore":  # TODO: implement constraint
-        pass
+        ...
 
     @staticmethod
     def getProbabilityFalseNegativeComplenent(
         priorPos,
     ) -> "RankingScore":  # TODO: implement constraint
-        pass
+        ...
 
     @staticmethod
     def getProbabilityTruePositive(
         priorPos,
     ) -> "RankingScore":  # TODO: implement constraint
-        pass  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
 
     @staticmethod
     def getDetectionRate(priorPos) -> "RankingScore":  # TODO: implement constraint
-        pass
+        ...
 
     @staticmethod
     def getRejectionRate(priorPos) -> "RankingScore":  # TODO: implement constraint
-        pass
+        ...
 
     def __str__(self):
         return f"Ranking Score: {self._name} with importance {str(self._importance)}"
