@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sorbetto.geometry.quadratic_curve import QuadraticCurve
+from sorbetto.geometry.quadratic_curve import Conic
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -159,7 +159,7 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO
 
-    def locateSimilarityCoefficients(self) -> QuadraticCurve:
+    def locateSimilarityCoefficients(self) -> Conic:
         """
         Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
         See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
@@ -291,13 +291,13 @@ class AbstractParameterization(ABC):
     # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6.
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFooting(
         self, priorPos, ratePos
-    ) -> Point | QuadraticCurve:
+    ) -> Point | Conic:
         # See Theorem 3 of future "paper 6".
         # See Theorem 4 of future "paper 6".
         # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
         raise NotImplementedError()  # TODO
 
-    def locateOrderingsInveredWithOpChangePredictedClass(self) -> QuadraticCurve:
+    def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
         """
         $$\left{ R_I : I(tp) I(fp) = I(tn) I(fn) \right}
         = \left{ R_I : a(I) = b(I) \right}$$
@@ -305,7 +305,7 @@ class AbstractParameterization(ABC):
         # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO
 
-    def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> QuadraticCurve:
+    def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
         """
         $$\left{ R_I : I(tp) I(fn) = I(tn) I(fp) \right}
         = \left{ R_I : a(I) + b(I) = 1 \right}$$
