@@ -51,5 +51,6 @@ def run_and_save(func, name: str, *args, skip_existing: bool = True, **kwargs):
     try:
         func(*args, **kwargs)
         save_fig(name)
+        logging.info("Figure %s saved.", name)
     except Exception as e:
         logging.error(f"Failed to generate figure {name}: {e}")
