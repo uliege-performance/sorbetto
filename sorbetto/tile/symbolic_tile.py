@@ -1,4 +1,4 @@
-from sorbetto.tile.asbtract_tile import AbstractTile
+from sorbetto.tile.abstract_tile import AbstractTile
 
 
 class AbstractSymbolicTile(AbstractTile):
