@@ -1,0 +1,76 @@
+from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.core.importance import Importance
+from sorbetto.geometry.point import Point
+from sorbetto.ranking.ranking_score import RankingScore
+from sorbetto.tile.asbtract_tile import AbstractTile
+
+
+class AnnotationText(AbstractAnnotation):
+    """
+    This type of annotation can be used to place a text on the Tile, next to the point
+    corresponding to given importance values.
+    """
+
+    def __init__(
+        self,
+        location: Importance | RankingScore | Point,
+        label: str | None = None,
+        **plt_kwargs,
+    ):
+        """
+        Initializes a new annotation for a text object.
+
+        Args:
+            location (Importance | RankingScore | Point): where to write the label
+            label (str | None, optional): _description_. Defaults to None.
+        """
+
+        assert isinstance(location, [Importance, RankingScore, Point])
+        self._location = location
+
+        if label is not None:
+            if not isinstance(label, str):
+                label = str(label)
+
+        self._plt_kwargs = plt_kwargs
+
+        AbstractAnnotation.__init__(self, label)
+
+    def draw(self, tile: AbstractTile, fig, ax) -> None:
+        assert isinstance(tile, AbstractTile)
+        parameterization = tile.getParameterization()
+        location = self._location
+        if isinstance(location, Importance):
+            importance = location
+            rankingScore = RankingScore(importance)
+            x = parameterization.getValueParameter1(rankingScore)
+            y = parameterization.getValueParameter2(rankingScore)
+        elif isinstance(location, RankingScore):
+            rankingScore = location
+            x = parameterization.getValueParameter1(rankingScore)
+            y = parameterization.getValueParameter2(rankingScore)
+        elif isinstance(location, Point):
+            point = location
+            x = point.x
+            y = point.y
+        else:
+            assert False  # should never happen
+        min_x, max_x = parameterization.getBoundsParameter1()
+        min_y, max_y = parameterization.getBoundsParameter2()
+        if x < min_x or x > max_x:
+            return
+        if y < min_y or y > max_y:
+            return
+        center_x = 0.5 * (min_x + max_x)
+        center_y = 0.5 * (min_y + max_y)
+        ax.plot(x, y, "o", self._plt_kwargs)
+        if x < center_x:
+            if y < center_y:
+                ax.text(x, y, self.name, ha="left", va="bottom")
+            else:
+                ax.text(x, y, self.name, ha="left", va="top")
+        else:
+            if y < center_y:
+                ax.text(x, y, self.name, ha="right", va="bottom")
+            else:
+                ax.text(x, y, self.name, ha="right", va="top")
