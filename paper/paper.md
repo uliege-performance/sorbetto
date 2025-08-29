@@ -40,7 +40,7 @@ bibliography: paper.bib
 This is the summary. 
 
 # Statement of need
-[comment]: # (Statement of need section that clearly illustrates the research purpose of the software and places it in the context of related work.)
+[comment]: # (Statement of need section that clearly illustrates the research purpose of the software, give the target audience, and places it in the context of related work.)
 
 `sorbetto` is a Python package for producing classification tiles with different flavors. 
 
@@ -50,8 +50,13 @@ Figures can be included like this:
 ![Caption for example figure.\label{fig:example}](figure.png){ width=20% }
 and referenced from text using \autoref{fig:example}.
 
+# State of field
+[comment]: # (Description of how this software compares to other commonly-used packages)
+
+This is the state of field.
+
 # Mention 
-[comment]: # (representative set of past or ongoing research projects using the software and recent scholarly publications enabled by it.)
+[comment]: # (Representative set of past or ongoing research projects using the software and recent scholarly publications enabled by it.)
 
 While the package has not yet been used in any scientific publications, it relies on foundations provided in recent publications [Pierard2025Foundations; Pierard2024TheTile-arxiv]. Besides, results from numerous publications already showcasing various tile flavors [Halin2024AHitchhikers-arxiv; Pierard2025AMethodology] could be replicated very easily thanks to this sorbetto package. 
 
