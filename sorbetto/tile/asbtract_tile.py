@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
-from sorbetto.parametrization.abstract_parametrization import AbstractParametrization
+from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 
 
 class AbstractTile(ABC):
@@ -15,18 +15,18 @@ class AbstractTile(ABC):
 
     def __init__(
         self,
-        parametrization: AbstractParametrization,
+        parametrization: AbstractParameterization,
         flavor: AbstractFlavor,
         resolution: int = 1001,
         name: str | None = None,
     ):
-        if not isinstance(parameterization, AbstractParameterization):
+        if not isinstance(parametrization, AbstractParameterization):
             raise TypeError(
-                f"paramer must be an instance of Importance, got {type(importance)}"
+                f"parameterization must be an instance of AbstractParameterization, got {type(parametrization)}"
             )
 
         self._name = name
-        self._parameterization = parameterization
+        self._parameterization = parametrization
         self._flavor = flavor
         self._resolution = resolution
         # other args
