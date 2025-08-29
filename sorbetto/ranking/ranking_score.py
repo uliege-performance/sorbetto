@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from sorbetto.core.importance import Importance
-from sorbetto.geometry.pencil import Pencil
+from sorbetto.geometry.pencil import Conic, Pencil
+from sorbetto.performance.two_class_classification import (
+    TwoClassClassificationPerformance,
+)
 
 
 class RankingScore:
@@ -59,6 +62,57 @@ class RankingScore:
     @property
     def importance(self) -> Importance:
         return self._importance
+
+    # TODO: this method might not be in the right class. Should we move it in ParameterizationDefault ?
+    def equivalent(
+        self,
+        p1: TwoClassClassificationPerformance,
+        p2: TwoClassClassificationPerformance,
+    ) -> Conic:
+        """
+        Computes, on the Tile with the default parameterization, the locus of performance orderings for which
+        the performances `p1` and `p2` are equivalent. This locus is a curve, a conic section.
+
+        Args:
+            p1 (TwoClassClassificationPerformance): _description_
+            p2 (TwoClassClassificationPerformance): _description_
+
+        Returns:
+            Conic: the conic section.
+        """
+
+        # ( itn ptn1 + itp ptp1 ) / ( itn ptn1 + ifp pfp1 + ifn pfn1 + itp ptp1 ) = ( itn ptn2 + itp ptp2 ) / ( itn ptn2 + ifp pfp2 + ifn pfn2 + itp ptp2 )
+        # ( itn ptn1 + itp ptp1 ) ( itn ptn2 + ifp pfp2 + ifn pfn2 + itp ptp2 ) = ( itn ptn2 + itp ptp2 ) ( itn ptn1 + ifp pfp1 + ifn pfn1 + itp ptp1 )
+        # ( itn ptn1 + itp ptp1 ) ( ifp pfp2 + ifn pfn2 ) = ( itn ptn2 + itp ptp2 ) ( ifp pfp1 + ifn pfn1 )
+        # ( itn ptn1 + itp ptp1 ) ( ifp pfp2 + ifn pfn2 ) - ( itn ptn2 + itp ptp2 ) ( ifp pfp1 + ifn pfn1 ) = 0
+        # ( (1-a) ptn1 + a ptp1 ) ( (1-b) pfp2 + b pfn2 ) - ( (1-a) ptn2 + a ptp2 ) ( (1-b) pfp1 + b pfn1 ) = 0
+        # ( ptn1 + a (ptp1-ptn1) ) ( pfp2 + b (pfn2-pfp2) ) - ( ptn2 + a (ptp2-ptn2) ) ( pfp1 + b (pfn1-pfp1) ) = 0
+        #
+        # K + Ka a + Kb b + Kab a b = 0
+        #
+        # With:
+        # K = ptn1 pfp2 - ptn2 pfp1
+        # Ka = (ptp1-ptn1)pfp2 - (ptp2-ptn2)pfp1
+        # Kb = ptn1(pfn2-pfp2) - ptn2(pfn1-pfp1)
+        # Kab = (ptp1-ptn1)(pfn2-pfp2) - (ptp2-ptn2)(pfn1-pfp1)
+
+        ptn1 = p1.ptn
+        pfp1 = p1.pfp
+        pfn1 = p1.pfn
+        ptp1 = p1.ptp
+
+        ptn2 = p2.ptn
+        pfp2 = p2.pfp
+        pfn2 = p2.pfn
+        ptp2 = p2.ptp
+
+        K = ptn1 * pfp2 - ptn2 * pfp1
+        Ka = (ptp1 - ptn1) * pfp2 - (ptp2 - ptn2) * pfp1
+        Kb = ptn1 * (pfn2 - pfp2) - ptn2 * (pfn1 - pfp1)
+        Kab = (ptp1 - ptn1) * (pfn2 - pfp2) - (ptp2 - ptn2) * (pfn1 - pfp1)
+
+        # a x^2 + b x y + c y^2 + d x + e y + f = 0
+        return Conic(0, Kab, 0, Ka, Kb, K, "equivalent")
 
     def isCanonical(self, tol=1e-8) -> bool:
         """
@@ -201,7 +255,7 @@ class RankingScore:
         unsatisfying = pfp * ifp + pfn * ifn
         return satisfying / (satisfying + unsatisfying)
 
-    def __call__(self, performance) -> float:
+    def __call__(self, performance: TwoClassClassificationPerformance) -> float:
         if self._constraint and not self._constraint(performance):
             logging.warning(
                 f"Performance {performance} does not satisfy the constraint of "
