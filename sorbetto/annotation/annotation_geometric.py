@@ -24,7 +24,7 @@ class AnnotationGeometric(AbstractAnnotation):
 
         self._plt_kwargs = plt_kwargs
 
-        AbstractGeometricObject2D.__init__(self)
+        AbstractAnnotation.__init__(self, name)
 
     def draw(self, tile: AbstractTile, fig, ax) -> None:
         assert isinstance(tile, AbstractTile)
@@ -33,6 +33,3 @@ class AnnotationGeometric(AbstractAnnotation):
         min2, max2 = parameterization.getBoundsParameter2()
         extent = [min1, max1, min2, max2]
         self._geom.draw(fig, ax, extent, self._plt_kwargs)
-
-    def __str__(self) -> str:
-        return self.name
