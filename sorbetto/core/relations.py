@@ -1,7 +1,7 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
 
-class AbstractHomogeneousBinaryRelationOnPerformances:
+class AbstractHomogeneousBinaryRelationOnPerformances(ABC):
     def __init__(self, name: str | None = None):
         self._name = name
 
