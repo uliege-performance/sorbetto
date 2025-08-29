@@ -1,5 +1,7 @@
 import logging
 
+import numpy as np
+
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
@@ -19,11 +21,42 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
     def __init__(
         self,
-        performance_list: list[TwoClassClassificationPerformance],
+        performance_list: list[TwoClassClassificationPerformance] | np.ndarray,
         name: str = "finite set",
     ):
-        self._performance_list = performance_list
+        if isinstance(performance_list, np.ndarray):
+            self._performance_list = (
+                FiniteSetOfTwoClassClassificationPerformances.from_array(
+                    performance_list
+                ).performance_list
+            )
+        elif isinstance(performance_list, list):
+            if len(performance_list) > 0:
+                if isinstance(performance_list[0], TwoClassClassificationPerformance):
+                    self._performance_list = performance_list
+                else:
+                    raise ValueError(
+                        "The performance list must contain TwoClassClassificationPerformance instances"
+                    )
+            else:
+                raise ValueError("The performance list cannot be empty")
+
+        else:
+            raise ValueError(
+                "The performance_list must be a list of TwoClassClassificationPerformance instances or a numpy array"
+            )
+
         self._name = name
+
+    @staticmethod
+    def from_array(array_tn_fp_fn_tp):
+        performance_list = []
+        for tn, fp, fn, tp in array_tn_fp_fn_tp:
+            performance = TwoClassClassificationPerformance(
+                ptn=tn, pfp=fp, pfn=fn, ptp=tp
+            )
+            performance_list.append(performance)
+        return FiniteSetOfTwoClassClassificationPerformances(performance_list)
 
     @property
     def performance_list(self) -> list[TwoClassClassificationPerformance]:
@@ -71,6 +104,27 @@ class FiniteSetOfTwoClassClassificationPerformances:
         ...  # TODO
 
     def __str__(self):
-        txt = f"FiniteSetOfTwoClassClassificationPerformances(name={self._name}, performances={self._performance_list})"
+        txt = (
+            f"FiniteSetOfTwoClassClassificationPerformances(name={self._name} and "
+            f"performances=\n{'\n'.join(str(self._performance_list[i]) for i in range(len(self._performance_list)))})"
+        )
 
         return txt
+
+
+if __name__ == "__main__":
+    import numpy as np
+
+    # Example usage
+    list_tn_fp_fn_tp = np.array(
+        [
+            (0.70, 0.05, 0.10, 0.15),
+            (0.60, 0.10, 0.15, 0.15),
+            (0.80, 0.02, 0.08, 0.10),
+        ]
+    )
+
+    print(f"Used dim {list_tn_fp_fn_tp.shape}")
+
+    finite_set = FiniteSetOfTwoClassClassificationPerformances(list_tn_fp_fn_tp)
+    print(finite_set)
