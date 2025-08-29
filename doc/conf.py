@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx_math_dollar",
     "sphinxcontrib.bibtex",
+    "nbsphinx",
 ]
 
 templates_path = ["_templates"]

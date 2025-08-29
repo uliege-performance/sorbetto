@@ -32,6 +32,9 @@ pip install -e ".[doc]"
 
 The `-e` is not mandatory.
 
+You also need to install `pandoc` to properly export the example notebooks.
+Follow the instructions on the [pandoc documentation](https://pandoc.org/installing.html).
+
 Then generate the html documentation:
 
 ```bash

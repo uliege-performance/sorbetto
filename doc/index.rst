@@ -14,6 +14,7 @@ This is the documentation for `sorbetto`. It will be completed over time.
    :caption: Contents:
 
    self
+   examples
    references
 
 .. toctree::
