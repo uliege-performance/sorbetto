@@ -1,5 +1,6 @@
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 import numpy as np
+import math
 import jax
 
 
@@ -85,6 +86,153 @@ class Conic(AbstractGeometricObject2D):
         """
         return self._f
 
+    def getMatrixRepresentation(self) -> np.nparray:
+        """
+        Computes the 3 by 3 matrix representation of the conic section.
+        See https://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
+
+        Returns:
+            np.nparray: the matrix representation
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        e = self._e
+        f = self._f
+
+        return np.array(
+            [[a, 0.5 * b, 0.5 * d], [0.5 * b, c, 0.5 * e], [0.5 * d, 0.5 * e, f]]
+        )
+
+    def isDegenerate(self, tol: float = 1e-8) -> bool:
+        """
+        See https://en.wikipedia.org/wiki/Degenerate_conic
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is degenerate; False otherwise
+        """
+        det = np.linalg.det(self.getMatrixRepresentation())
+
+        return math.isclose(det, 0.0, abs_tol=tol)
+
+    def isEllipse(self, tol: float = 1e-8) -> bool:
+        """
+        Test if the conic section is an ellipse.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is an ellipse; False otherwise
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+
+        test_1 = b * b - 4.0 * a * c < 0.0
+        test_2 = not self.isParabola(tol)
+        return test_1 and test_2
+
+    def isCircle(self, tol: float = 1e-8) -> bool:
+        """
+        Test if the conic section is a circle.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is a circle; False otherwise
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+
+        return (
+            self.isEllipse()
+            and math.isclose(a, c, abs_tol=tol)
+            and math.isclose(b, 0.0, abs_tol=tol)
+        )
+
+    def isParabola(self, tol: float = 1e-8) -> bool:
+        """
+        Test if the conic section is a parabola.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is a parabola; False otherwise
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+
+        return math.isclose(b * b - 4.0 * a * c, 0.0, abs_tol=tol)
+
+    def isHyperbola(self, tol: float = 1e-8) -> bool:
+        """
+        Test if the conic section is a hyperbola.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is a hyperbola; False otherwise
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+
+        test_1 = b * b - 4.0 * a * c > 0.0
+        test_2 = not self.isParabola(tol)
+        return test_1 and test_2
+
+    def isRectangularHyperbola(self, tol: float = 1e-8) -> bool:
+        """
+        Test if the conic section is a rectangular hyperbola.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the conic section is a rectangular hyperbola; False otherwise
+        """
+        a = self._a
+        c = self._c
+
+        return self.isParabola(tol) and a + c == 0.0
+
+    def classify(self, tol: float = 1e-8) -> str:
+        """
+        Classify the conic section.
+
+        Args:
+            tol (float, optional): the numerical tolerance, positive. Defaults to 1e-8.
+
+        Returns:
+            str: a name, in english, for the conic section type
+        """
+        # TODO: should we have some numerical tolerance in this test?
+        if self.isParabola(tol):
+            return "degenerate parabola" if self.isDegenerate(tol) else "parabola"
+        if self.isCircle(tol):
+            return "degenerate circle" if self.isDegenerate(tol) else "circle"
+        if self.isEllipse(tol):
+            return "degenerate ellipse" if self.isDegenerate(tol) else "ellipse"
+        if self.isRectangularHyperbola(tol):
+            return (
+                "degenerate rectangular hyperbola"
+                if self.isDegenerate(tol)
+                else "rectangular hyperbola"
+            )
+        if self.isHyperbola(tol):
+            return "degenerate hyperbola" if self.isDegenerate(tol) else "hyperbola"
+        return "unknown type of conic section"  # this should never happen
+
     @staticmethod
     def _solve_quadratic_equation_min(a, b, c):
         """
@@ -135,12 +283,12 @@ class Conic(AbstractGeometricObject2D):
         Returns:
             _type_: the smallest value of $y$, for the given $x$.
         """
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
-        e = self.e
-        f = self.f
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        e = self._e
+        f = self._f
 
         #     a x^2 + b x y + c y^2 + d x + e y + f = 0 = 0
         # <=> y^2 ( c ) + y^1 ( b x + e ) + y^0 ( a x^2 + d x + f ) = 0
@@ -161,12 +309,12 @@ class Conic(AbstractGeometricObject2D):
         Returns:
             _type_: the largest value of $y$, for the given $x$.
         """
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
-        e = self.e
-        f = self.f
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        e = self._e
+        f = self._f
 
         #     a x^2 + b x y + c y^2 + d x + e y + f = 0
         # <=> y^2 ( c ) + y^1 ( b x + e ) + y^0 ( a x^2 + d x + f ) = 0
@@ -187,12 +335,12 @@ class Conic(AbstractGeometricObject2D):
         Returns:
             _type_: the smallest value of $x$, for the given $y$.
         """
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
-        e = self.e
-        f = self.f
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        e = self._e
+        f = self._f
 
         #     a x^2 + b x y + c y^2 + d x + e y + f = 0
         # <=> x^2 ( a ) + x^1 ( b y + d ) + x^0 ( c y^2 + e y + f ) = 0
@@ -213,12 +361,12 @@ class Conic(AbstractGeometricObject2D):
         Returns:
             _type_: the largest value of $x$, for the given $y$.
         """
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
-        e = self.e
-        f = self.f
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        e = self._e
+        f = self._f
 
         #     a x^2 + b x y + c y^2 + d x + e y + f = 0
         # <=> x^2 ( a ) + x^1 ( b y + d ) + x^0 ( c y^2 + e y + f ) = 0
@@ -279,6 +427,6 @@ class Conic(AbstractGeometricObject2D):
         draw_x_fct_of_y(self.getLargestX)
 
     def __str__(self) -> str:
-        return "({:g}) x^2 + ({:g}) x y + ({:g}) y^2 + ({:g}) x + ({:g}) y + ({:g}) = 0".fomat(
-            self.a, self.b, self.c, self.d, self.e, self.f
+        return "{} ({:g}) x^2 + ({:g}) x y + ({:g}) y^2 + ({:g}) x + ({:g}) y + ({:g}) = 0".fomat(
+            self.classify(), self.a, self.b, self.c, self.d, self.e, self.f
         )
