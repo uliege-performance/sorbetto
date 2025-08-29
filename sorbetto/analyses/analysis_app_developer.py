@@ -1,5 +1,5 @@
 from sorbetto.analyses.abstract_analysis import AbstractAnalysis
-from sorbetto.parameterization.abstract_parametrization import AbstractParameterization
+from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.tile.abstract_symbolic_tile import AbstractSymbolicTile
 from sorbetto.tile.value_tile import ValueTile
 

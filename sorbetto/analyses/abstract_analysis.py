@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from sorbetto.parameterization.abstract_parametrization import AbstractParameterization
+
+from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 
 
 class AbstractAnalysis(ABC):

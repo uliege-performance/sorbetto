@@ -15,18 +15,18 @@ class AbstractTile(ABC):
 
     def __init__(
         self,
-        parametrization: AbstractParameterization,
+        parameterization: AbstractParameterization,
         flavor: AbstractFlavor,
         resolution: int = 1001,
         name: str | None = None,
     ):
-        if not isinstance(parametrization, AbstractParameterization):
+        if not isinstance(parameterization, AbstractParameterization):
             raise TypeError(
-                f"parameterization must be an instance of AbstractParameterization, got {type(parametrization)}"
+                f"parameterization must be an instance of AbstractParameterization, got {type(parameterization)}"
             )
 
         self._name = name
-        self._parameterization = parametrization
+        self._parameterization = parameterization
         self._flavor = flavor
         self._resolution = resolution
         # other args

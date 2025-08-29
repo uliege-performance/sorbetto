@@ -1,4 +1,4 @@
-from sorbetto.parametrization.abstract_parametrization import AbstractParameterization
+from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.ranking.ranking_score import RankingScore
 
 
