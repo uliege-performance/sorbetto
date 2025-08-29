@@ -3,6 +3,14 @@ from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObje
 
 class Point(AbstractGeometricObject2D):
     def __init__(self, x: float, y: float, name: str | None = None):
+        """
+        Constructs a new point $(x,y)$ based on its coordinates and an optional name.
+
+        Args:
+            x (float): the first coordinate of the point
+            y (float): the second coordinate of the point
+            name (str | None, optional): the name
+        """
         assert isinstance(x, float)
         assert isinstance(y, float)
         self._x = x
@@ -11,19 +19,33 @@ class Point(AbstractGeometricObject2D):
 
     @property
     def x(self) -> float:
+        """
+        The first coordinate, $x$, of the point $(x,y)$.
+
+        Returns:
+            float: $x$
+        """
         return self._x
 
     @property
     def y(self) -> float:
+        """
+        The second coordinate, $y$, of the point $(x,y)$.
+
+        Returns:
+            float: $y$
+        """
         return self._y
 
     def draw(self, fig, ax, extent, **plt_kwargs):
-        """_summary_
+        """
+        If the point is withing some axis-aligned box, then plots it in some given Pyplot axes.
 
         Args:
-            fig (_type_): _description_
-            ax (_type_): _description_
-            extent (_type_): (x_min, x_max, y_min, y_max)
+            fig (_type_): a Pyplot Figure object
+            ax (_type_): a Pyplot Axes object
+            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            plt_kwargs: options for Pyplot's plot command.
         """
         x_min = extent[0]
         x_max = extent[1]
@@ -42,3 +64,6 @@ class Point(AbstractGeometricObject2D):
             return
 
         ax.plot(x, y, plt_kwargs)
+
+    def __str__(self) -> str:
+        return "({:g}, {:g})".format(self.x, self.y)
