@@ -54,6 +54,7 @@ doc = [
     "sphinx-math-dollar@git+https://github.com/MarelliF/sphinx-math-dollar.git",
     "sphinxcontrib-bibtex",
     "nbsphinx",
+    "sphinx-gallery",
 ]
 
 [project.urls]
