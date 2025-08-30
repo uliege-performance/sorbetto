@@ -3,7 +3,8 @@ import math
 import numpy as np
 
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
-from sorbetto.geometry.pencil import Pencil
+from sorbetto.geometry.line import Line
+from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.parameterization.parameterization_default import ParameterizationDefault
 from sorbetto.performance.two_class_classification import (
@@ -75,7 +76,7 @@ class ValueTile(AbstractTile):
     def performance(self, value: TwoClassClassificationPerformance):
         self._performance = value
 
-    def getVUT(self):
+    def getVUT(self) -> float:
         """
         Computes the volume
 
@@ -93,4 +94,27 @@ class ValueTile(AbstractTile):
                 "VUT is not implemented for other parameterization for now."
             )
 
-    def asPencil(self) -> Pencil: ...  # TODO
+    def asPencil(self) -> PencilOfLines:
+        if not isinstance(self.parameterization, ParameterizationDefault):
+            raise NotImplementedError(
+                "VUT is not implemented for other parameterization for now."
+            )
+
+        ptn = self._performance.ptn
+        pfp = self._performance.pfp
+        pfn = self._performance.pfn
+        ptp = self._performance.ptp
+
+        # score = ( itn ptn + itp ptp ) / ( itn ptn + ifp pfp + ifn pfn + itp ptp )
+        #       = ( (1-a) ptn + a ptp ) / ( (1-a) ptn + (1-b) pfp + b pfn + a ptp )
+        #       = ( (ptp-ptn) a + (ptn) ) / ( (ptp-ptn) a + (pfn-pfp) b + (ptn+pfp) )
+        #
+        # So, the pencil is
+        # lambda_1 ( (ptp-ptn) a + (ptn) ) + lambda_2 ( (ptp-ptn) a + (pfn-pfp) b + (ptn+pfp) ) = 0
+
+        line_1 = Line(ptp - ptn, 0, ptn)
+        line_2 = Line(ptp - ptn, pfn - pfp, ptn + pfp)
+        pencil = PencilOfLines(
+            line_1, line_2, "pencil for score {}".format(self._performance)
+        )
+        return pencil
