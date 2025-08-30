@@ -2,6 +2,11 @@ from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObje
 
 
 class Point(AbstractGeometricObject2D):
+    """
+    This class is used to represent points.
+    See https://en.wikipedia.org/wiki/Point_(geometry)
+    """
+
     def __init__(self, x: float, y: float, name: str | None = None):
         """
         Constructs a new point $(x,y)$ based on its coordinates and an optional name.
@@ -66,4 +71,4 @@ class Point(AbstractGeometricObject2D):
         ax.plot(x, y, plt_kwargs)
 
     def __str__(self) -> str:
-        return "({:g}, {:g})".format(self.x, self.y)
+        return "point ({:g}, {:g})".format(self.x, self.y)
