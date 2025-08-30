@@ -22,6 +22,7 @@ extensions = [
     "sphinx_math_dollar",
     "sphinxcontrib.bibtex",
     "nbsphinx",
+    "sphinx_gallery.load_style",
 ]
 
 templates_path = ["_templates"]
@@ -42,6 +43,13 @@ apidoc_modules = [
         },
     }
 ]
+
+mathjax3_config = {
+    "tex": {
+        "inlineMath": [["\\(", "\\)"]],
+        "displayMath": [["\\[", "\\]"]],
+    }
+}
 
 bibtex_bibfiles = ["references.bib"]
 bibtex_default_style = "plain"

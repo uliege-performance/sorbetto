@@ -1,9 +1,8 @@
 Examples
 ========
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+.. nbgallery::
+   :caption: Gallery
    :glob:
 
    examples/**
