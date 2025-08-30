@@ -36,6 +36,9 @@ dependencies = [
     "jax>=0.7.1",
 ]
 
+[tool.setuptools.packages.find]
+include = ["sorbetto*"]
+
 [tool.setuptools.dynamic]
 version = { attr = "sorbetto.__version__" }
 readme = { file = ["README.md"] }
