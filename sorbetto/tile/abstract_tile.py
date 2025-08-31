@@ -115,18 +115,25 @@ class AbstractTile(ABC):
     @abstractmethod
     def getExplanation(self) -> str: ...  # TODO
 
+    @abstractmethod
     def getParameterization(self) -> AbstractParameterization: ...  # TODO
 
+    @abstractmethod
     def getFlavor(self) -> AbstractFlavor: ...  # TODO
 
+    @abstractmethod
     def getResolution(self) -> int: ...  # TODO
 
+    @abstractmethod
     def getVecParam1(self) -> np.ndarray: ...  # TODO
 
+    @abstractmethod
     def getVecParam2(self) -> np.ndarray: ...  # TODO
 
+    @abstractmethod
     def getMat(self) -> np.ndarray: ...  # TODO
 
+    @abstractmethod
     def getColormap(self) -> np.ndarray: ...  # TODO
 
     # annotations : List [ Annotation ]
@@ -143,8 +150,8 @@ class AbstractTile(ABC):
 
     def __call__(
         self,
-        param1: list[float] | np.ndarray | None = None,
-        param2: list[float] | np.ndarray | None = None,
+        param1: list[float] | np.ndarray | None = None,  # TODO: or float ?
+        param2: list[float] | np.ndarray | None = None,  # TODO: or float ?
         *args,
         **kwargs,
     ):  # uses `flavor ( importances )`.
@@ -153,6 +160,7 @@ class AbstractTile(ABC):
         if not isinstance(param2, (np.ndarray)):
             param2 = np.array(param2)
 
+        # TODO : should be self.getParameterization ().getCanonicalImportanceVectorized ...
         importances = ParameterizationDefault().getCanonicalImportanceVectorized(
             param1, param2
         )
