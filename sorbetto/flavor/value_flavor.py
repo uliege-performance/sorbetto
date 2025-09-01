@@ -2,6 +2,7 @@ import numpy as np
 
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
+from sorbetto.flavor.ranking_flavor import FiniteSetOfTwoClassClassificationPerformances
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
@@ -21,7 +22,9 @@ class ValueFlavor(AbstractNumericFlavor):
     def __call__(
         self,
         importance: Importance | np.ndarray,
-        performance: TwoClassClassificationPerformance,
+        performance: TwoClassClassificationPerformance
+        | FiniteSetOfTwoClassClassificationPerformances
+        | np.ndarray,
     ) -> float | np.ndarray:
         if isinstance(importance, Importance):
             itn = importance.itn
@@ -35,15 +38,33 @@ class ValueFlavor(AbstractNumericFlavor):
             ifn = importance[..., 2]
             itp = importance[..., 3]
 
+        if isinstance(
+            performance,
+            (
+                TwoClassClassificationPerformance,
+                FiniteSetOfTwoClassClassificationPerformances,
+            ),
+        ):
+            ptn = performance.ptn
+            pfp = performance.pfp
+            pfn = performance.pfn
+            ptp = performance.ptp
+        elif isinstance(performance, np.ndarray):
+            assert performance.shape[-1] == 4
+            ptn = performance[..., 0]
+            pfp = performance[..., 1]
+            pfn = performance[..., 2]
+            ptp = performance[..., 3]
+
         return RankingScore._compute(
             itn=itn,
             ifp=ifp,
             ifn=ifn,
             itp=itp,
-            ptn=performance.ptn,
-            pfp=performance.pfp,
-            pfn=performance.pfn,
-            ptp=performance.ptp,
+            ptn=ptn,
+            pfp=pfp,
+            pfn=pfn,
+            ptp=ptp,
         )
 
     def getDefaultColormap(self):

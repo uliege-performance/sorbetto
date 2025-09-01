@@ -138,6 +138,9 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
         return txt
 
+    def __iter__(self):
+        return iter(self._performance_list)
+
 
 if __name__ == "__main__":
     import numpy as np
