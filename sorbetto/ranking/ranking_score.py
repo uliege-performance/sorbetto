@@ -8,7 +8,7 @@ import numpy as np
 
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.conic import Conic
-from sorbetto.geometry.pencil import Pencil
+from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
@@ -248,7 +248,7 @@ class RankingScore:
         ax.set_aspect("equal")
         ax.set_title("ROC for $\\pi_+={:g}$".format(priorPos))
 
-    def getPencilInROC(self, priorPos) -> Pencil: ...  # TODO: implement Seb
+    def getPencilInROC(self, priorPos) -> PencilOfLines: ...  # TODO: implement Seb
 
     @staticmethod
     def _compute(itn, ifp, ifn, itp, ptn, pfp, pfn, ptp) -> float:
