@@ -1,5 +1,6 @@
 import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -134,13 +135,17 @@ class ValueTile(AbstractNumericalTile):
         )
         return pencil
 
-    def draw(self, fig: Figure, ax: Axes):
+    def draw(self, fig: Figure | None = None, ax: Axes | None = None):
+        if fig is None and ax is None:
+            fig = plt.figure()
+            ax = fig.gca()
+
         A = self.sample_A
         B = self.sample_B
 
-        tile = self(A, B, performance=self.performance).T
+        tile = self(A, B, performance=self.performance)
         ax.imshow(
-            tile.T,
+            tile,
             origin="lower",
             cmap=self._flavor.getDefaultColormap(),
             extent=(
@@ -152,6 +157,22 @@ class ValueTile(AbstractNumericalTile):
             vmin=0.8,
             vmax=1.0,
         )
+
+        ax.contour(
+            A,
+            B,
+            tile,
+            origin="lower",
+            levels=np.arange(0.4, 1.01, 0.1),
+            colors="red",
+            linewidths=1,
+        )
+        fig.colorbar(ax.images[0], ax=ax)
+        ax.set_xlabel(self.parameterization.getNameParameter1())
+        ax.set_ylabel(self.parameterization.getNameParameter2())
+        ax.set_title(self.name)
+
+        return fig, ax
 
     def getExplanation(self) -> str:
         return "Explanation for this tile is not implemented yet"

@@ -96,7 +96,7 @@ class AbstractTile(ABC):
         return self._parameterization
 
     @property
-    def flavor(self) -> AbstractFlavor:
+    def flavor(self) -> AbstractFlavor | None:
         return self._flavor
 
     @property
@@ -113,7 +113,7 @@ class AbstractTile(ABC):
     def update_grid(self):
         a = np.linspace(self.lower_bound, self.upper_bound, self.resolution)
         b = np.linspace(self.lower_bound, self.upper_bound, self.resolution)
-        self.sample_A, self.sample_B = np.meshgrid(a, b, indexing="ij")
+        self.sample_A, self.sample_B = np.meshgrid(a, b, indexing="xy")
 
     @abstractmethod
     def getExplanation(self) -> str: ...  # TODO
@@ -124,20 +124,20 @@ class AbstractTile(ABC):
     # TODO: @abstractmethod ???
     def getFlavor(self) -> AbstractFlavor: ...  # TODO
 
-    @abstractmethod
-    def getResolution(self) -> int: ...  # TODO
+    def getResolution(self) -> int:
+        return self.resolution
 
-    @abstractmethod
-    def getVecParam1(self) -> np.ndarray: ...  # TODO
+    def getVecParam1(self) -> np.ndarray:
+        return self.sample_A
 
-    @abstractmethod
-    def getVecParam2(self) -> np.ndarray: ...  # TODO
+    def getVecParam2(self) -> np.ndarray:
+        return self.sample_B
 
-    @abstractmethod
-    def getMat(self) -> np.ndarray: ...  # TODO
+    # @abstractmethod
+    # def getMat(self) -> np.ndarray: ...  # TODO
 
-    @abstractmethod
-    def getColormap(self) -> np.ndarray: ...  # TODO
+    # @abstractmethod
+    # def getColormap(self) -> np.ndarray: ...  # TODO
 
     # annotations : List [ Annotation ]
 
@@ -164,6 +164,9 @@ class AbstractTile(ABC):
         *args,
         **kwargs,
     ):  # uses `flavor ( importances )`.
+        if self.flavor is None:
+            return np.array([])
+
         if not isinstance(param1, (np.ndarray)):
             param1 = np.array(param1)
         if not isinstance(param2, (np.ndarray)):
