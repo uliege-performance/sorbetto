@@ -6,11 +6,11 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.symbolic_tile import AbstractSymbolicTile
+from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
 from sorbetto.tile.utils import get_colors
 
 
-class RankingTile(AbstractSymbolicTile):
+class RankingTile(AbstractNumericalTile):
     def __init__(
         self,
         name: str,
@@ -36,7 +36,6 @@ class RankingTile(AbstractSymbolicTile):
                 "Entity ID must be either a string or an integer."
             )
 
-        self._entities_list = entities_list
         self._colormap = get_colors(len(entities_list))
         self._performance = FiniteSetOfTwoClassClassificationPerformances(
             [ent.performance for ent in entities_list]
@@ -44,13 +43,18 @@ class RankingTile(AbstractSymbolicTile):
 
         self.value_tile = None
 
+        self._entities = entities_list
+
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
-            entities_list=entities_list,
             resolution=resolution,
         )
+
+    @property
+    def entities(self):
+        return self._entities
 
     @property
     def colormap(self) -> np.ndarray:
@@ -67,10 +71,6 @@ class RankingTile(AbstractSymbolicTile):
     @rank.setter
     def rank(self, value: int):
         self._rank = value
-
-    @property
-    def entities(self) -> dict[int, Entity]:
-        return self.entities_list
 
     @property
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:

@@ -21,7 +21,7 @@ class EntityTile(AbstractSymbolicTile):
         resolution: int = 1001,
     ):
         self._rank = rank
-        self._entities_list = entities_list
+        self._entities = entities_list
         self._colormap = get_colors(len(entities_list))
         self._performance = FiniteSetOfTwoClassClassificationPerformances(
             [ent.performance for ent in entities_list]
@@ -33,9 +33,12 @@ class EntityTile(AbstractSymbolicTile):
             name=name,
             parameterization=parameterization,
             flavor=flavor,
-            entities_list=entities_list,
             resolution=resolution,
         )
+
+    @property
+    def entities(self):
+        return self._entities
 
     @property
     def colormap(self) -> np.ndarray:
@@ -52,10 +55,6 @@ class EntityTile(AbstractSymbolicTile):
     @rank.setter
     def rank(self, value: int):
         self._rank = value
-
-    @property
-    def entities(self) -> dict[int, Entity]:
-        return self.entities_list
 
     @property
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
