@@ -390,40 +390,48 @@ class Conic(AbstractGeometricObject2D):
             plt_kwargs: options for Pyplot's plot command.
         """
 
-        x_min = extent[0]
-        x_max = extent[1]
+        x_min, x_max, y_min, y_max = extent
         assert x_max > x_min
+        assert y_max > y_min
+
         x = np.linspace(x_min, x_max, 1000)
 
         def draw_y_fct_of_x(f):
             y = f(x)
+            y[y < y_min] = np.nan
+            y[y > y_max] = np.nan
             grad = jax.grad(f)
-            g = grad(x)
+            g = np.empty(x.shape)
+            for i in range(x.size):
+                if np.isfinite(y[i]):
+                    g[i] = grad(x[i])
+                else:
+                    g[i] = np.nan
             ok = np.logical_and(np.isfinite(y), -1.0 <= g, g <= 1.0)
             ko = np.logical_not(ok)
             y[ko] = np.nan
-            y[y < y_min] = np.nan
-            y[y > y_max] = np.nan
-            ax.plot(x, y, "-", plt_kwargs)
+            ax.plot(x, y, "-", **plt_kwargs)
 
         draw_y_fct_of_x(self.getSmallestY)
         draw_y_fct_of_x(self.getLargestY)
 
-        y_min = extent[2]
-        y_max = extent[3]
-        assert y_max > y_min
         y = x  # = np.linspace(y_min, y_max, 1000)
 
         def draw_x_fct_of_y(f):
             x = f(y)
+            x[x < x_min] = np.nan
+            x[x > x_max] = np.nan
             grad = jax.grad(f)
-            g = grad(y)
+            g = np.empty(y.shape)
+            for i in range(y.size):
+                if np.isfinite(x[i]):
+                    g[i] = grad(y[i])
+                else:
+                    g[i] = np.nan
             ok = np.logical_and(np.isfinite(x), -1.0 <= g, g <= 1.0)
             ko = np.logical_not(ok)
             x[ko] = np.nan
-            x[x < x_min] = np.nan
-            x[x > x_max] = np.nan
-            ax.plot(x, y, "-", plt_kwargs)
+            ax.plot(x, y, "-", **plt_kwargs)
 
         draw_x_fct_of_y(self.getSmallestX)
         draw_x_fct_of_y(self.getLargestX)
