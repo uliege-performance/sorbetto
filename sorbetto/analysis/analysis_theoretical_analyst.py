@@ -1,3 +1,5 @@
+from typing import Callable
+
 import numpy as np
 import scipy.stats
 
@@ -6,11 +8,11 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.distribution.distribution_two_class_classification import (
     AbstractDistributionOfTwoClassClassificationPerformances,
 )
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.abstract_numeric_tile import AbstractNumericTile
+from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
 from sorbetto.tile.correlation_tile import CorrelationTile
 
 
@@ -24,7 +26,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
         self,
         performances: np.ndarray
         | AbstractDistributionOfTwoClassClassificationPerformances,
-        score: list | callable | RankingScore,
+        score: list | Callable | RankingScore,
         parameterization: AbstractParameterization,
         resolution: int = 1001,
         colormap: str = None,  # FIXME: it should not be only a string... should include option to clamp colorbar, choose min/max, etc.
@@ -96,7 +98,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getPearsonCorrelationTile(
         self,
-    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.pearsonr
         return CorrelationTile(
             self._parameterization,
@@ -109,7 +111,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getKendallCorrelationTile(
         self,
-    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.kendalltau
         return CorrelationTile(
             self._parameterization,
@@ -122,7 +124,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getSpearmanCorrelationTile(
         self,
-    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.spearmanr
         return CorrelationTile(
             self._parameterization,
