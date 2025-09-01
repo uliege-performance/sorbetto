@@ -82,4 +82,4 @@ class EntityFlavor(AbstractSymbolicFlavor):
         return 0.0
 
     def getUpperBound(self):
-        return 1
+        return self.nb_entities - 1

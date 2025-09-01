@@ -197,28 +197,23 @@ class AbstractTile(ABC):
                 vmin=0.8,
                 vmax=1.0,
             )
+
+            fig.colorbar(ax.images[0], ax=ax)
+
+            ax.set_xlim(parameterization.getBoundsParameter1())
+            ax.set_ylim(parameterization.getBoundsParameter2())
         elif isinstance(self._flavor, AbstractSymbolicFlavor):
             # FIXME and/or add stuff there
             ax.imshow(
                 tile,
                 origin="lower",
-                cmap=self._flavor.getDefaultColormap(),
+                # cmap=self._flavor.getDefaultColormap(),
             )
 
-        # TODO should be annotation
-        ax.contour(
-            A,
-            B,
-            tile,
-            origin="lower",
-            levels=np.arange(0.4, 1.01, 0.1),
-            colors="red",
-            linewidths=1,
-        )
-        fig.colorbar(ax.images[0], ax=ax)
+            # TODO add extent based on parametrization
 
-        ax.set_xlim(parameterization.getBoundsParameter1())
-        ax.set_ylim(parameterization.getBoundsParameter2())
+        # TODO should be annotation
+
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
         ax.set_aspect("equal")

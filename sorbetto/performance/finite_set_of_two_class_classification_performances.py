@@ -47,10 +47,10 @@ class FiniteSetOfTwoClassClassificationPerformances:
             )
 
         self._name = name
-        self._ptn = np.array([])
-        self._pfp = np.array([])
-        self._pfn = np.array([])
-        self._ptp = np.array([])
+        self._ptn = np.array([perf.ptn for perf in self._performance_list])
+        self._pfp = np.array([perf.pfp for perf in self._performance_list])
+        self._pfn = np.array([perf.pfn for perf in self._performance_list])
+        self._ptp = np.array([perf.ptp for perf in self._performance_list])
 
     @staticmethod
     def from_array(array_tn_fp_fn_tp):
