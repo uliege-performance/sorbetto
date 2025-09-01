@@ -29,7 +29,7 @@ class ValueFlavor(AbstractNumericFlavor):
             ifn = importance.ifn
             itp = importance.itp
         elif isinstance(importance, np.ndarray):
-            assert importance.shape[1] == 4
+            assert importance.shape[-1] == 4
             itn = importance[:, 0]
             ifp = importance[:, 1]
             ifn = importance[:, 2]

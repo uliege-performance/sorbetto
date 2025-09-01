@@ -1,8 +1,10 @@
 import math
 
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
-from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
+from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -10,9 +12,7 @@ from sorbetto.parameterization.parameterization_default import ParameterizationD
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
-from sorbetto.tile.abstract_tile import AbstractTile
-
-# from sorbetto.tile.numeric_tile import AbstractNumericTile
+from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
 
 
 def __vut_default_param(ptn, pfp, pfn, ptp):
@@ -51,12 +51,12 @@ def __vut_default_param(ptn, pfp, pfn, ptp):
         return 0.5 - 0.5 * num / den
 
 
-class ValueTile(AbstractTile):
+class ValueTile(AbstractNumericalTile):
     def __init__(
         self,
         name: str,
         parameterization: AbstractParameterization,
-        flavor: AbstractSymbolicFlavor,
+        flavor: AbstractNumericFlavor,
         performance: TwoClassClassificationPerformance,
         resolution: int = 1001,
     ):
@@ -133,3 +133,25 @@ class ValueTile(AbstractTile):
             line_1, line_2, "pencil for performance {}".format(self._performance)
         )
         return pencil
+
+    def draw(self, fig: Figure, ax: Axes):
+        A = self.sample_A
+        B = self.sample_B
+
+        tile = self(A, B, performance=self.performance).T
+        ax.imshow(
+            tile.T,
+            origin="lower",
+            cmap=self._flavor.getDefaultColormap(),
+            extent=(
+                self._flavor.getLowerBound(),
+                self._flavor.getUpperBound(),
+                self._flavor.getLowerBound(),
+                self._flavor.getUpperBound(),
+            ),
+            vmin=0.8,
+            vmax=1.0,
+        )
+
+    def getExplanation(self) -> str:
+        return "Explanation for this tile is not implemented yet"
