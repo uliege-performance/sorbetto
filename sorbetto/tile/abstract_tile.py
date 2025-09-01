@@ -20,14 +20,14 @@ class AbstractTile(ABC):
         self,
         name: str,
         parameterization: AbstractParameterization,
-        flavor: AbstractFlavor,
+        flavor: AbstractFlavor | None = None,
         resolution: int = 1001,
     ):
         """
         Args:
             parameterization (AbstractParameterization): The parameterization to be used
                 for the tile.
-            flavor (AbstractFlavor): The flavor to use.
+            flavor (AbstractFlavor | None, optional): The flavor to use. Defaults to None.
             resolution (int, optional): Resolution of the tile. Defaults to 1001.
             name (str | None, optional): Name of the tile. Defaults to None.
 
@@ -40,10 +40,11 @@ class AbstractTile(ABC):
             )
         self._parameterization = parameterization
 
-        if not isinstance(flavor, AbstractFlavor):
-            raise TypeError(
-                f"flavor must be an instance of AbstractFlavor, got {type(flavor)}"
-            )
+        if flavor is not None:
+            if not isinstance(flavor, AbstractFlavor):
+                raise TypeError(
+                    f"flavor must be an instance of AbstractFlavor, got {type(flavor)}"
+                )
         self._flavor = flavor
 
         if not isinstance(resolution, int):
@@ -147,8 +148,14 @@ class AbstractTile(ABC):
 
     def delAnnotation(self, annotation): ...  # TODO
 
-    @abstractmethod
-    def draw(self, fig, ax): ...  # TODO
+    def draw(self, fig, ax):
+        parameterization = self.parameterization
+        ax.set_xlim(parameterization.getBoundsParameter1())
+        ax.set_ylim(parameterization.getBoundsParameter2())
+        ax.set_xlabel(parameterization.getNameParameter1())
+        ax.set_ylabel(parameterization.getNameParameter2())
+        ax.set_aspect("equal")
+        ax.set_title("Tile")
 
     def __call__(
         self,
