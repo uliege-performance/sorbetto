@@ -113,7 +113,7 @@ class RankingScore:
         Kab = (ptp1 - ptn1) * (pfn2 - pfp2) - (ptp2 - ptn2) * (pfn1 - pfp1)
 
         # a x^2 + b x y + c y^2 + d x + e y + f = 0
-        return Conic(0, Kab, 0, Ka, Kb, K, "equivalent")
+        return Conic(0.0, Kab, 0.0, Ka, Kb, K, "equivalent")
 
     def isCanonical(self, tol=1e-8) -> bool:
         """
