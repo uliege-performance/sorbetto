@@ -62,3 +62,6 @@ class EmptyTile(AbstractTile):
 
     def getColormap(self) -> np.ndarray:
         return None
+
+    def flavorCall(self, importance):
+        return None
