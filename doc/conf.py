@@ -59,3 +59,7 @@ bibtex_default_style = "plain"
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+html_logo = "images/sorbetto_banner.svg"
+html_theme_options = {
+    "logo_only": True,
+}
