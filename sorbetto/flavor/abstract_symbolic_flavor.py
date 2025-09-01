@@ -13,5 +13,5 @@ class AbstractSymbolicFlavor(AbstractFlavor):
         super().__init__(name)
 
     @abstractmethod
-    def getCodomain(self) -> set:
+    def getCoDomain(self) -> set:
         pass
