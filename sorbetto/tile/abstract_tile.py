@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
+from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
+from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
-from sorbetto.parameterization.parameterization_default import (
-    ParameterizationDefault,
-)  # TODO : it is not logical to have this import here.
 
 
 class AbstractTile(ABC):
@@ -96,6 +98,12 @@ class AbstractTile(ABC):
         return self._parameterization
 
     @property
+    def importances(self):
+        return self.parameterization.getCanonicalImportanceVectorized(
+            self.sample_A, self.sample_B
+        )
+
+    @property
     def flavor(self) -> AbstractFlavor | None:
         return self._flavor
 
@@ -148,36 +156,110 @@ class AbstractTile(ABC):
 
     def delAnnotation(self, annotation): ...  # TODO
 
-    def draw(self, fig, ax):
+    def draw(self, fig: Figure | None = None, ax: Axes | None = None):
+        """Draws the Tile in the given figure and axes.
+
+        Args:
+            fig (Figure | None, optional): The figure to draw in. If None, a new
+                figure is created. Defaults to None.
+            ax (Axes | None, optional): The axes to draw in. If None, a new axis is
+                created. Defaults to None. Note that this argument is ignored if fig
+                is None.
+
+
+        Returns:
+            The figure and axes used for drawing.
+        """
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.gca()
+        elif ax is None:
+            ax = fig.gca()
+
         parameterization = self.parameterization
+
+        A = self.sample_A
+        B = self.sample_B
+
+        tile = self.compute_tile(A, B)
+
+        if isinstance(self._flavor, AbstractNumericFlavor):
+            ax.imshow(
+                tile,
+                origin="lower",
+                cmap=self._flavor.getDefaultColormap(),
+                extent=(
+                    self._flavor.getLowerBound(),
+                    self._flavor.getUpperBound(),
+                    self._flavor.getLowerBound(),
+                    self._flavor.getUpperBound(),
+                ),
+                vmin=0.8,
+                vmax=1.0,
+            )
+        elif isinstance(self._flavor, AbstractSymbolicFlavor):
+            # FIXME and/or add stuff there
+            ax.imshow(
+                tile,
+                origin="lower",
+                cmap=self._flavor.getDefaultColormap(),
+            )
+
+        # TODO should be annotation
+        ax.contour(
+            A,
+            B,
+            tile,
+            origin="lower",
+            levels=np.arange(0.4, 1.01, 0.1),
+            colors="red",
+            linewidths=1,
+        )
+        fig.colorbar(ax.images[0], ax=ax)
+
         ax.set_xlim(parameterization.getBoundsParameter1())
         ax.set_ylim(parameterization.getBoundsParameter2())
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
         ax.set_aspect("equal")
-        ax.set_title("Tile")
+        ax.set_xlabel(self.parameterization.getNameParameter1())
+        ax.set_ylabel(self.parameterization.getNameParameter2())
+        ax.set_title(self.name)
 
-    def __call__(
+        return fig, ax
+
+    @abstractmethod
+    def flavorCall(self, importance: np.ndarray) -> np.ndarray:
+        """Calls the flavor.
+
+        This function must be implemented in subclasses. The only argument is
+        `importance`, which is a numpy array of shape ({{*self.resolution}}, 4)
+        containing the sampled importances. Other arguments must be "hardcoded"
+        directly in the subclass implementation of this function.
+        """
+        ...
+
+    def compute_tile(
         self,
         param1: list[float] | np.ndarray | None = None,  # TODO: or float ?
         param2: list[float] | np.ndarray | None = None,  # TODO: or float ?
-        *args,
-        **kwargs,
     ):  # uses `flavor ( importances )`.
-        if self.flavor is None:
-            return np.array([])
-
         if not isinstance(param1, (np.ndarray)):
             param1 = np.array(param1)
         if not isinstance(param2, (np.ndarray)):
             param2 = np.array(param2)
 
-        # TODO : should be self.getParameterization ().getCanonicalImportanceVectorized ...
-        importances = ParameterizationDefault().getCanonicalImportanceVectorized(
+        importance = self.parameterization.getCanonicalImportanceVectorized(
             param1, param2
         )
 
-        return self.flavor(importance=importances, *args, **kwargs)
+        if self.flavor is None:
+            return np.zeros_like(importance.shape[:-1])
+
+        return self.flavorCall(importance=importance)
+
+    def __call__(self, param1: np.ndarray, param2: np.ndarray) -> np.ndarray:
+        return self.compute_tile(param1, param2)
 
     def __str__(self) -> str:  # TODO
         return self.name
