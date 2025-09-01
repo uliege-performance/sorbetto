@@ -38,23 +38,22 @@ class ValueFlavor(AbstractNumericFlavor):
             ifn = importance[..., 2]
             itp = importance[..., 3]
 
-        if isinstance(
-            performance,
-            (
-                TwoClassClassificationPerformance,
-                FiniteSetOfTwoClassClassificationPerformances,
-            ),
-        ):
+        if isinstance(performance, (TwoClassClassificationPerformance)):
             ptn = performance.ptn
             pfp = performance.pfp
             pfn = performance.pfn
             ptp = performance.ptp
+        elif isinstance(performance, (FiniteSetOfTwoClassClassificationPerformances)):
+            ptn = performance.ptn[:, np.newaxis, np.newaxis]
+            pfp = performance.pfp[:, np.newaxis, np.newaxis]
+            pfn = performance.pfn[:, np.newaxis, np.newaxis]
+            ptp = performance.ptp[:, np.newaxis, np.newaxis]
         elif isinstance(performance, np.ndarray):
             assert performance.shape[-1] == 4
-            ptn = performance[..., 0]
-            pfp = performance[..., 1]
-            pfn = performance[..., 2]
-            ptp = performance[..., 3]
+            ptn = performance[..., 0][:, np.newaxis, np.newaxis]
+            pfp = performance[..., 1][:, np.newaxis, np.newaxis]
+            pfn = performance[..., 2][:, np.newaxis, np.newaxis]
+            ptp = performance[..., 3][:, np.newaxis, np.newaxis]
 
         return RankingScore._compute(
             itn=itn,
