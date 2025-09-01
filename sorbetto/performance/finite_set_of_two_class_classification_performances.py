@@ -141,6 +141,9 @@ class FiniteSetOfTwoClassClassificationPerformances:
     def __iter__(self):
         return iter(self._performance_list)
 
+    def __len__(self):
+        return len(self._performance_list)
+
 
 if __name__ == "__main__":
     import numpy as np
