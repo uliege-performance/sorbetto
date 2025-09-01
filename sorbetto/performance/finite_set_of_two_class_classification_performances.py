@@ -47,6 +47,10 @@ class FiniteSetOfTwoClassClassificationPerformances:
             )
 
         self._name = name
+        self._ptn = np.array([])
+        self._pfp = np.array([])
+        self._pfn = np.array([])
+        self._ptp = np.array([])
 
     @staticmethod
     def from_array(array_tn_fp_fn_tp):
@@ -57,6 +61,29 @@ class FiniteSetOfTwoClassClassificationPerformances:
             )
             performance_list.append(performance)
         return FiniteSetOfTwoClassClassificationPerformances(performance_list)
+
+    @property
+    def ptn(self) -> np.ndarray:
+        return self._ptn
+
+    @property
+    def pfp(self) -> np.ndarray:
+        return self._pfp
+
+    @property
+    def pfn(self) -> np.ndarray:
+        return self._pfn
+
+    @property
+    def ptp(self) -> np.ndarray:
+        return self._ptp
+
+    # NOTE: if we add or remove a performance, we must call this method
+    def update_probabilities(self):
+        self._ptn = np.array([perf.ptn for perf in self._performance_list])
+        self._pfp = np.array([perf.pfp for perf in self._performance_list])
+        self._pfn = np.array([perf.pfn for perf in self._performance_list])
+        self._ptp = np.array([perf.ptp for perf in self._performance_list])
 
     @property
     def performance_list(self) -> list[TwoClassClassificationPerformance]:
