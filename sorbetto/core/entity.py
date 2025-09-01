@@ -34,6 +34,12 @@ class Entity:
 
     @property
     def performance(self) -> TwoClassClassificationPerformance:
+        """
+        The result of the evaluation of the entity, that is its performance.
+
+        Returns:
+            TwoClassClassificationPerformance: The entity's performance
+        """
         return self._performance
 
     def __str__(self):
