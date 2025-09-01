@@ -1,5 +1,5 @@
 ---
-title: 'Sorbetto: A Python Package for Producing Classification Tiles With Different Flavors'
+title: 'sorbetto: A Python Package for Producing Classification Tiles With Different Flavors'
 tags:
   - Python
   - performance
@@ -37,7 +37,9 @@ bibliography: paper.bib
 # Summary
 [comment]: # (Summary of the high-level functionality of your software for a non-specialist reader. Avoid jargon in this section.)
 
-This is the summary. 
+`sorbetto` is a Python package to understand or/and visualize performances of two-class classifiers, designed to meet the needs of both researchers and praticionners.
+With `sorbetto`
+The Tile is a recently introduced visualization tool organizing an infinity of ranking scores into a 2D map. Thanks to the Tile, it is now possi- ble to compare classifiers efficiently, displaying all possible application-specific preferences instead of having to rely on a pair of scores.
 
 # Statement of need
 [comment]: # (Statement of need section that clearly illustrates the research purpose of the software, give the target audience, and places it in the context of related work.)
