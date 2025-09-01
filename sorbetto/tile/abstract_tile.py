@@ -4,7 +4,9 @@ import numpy as np
 
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
-from sorbetto.parameterization.parameterization_default import ParameterizationDefault
+from sorbetto.parameterization.parameterization_default import (
+    ParameterizationDefault,
+)  # TODO : it is not logical to have this import here.
 
 
 class AbstractTile(ABC):
@@ -115,10 +117,10 @@ class AbstractTile(ABC):
     @abstractmethod
     def getExplanation(self) -> str: ...  # TODO
 
-    @abstractmethod
+    # TODO: @abstractmethod ???
     def getParameterization(self) -> AbstractParameterization: ...  # TODO
 
-    @abstractmethod
+    # TODO: @abstractmethod ???
     def getFlavor(self) -> AbstractFlavor: ...  # TODO
 
     @abstractmethod
