@@ -13,7 +13,7 @@ class RankingInducedByScore(AbstractRanking):
 
     def __init__(self, entities, score, name=None):
         # Precompute a few things.
-        vals = [score(entity.evaluate()) for entity in entities]
+        vals = [score(entity.performance) for entity in entities]
         vals = np.asarray(vals)
         self._vals = vals
 
@@ -23,7 +23,7 @@ class RankingInducedByScore(AbstractRanking):
         self._sorted_idx = idxs
         self._dico_entities = {entity: idx for idx, entity in zip(idxs, entities)}
 
-        N = len(self._entities)
+        N = len(entities)
 
         # num_lt = [ sum([v < val for v in vals]) for val in vals ]
         num_lt = np.searchsorted(vals, vals, side="left", sorter=idxs)
