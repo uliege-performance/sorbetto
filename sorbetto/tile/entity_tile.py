@@ -1,6 +1,5 @@
 import numpy as np
 
-from sorbetto.core.entity import Entity
 from sorbetto.flavor.entity_flavor import EntityFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
@@ -16,22 +15,20 @@ class EntityTile(AbstractSymbolicTile):
         name: str,
         parameterization: AbstractParameterization,
         flavor: EntityFlavor,
-        entities_list: list[Entity],
         resolution: int = 1001,
     ):
-        self._rank = flavor._rank
-        self._entities = flavor._entity_list
-        self._colormap = get_colors(len(entities_list))
-        self._performance = flavor._performances
-
-        self.value_tile = None
-
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
         )
+        self._rank = flavor._rank
+        self._entities = flavor._entity_list
+        self._colormap = get_colors(len(self._entities))
+        self._performance = flavor._performances
+
+        self.value_tile = None
 
     @property
     def entities(self):
