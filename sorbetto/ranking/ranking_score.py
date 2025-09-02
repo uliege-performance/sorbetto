@@ -15,7 +15,7 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     _parse_performance,
 )
 from sorbetto.performance.roc import setupROC
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 
@@ -76,8 +76,8 @@ class RankingScore:
                 itn, ifp, ifn, itp
             )
         elif not isinstance(name, str):
-            value = str(name)
-        self._name = value
+            name = str(name)
+        self._name = name
         self._abbreviation = None
 
     @property
@@ -87,7 +87,7 @@ class RankingScore:
     @abbreviation.setter
     def abbreviation(self, abbreviation):
         assert isinstance(abbreviation, str)
-        if abbreviation is not None:
+        if self._abbreviation is not None:
             raise RuntimeError("The name should be set before the abbreviation")
         else:
             self._abbreviation = abbreviation
@@ -99,7 +99,7 @@ class RankingScore:
     @symbol.setter
     def symbol(self, symbol):
         assert isinstance(symbol, str)
-        if symbol is not None:
+        if self._symbol is not None:
             raise RuntimeError("The abbreviation should be set before the symbol")
         else:
             self._symbol = symbol
@@ -512,7 +512,7 @@ class RankingScore:
         )
         name = "Inverse F-score for β={:g}".format(beta)
         abbreviation = "F{:g}-Inv".format(beta)
-        symbol = "$F_{}{}$".format("{:g}".format(beta), "\textrm{-}Inv")
+        symbol = "$F_{}{}$".format("{:g}".format(beta), "\\textrm{-}Inv")
         return RankingScore(
             importance, name=name, abbreviation=abbreviation, symbol=symbol
         )
