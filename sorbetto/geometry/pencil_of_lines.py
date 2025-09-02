@@ -104,12 +104,22 @@ class PencilOfLines(AbstractGeometricObject2D):
             sin = np.sin(theta)
             cos = np.cos(theta)
             line = self.getLine(sin, cos)
-            line.draw(fig, ax, extent, plt_kwargs)  # TODO: draw dashed
+            if plt_kwargs is None:
+                plt_kwargs_bis = dict()
+            else:
+                plt_kwargs_bis = plt_kwargs.copy()
+            plt_kwargs_bis["linestyle", ":"]  # dashed line
+            line.draw(fig, ax, extent, plt_kwargs_bis)
         for theta in np.linspace(0.0 * np.pi, 0.5 * np.pi, n):
             sin = np.sin(theta)
             cos = np.cos(theta)
             line = self.getLine(sin, cos)
-            line.draw(fig, ax, extent, plt_kwargs)  # TODO: draw solid
+            if plt_kwargs is None:
+                plt_kwargs_bis = dict()
+            else:
+                plt_kwargs_bis = plt_kwargs.copy()
+            plt_kwargs_bis["linestyle", "-"]  # solid line
+            line.draw(fig, ax, extent, plt_kwargs_bis)
         vertex = self.getVertex()
         vertex.draw(fig, ax, extent, plt_kwargs)
 
