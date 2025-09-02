@@ -38,7 +38,7 @@ class AnnotationText(AbstractAnnotation):
 
     def draw(self, tile: AbstractTile, fig, ax) -> None:
         assert isinstance(tile, AbstractTile)
-        parameterization = tile.getParameterization()
+        parameterization = tile.parameterization
         location = self._location
         if isinstance(location, Importance):
             importance = location
@@ -63,7 +63,8 @@ class AnnotationText(AbstractAnnotation):
             return
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
-        ax.plot(x, y, "o", self._plt_kwargs)
+        print(self._plt_kwargs)
+        ax.plot(x, y, "o", **self._plt_kwargs)
         if x < center_x:
             if y < center_y:
                 ax.text(x, y, self.name, ha="left", va="bottom")
