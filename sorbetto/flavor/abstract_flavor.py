@@ -12,12 +12,24 @@ class AbstractFlavor(ABC):
     importance values.
     """
 
-    def __init__(self, name: str = "Default Flavor"):
+    def __init__(self, name: str = "Unnamed Flavor"):
         assert isinstance(name, str)
         self.name = name
 
     @abstractmethod
-    def __call__(self, importance: Importance | np.ndarray, *args, **kwargs) -> Any: ...
+    def __call__(self, importance: Importance | np.ndarray) -> Any:
+        """Computes the value of the flavor for the given importance value(s).
+
+
+        Args:
+            importance (Importance | np.ndarray): The importance value(s). Either a
+                single Importance object or a numpy array of shape (..., 4), in which
+                case the last dimension corresponds to (itn, ifp, ifn, itp).
+
+
+        Returns:
+            The value of the flavor evaluated at the given importance(s)
+        """
 
     @abstractmethod
     def getDefaultColormap(self) -> Any: ...

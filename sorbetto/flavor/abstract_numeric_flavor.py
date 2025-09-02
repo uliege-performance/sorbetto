@@ -10,7 +10,7 @@ class AbstractNumericFlavor(AbstractFlavor):
     given importance values.
     """
 
-    def __init__(self, name: str = "Default Numeric Flavor"):
+    def __init__(self, name: str = "Unnamed Numeric Flavor"):
         super().__init__(name)
 
     @abstractmethod

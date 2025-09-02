@@ -9,9 +9,15 @@ class AbstractSymbolicFlavor(AbstractFlavor):
     given importance values.
     """
 
-    def __init__(self, name: str = "Default Symbolic Flavor"):
+    def __init__(self, name: str = "Unnamed Symbolic Flavor"):
         super().__init__(name)
 
     @abstractmethod
-    def getCoDomain(self) -> set:
+    def getCodomain(self) -> set:
+        """Returns the codomain of the flavor.
+        See https://en.wikipedia.org/wiki/Codomain
+
+        Returns:
+            The codomain of the flavor.
+        """
         pass
