@@ -1,7 +1,6 @@
-# import numpy as np
 import logging
 import math
-from typing import Self, cast
+from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,11 +8,13 @@ import numpy as np
 from sorbetto.core.importance import Importance, _parse_importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
+from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
     _parse_performance,
 )
+from sorbetto.performance.roc import setupROC
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
@@ -21,13 +22,20 @@ from sorbetto.performance.two_class_classification import (
 
 class RankingScore:
     def __init__(
-        self, importance: Importance, constraint=None, name: str | None = None
+        self,
+        importance: Importance,
+        constraint=None,
+        name: str | None = None,
+        abbreviation: str | None = None,
+        symbol: str | None = None,
     ):
         """
         Args:
             importance (Importance): _description_
             constraint (_type_, optional): _description_. Defaults to None.
             name (str | None, optional): _description_. Defaults to None.
+            abbreviation (str | None, optional): _description_. Defaults to None.
+            symbol (str | None, optional): _description_. Defaults to None.
 
         Raises:
             TypeError: _description_
@@ -45,25 +53,56 @@ class RankingScore:
                 )
         self._constraint = constraint
 
+        self._name = None
+        self._abbreviation = None
+        self._symbol = None
+
         self.name = name
+        self.abbreviation = abbreviation
+        self.symbol = symbol
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, value):
-        itn = self._importance.itn
-        ifp = self._importance.ifp
-        ifn = self._importance.ifn
-        itp = self._importance.itp
-        if value is None:
-            value = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
+    def name(self, name):
+        if name is None:
+            itn = self._importance.itn
+            ifp = self._importance.ifp
+            ifn = self._importance.ifn
+            itp = self._importance.itp
+            name = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
                 itn, ifp, ifn, itp
             )
-        elif not isinstance(value, str):
-            value = str(value)
+        elif not isinstance(name, str):
+            value = str(name)
         self._name = value
+        self._abbreviation = None
+
+    @property
+    def abbreviation(self):
+        return self._abbreviation
+
+    @abbreviation.setter
+    def abbreviation(self, abbreviation):
+        assert isinstance(abbreviation, str)
+        if abbreviation is not None:
+            raise RuntimeError("The name should be set before the abbreviation")
+        else:
+            self._abbreviation = abbreviation
+
+    @property
+    def symbol(self):
+        return self._symbol
+
+    @symbol.setter
+    def symbol(self, symbol):
+        assert isinstance(symbol, str)
+        if symbol is not None:
+            raise RuntimeError("The abbreviation should be set before the symbol")
+        else:
+            self._symbol = symbol
 
     @property
     def importance(self) -> Importance:
@@ -131,12 +170,6 @@ class RankingScore:
         canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
         canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
         return canonical_for_satisfying and canonical_for_unsatisfying
-
-    def toPABDC(self) -> Self:
-        """
-        See :cite:t:`Pierard2024TheTile-arxiv`, Example 3.
-        """
-        ...  # TODO: implement
 
     def drawInROC(self, fig, ax, priorPos: float) -> None:
         """
@@ -211,49 +244,51 @@ class RankingScore:
         if show_values_map and show_colorbar:
             fig.colorbar(im, ax=ax, label=self.name)  # type: ignore
 
-        if show_no_skills:
-            ax.plot([0, 1], [0, 1], "--", c="palevioletred")
-            ax.text(
-                0.5,
-                0.5,
-                "no-skill",
-                ha="center",
-                va="baseline",
-                rotation=45,
-                c="palevioletred",
-            )
+        setupROC(
+            fig,
+            ax,
+            priorPos=priorPos,
+            show_no_skills=show_no_skills,
+            show_priors=show_priors,
+            show_unbiased=show_unbiased,
+        )
 
-        if show_priors:
-            ax.plot(
-                [0, priorPos, priorPos], [priorPos, priorPos, 0], ":", c="palevioletred"
-            )
+    def getPencilInROC(self, priorPos) -> PencilOfLines:
+        assert isinstance(priorPos, float)
+        assert priorPos > 0
+        assert priorPos < 1
+        priorNeg = 1 - priorPos
 
-        if show_unbiased:
-            if priorPos <= 0.5:
-                ax.plot([0, priorPos / priorNeg], [1, 0], "--", c="palevioletred")
-            else:
-                ax.plot([0, 1], [1, 1 - priorNeg / priorPos], "--", c="palevioletred")
-            x = 0.5 * priorPos
-            y = 0.5 + 0.5 * priorPos
-            a = math.atan2(priorNeg, -priorPos) * 180.0 / math.pi
-            ax.text(
-                x,
-                y,
-                "unbiased",
-                ha="center",
-                va="baseline",
-                rotation=a,
-                c="palevioletred",
-            )
+        itn = self._importance.itn
+        ifp = self._importance.ifp
+        ifn = self._importance.ifn
+        itp = self._importance.itp
 
-        ax.set_xlim([0, 1])
-        ax.set_ylim([0, 1])
-        ax.set_xlabel("False Positive Rate (FPR)")
-        ax.set_ylabel("True Positive Rate (TPR)")
-        ax.set_aspect("equal")
-        ax.set_title("ROC for $\\pi_+={:g}$".format(priorPos))
+        # TODO: generalize what we do here:
+        # it could be useful to be able to find the line for any value
 
-    def getPencilInROC(self, priorPos) -> PencilOfLines: ...  # TODO: implement Seb
+        # When the score takes the value 0:
+        #     itn ptn + itp ptp = 0
+        # <=> itn ( (1-fpr) priorNeg ) + itp ( tpr priorPos ) = 0
+        # <=> fpr ( - itn priorNeg ) + tpr ( itp priorPos ) + ( itn priorNeg ) = 0
+        a = -itn * priorNeg
+        b = itp * priorPos
+        c = itn * priorNeg
+        line_0 = Line(a, b, c, "line for value 0")
+
+        # When the score takes the value 1:
+        #     ifp pfp + ifn pfn = 0
+        # <=> ifp ( fpr priorNeg ) + ifn ( (1-tpr) priorPos ) = 0
+        # <=> fpr ( ifp priorNeg ) + tpr ( - ifn priorPos ) + ( ifn priorPos ) = 0
+        a = ifp * priorNeg
+        b = -ifn * priorPos
+        c = ifn * priorPos
+        line_1 = Line(a, b, c, "line for value 1")
+
+        name = "pencil in ROC for score {} and a prior of positive class of {}".format(
+            self.name, priorPos
+        )
+        return PencilOfLines(line_0, line_1, name)
 
     @staticmethod
     def _compute(
@@ -302,31 +337,34 @@ class RankingScore:
         )
 
     @staticmethod
-    def getTrueNegativeRate() -> (
-        "RankingScore"
-    ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getTrueNegativeRate() -> "RankingScore":
         """
         True Negative Rate (TNR).
         Synonyms: specificity, selectivity, inverse recall.
         """
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=1, ifn=0, itp=0)
-        return RankingScore(importance, name="TNR")
+        name = "True Negative Rate"
+        abbreviation = "TNR"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
-    def getTruePositiveRate() -> (
-        "RankingScore"
-    ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getTruePositiveRate() -> "RankingScore":
         """
         True Positive Rate (TPR).
         Synonyms: sensitivity, recall.
         """
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=0, ifp=0, ifn=1, itp=1)
-        return RankingScore(importance, name="TPR")
+        name = "True Positive Rate"
+        abbreviation = "TPR"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
     def getSpecificity() -> "RankingScore":
         rs = RankingScore.getTrueNegativeRate()
         rs.name = "Specificity"
+        rs.abbreviation = "Sp"
         return rs
 
     @staticmethod
@@ -342,49 +380,55 @@ class RankingScore:
         return rs
 
     @staticmethod
-    def getNegativePredictiveValue() -> (
-        "RankingScore"
-    ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getNegativePredictiveValue() -> "RankingScore":
         """
         Negative Predictive Value (NPV).
         Synonym: inverse precision
         """
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=0, ifn=1, itp=0)
-        return RankingScore(importance, name="NPV")
+        name = "Negative Predictive Value"
+        abbreviation = "NPV"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
-    def getPositivePredictiveValue() -> (
-        "RankingScore"
-    ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getPositivePredictiveValue() -> "RankingScore":
         """
         Positive Predictive Value (PPV).
         Synonym: precision
         """
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=0, ifp=1, ifn=0, itp=1)
-        return RankingScore(importance, name="PPV")
+        name = "Positive Predictive Value"
+        abbreviation = "PPV"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
     def getPrecision() -> "RankingScore":
         rs = RankingScore.getPositivePredictiveValue()
         rs.name = "Precision"
+        rs.abbreviation = "Pr"
         return rs
 
     @staticmethod
     def getInversePrecision() -> "RankingScore":
         rs = RankingScore.getNegativePredictiveValue()
         rs.name = "Inverse Precision"
+        rs.abbreviation = "Pr-Inv"
         return rs
 
     @staticmethod
     def getRecall() -> "RankingScore":
         rs = RankingScore.getTruePositiveRate()
         rs.name = "Recall"
+        rs.abbreviation = "Re"
         return rs
 
     @staticmethod
     def getInverseRecall() -> "RankingScore":
         rs = RankingScore.getTrueNegativeRate()
         rs.name = "Inverse Recall"
+        rs.abbreviation = "Re-Inv"
         return rs
 
     @staticmethod
@@ -394,29 +438,36 @@ class RankingScore:
         Synonyms: Jaccard index, Jaccard similarity coefficient, Tanimoto coefficient, similarity, critical success index (CSI), threat score.
         """
         importance = Importance(itn=0, ifp=1, ifn=1, itp=1)
-        return RankingScore(importance, name="IoU")
+        name = "Intersection over Union"
+        abbreviation = "IoU"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
     def getInverseIntersectionOverUnion() -> "RankingScore":
         importance = Importance(itn=1, ifp=1, ifn=1, itp=0)
-        return RankingScore(importance, name="Inverse IoU")
+        name = "Inverse Intersection over Union"
+        abbreviation = "IoU-Inv"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
     def getJaccard() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "J"
+        rs.name = "Jaccard"
+        rs.abbreviation = "J"
         return rs
 
     @staticmethod
     def getInverseJaccard() -> "RankingScore":
         rs = RankingScore.getInverseIntersectionOverUnion()
-        rs.name = "Inverse J"
+        rs.name = "Inverse Jaccard"
+        rs.abbreviation = "J-Inv"
         return rs
 
     @staticmethod
     def getTanimotoCoefficient() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
         rs.name = "Tanimoto Coefficient"
+        rs.abbreviation = "TC"
         return rs
 
     @staticmethod
@@ -428,63 +479,79 @@ class RankingScore:
     @staticmethod
     def getCriticalSuccessIndex() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "CSI"
+        rs.name = "Critical Success Index"
+        rs.abbreviation = "CSI"
         return rs
 
     @staticmethod
-    def getF(
-        beta=1.0,
-    ) -> "RankingScore":  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
-        if beta < 0:
+    def getF(beta=1.0) -> "RankingScore":
+        if not isinstance(beta, float):
+            raise ValueError(f"beta must be a real number, got {beta}")
+        if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
-
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(
             itn=0, ifp=1 / (1 + beta**2), ifn=beta**2 / (1 + beta**2), itp=1
         )
-        return RankingScore(importance, name=f"F{beta}")
+        name = "F-score for β={:g}".format(beta)
+        abbreviation = "F{:g}".format(beta)
+        symbol = "$F_{}$".format("{:g}".format(beta))
+        return RankingScore(
+            importance, name=name, abbreviation=abbreviation, symbol=symbol
+        )
 
     @staticmethod
     def getInverseF(beta=1.0) -> "RankingScore":
-        if beta < 0:
+        if not isinstance(beta, float):
+            raise ValueError(f"beta must be a real number, got {beta}")
+        if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
 
         importance = Importance(
             itn=1, ifp=beta**2 / (1 + beta**2), ifn=1 / (1 + beta**2), itp=0
         )
-        return RankingScore(importance, name=f"Inverse F{beta}")
+        name = "Inverse F-score for β={:g}".format(beta)
+        abbreviation = "F{:g}-Inv".format(beta)
+        symbol = "$F_{}{}$".format("{:g}".format(beta), "\textrm{-}Inv")
+        return RankingScore(
+            importance, name=name, abbreviation=abbreviation, symbol=symbol
+        )
 
     @staticmethod
     def getDiceSorensenCoefficient() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "DSC"
+        rs.name = "Dice-Sørensen coefficient"
+        rs.abbreviation = "DSC"
         return rs
 
     @staticmethod
     def getZijdenbosSimilarityIndex() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "ZSI"
+        rs.name = "Zijdenbos Similarity Index"
+        rs.abbreviation = "ZSI"
         return rs
 
     @staticmethod
     def getCzekanowskiBinaryIndex() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "CBI"
+        rs.name = "Czekanowski Binary Index"
+        rs.abbreviation = "CBI"
         return rs
 
     @staticmethod
-    def getAccuracy() -> (
-        "RankingScore"
-    ):  # See :cite:t:`Pierard2025Foundations`, Section A.7.3
+    def getAccuracy() -> "RankingScore":
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=1, ifn=1, itp=1)
-        return RankingScore(importance, name="A")
+        name = "Accuracy"
+        abbreviation = "A"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
-    @staticmethod
-    def getMatchingCoefficient() -> (
-        "RankingScore"
-    ):  # SimpleMatchingCoefficient ??? Same as Jaccard ???
-        rs = RankingScore.getAccuracy()
-        rs.name = "MC"
-        return rs
+    # @staticmethod
+    # def getMatchingCoefficient() -> "RankingScore":
+    #     # SimpleMatchingCoefficient ??? Same as Jaccard ???
+    #     rs = RankingScore.getAccuracy()
+    #     rs.name = "MC"
+    #     return rs
 
     @staticmethod
     def getSkewInsensitiveVersionOfF(
