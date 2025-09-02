@@ -1,7 +1,4 @@
-import itertools
 from abc import ABC, abstractmethod
-
-import numpy as np
 
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
@@ -11,14 +8,11 @@ from sorbetto.performance.two_class_classification import (
 )
 
 
-def generate_grid(grid_size: int):
-    vec_fpr = vec_tpr = np.linspace(0, 1, num=grid_size)
-    mat_fpr, mat_tpr = np.meshgrid(vec_fpr, vec_tpr, indexing="xy")
-
-    return mat_fpr, mat_tpr
-
-
 class AbstractDistributionOfTwoClassClassificationPerformances(ABC):
+    """
+    This is the base class for all distributions of two-class classification performances.
+    """
+
     def __init__(self, name):
         self._name = name
 
@@ -28,17 +22,13 @@ class AbstractDistributionOfTwoClassClassificationPerformances(ABC):
     def name(self) -> str:
         return self._name
 
-    # def getSupport () -> ???
-
     @abstractmethod
     def drawAtRandom(
-        self, numPerformances
-    ) -> FiniteSetOfTwoClassClassificationPerformances:
-        pass
+        self, numPerformances: int
+    ) -> FiniteSetOfTwoClassClassificationPerformances: ...
 
     @abstractmethod
-    def getMean(self) -> TwoClassClassificationPerformance:
-        pass
+    def getMean(self) -> TwoClassClassificationPerformance: ...
 
     def __str__(self):
         txt = f"{self._name}: Distribution of two-class classification performances"
