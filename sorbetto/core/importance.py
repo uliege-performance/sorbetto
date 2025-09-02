@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Importance:
     """This class encodes some application-specific preferences.
     Currently, it is a random variable, called importance,
@@ -71,3 +74,42 @@ class Importance:
     def __str__(self):
         txt = f"[Importance] containing [TN:{self.itn}, FP:{self.ifp}, FN:{self.ifn}, TP:{self.itp}]"
         return txt
+
+
+# TODO get even better typing there (output as tuple of single type, based on inputs)
+def _parse_importance(
+    importance: Importance | list[Importance] | np.ndarray | None = None,
+    itn: float | np.ndarray | None = None,
+    ifp: float | np.ndarray | None = None,
+    ifn: float | np.ndarray | None = None,
+    itp: float | np.ndarray | None = None,
+) -> tuple[
+    float | np.ndarray,
+    float | np.ndarray,
+    float | np.ndarray,
+    float | np.ndarray,
+]:
+    if isinstance(importance, Importance):
+        itn_ = importance.itn
+        ifp_ = importance.ifp
+        ifn_ = importance.ifn
+        itp_ = importance.itp
+    elif isinstance(importance, np.ndarray):
+        assert importance.shape[-1] == 4
+        itn_ = importance[..., 0]
+        ifp_ = importance[..., 1]
+        ifn_ = importance[..., 2]
+        itp_ = importance[..., 3]
+    elif isinstance(importance, list):
+        itn_ = np.array([imp.itn for imp in importance])
+        ifp_ = np.array([imp.ifp for imp in importance])
+        ifn_ = np.array([imp.ifn for imp in importance])
+        itp_ = np.array([imp.itp for imp in importance])
+    else:
+        if (itn is None) or (ifp is None) or (ifn is None) or (itp is None):
+            raise ValueError(
+                "Either importance or all itn, ifp, ifn, itp must be provided."
+            )
+        itn_, ifp_, ifn_, itp_ = itn, ifp, ifn, itp
+
+    return itn_, ifp_, ifn_, itp_

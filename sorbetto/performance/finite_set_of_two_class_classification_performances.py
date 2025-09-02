@@ -145,6 +145,46 @@ class FiniteSetOfTwoClassClassificationPerformances:
         return len(self._performance_list)
 
 
+def _parse_performance(
+    performance: TwoClassClassificationPerformance
+    | FiniteSetOfTwoClassClassificationPerformances
+    | np.ndarray
+    | None = None,
+    ptn: float | np.ndarray | None = None,
+    pfp: float | np.ndarray | None = None,
+    pfn: float | np.ndarray | None = None,
+    ptp: float | np.ndarray | None = None,
+) -> tuple[
+    float | np.ndarray,
+    float | np.ndarray,
+    float | np.ndarray,
+    float | np.ndarray,
+]:
+    if isinstance(performance, TwoClassClassificationPerformance):
+        ptn_ = performance.ptn
+        pfp_ = performance.pfp
+        pfn_ = performance.pfn
+        ptp_ = performance.ptp
+    elif isinstance(performance, (FiniteSetOfTwoClassClassificationPerformances)):
+        ptn_ = performance.ptn[:, np.newaxis, np.newaxis]
+        pfp_ = performance.pfp[:, np.newaxis, np.newaxis]
+        pfn_ = performance.pfn[:, np.newaxis, np.newaxis]
+        ptp_ = performance.ptp[:, np.newaxis, np.newaxis]
+    elif isinstance(performance, np.ndarray):
+        assert performance.shape[-1] == 4
+        ptn_ = performance[..., 0][:, np.newaxis, np.newaxis]
+        pfp_ = performance[..., 1][:, np.newaxis, np.newaxis]
+        pfn_ = performance[..., 2][:, np.newaxis, np.newaxis]
+        ptp_ = performance[..., 3][:, np.newaxis, np.newaxis]
+    else:
+        if (ptn is None) or (pfp is None) or (pfn is None) or (ptp is None):
+            raise ValueError(
+                "Either performance or all ptn, pfp, pfn, ptp must be provided."
+            )
+        ptn_, pfp_, pfn_, ptp_ = ptn, pfp, pfn, ptp
+    return ptn_, pfp_, pfn_, ptp_
+
+
 if __name__ == "__main__":
     import numpy as np
 
