@@ -7,7 +7,7 @@ from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.parameterization.parameterization_default import ParameterizationDefault
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile

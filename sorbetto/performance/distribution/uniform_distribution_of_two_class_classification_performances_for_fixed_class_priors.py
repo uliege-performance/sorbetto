@@ -7,7 +7,7 @@ from sorbetto.performance.distribution.abstract_distribution_of_two_class_classi
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 

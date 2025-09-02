@@ -6,7 +6,7 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
     _parse_performance,
 )
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 from sorbetto.ranking.ranking_score import RankingScore

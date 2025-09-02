@@ -6,7 +6,7 @@ from scipy import stats
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.flavor.value_flavor import ValueFlavor
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 

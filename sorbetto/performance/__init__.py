@@ -1,4 +1,4 @@
-from .two_class_classification import TwoClassClassificationPerformance
+from .two_class_classification_performance import TwoClassClassificationPerformance
 
 __all__ = [
     "TwoClassClassificationPerformance",
