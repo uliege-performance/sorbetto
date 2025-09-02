@@ -6,7 +6,7 @@ from sorbetto.performance.two_class_classification import (
 
 
 class ConstraintFixedClassPriors:
-    def __init__(self, priorPos):
+    def __init__(self, priorPos: float):
         assert isinstance(priorPos, float)
         assert priorPos >= 0.0
         assert priorPos <= 1.0
