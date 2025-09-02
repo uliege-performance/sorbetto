@@ -10,6 +10,9 @@ from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
     _parse_performance,
@@ -79,6 +82,7 @@ class RankingScore:
             name = str(name)
         self._name = name
         self._abbreviation = None
+        self._symbol = None
 
     @property
     def abbreviation(self):
@@ -171,7 +175,18 @@ class RankingScore:
         canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
         return canonical_for_satisfying and canonical_for_unsatisfying
 
-    def drawInROC(self, fig, ax, priorPos: float) -> None:
+    def drawInROC(
+        self,
+        fig,
+        ax,
+        priorPos: float,
+        show_values_map: bool = True,
+        show_iso_value_lines: bool = True,
+        show_colorbar: bool = True,
+        show_no_skills: bool = True,
+        show_priors: bool = True,
+        show_unbiased: bool = True,
+    ) -> None:
         """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
@@ -179,16 +194,20 @@ class RankingScore:
             fig (_type_): _description_
             ax (_type_): _description_
             priorPos (float): prior of the positive class $\\pi_+ \\in (0,1)$
+            show_values_map (bool, optional): _description_. Defaults to True.
+            show_iso_value_lines (bool, optional): _description_. Defaults to True.
+            show_colorbar (bool, optional): _description_. Defaults to True.
+            show_no_skills (bool, optional): _description_. Defaults to True.
+            show_priors (bool, optional): _description_. Defaults to True.
+            show_unbiased (bool, optional): _description_. Defaults to True.
         """
 
-        # Configure here what we want to show:
-        # TODO: create an argument for all of this instead of hardcoding it
-        show_values_map = True
-        show_iso_value_lines = True
-        show_colorbar = True
-        show_no_skills = True
-        show_priors = True
-        show_unbiased = True
+        assert isinstance(show_values_map, bool)
+        assert isinstance(show_iso_value_lines, bool)
+        assert isinstance(show_colorbar, bool)
+        assert isinstance(show_no_skills, bool)
+        assert isinstance(show_priors, bool)
+        assert isinstance(show_unbiased, bool)
 
         # Check priors
         assert isinstance(priorPos, float)
@@ -554,56 +573,100 @@ class RankingScore:
     #     return rs
 
     @staticmethod
-    def getSkewInsensitiveVersionOfF(
-        priorPos,
-    ) -> "RankingScore":  # TODO: implement constraint
+    def getSkewInsensitiveVersionOfF(priorPos: float) -> "RankingScore":
         """
         The skew-insensitive version of $\\scoreFOne$.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
-        ...
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        importance = NotImplemented  # TODO
+        name = "Skew Insensitive Version of F"
+        abbreviation = "SIVF"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
-    def getWeightedAccuracy(
-        priorPos, weightPos
-    ) -> "RankingScore":  # TODO: implement constraint.
-        ...  # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
+    def getWeightedAccuracy(priorPos: float, weightPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        assert isinstance(weightPos, float)
+        assert weightPos >= 0
+        assert weightPos <= 1
+        # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
+        importance = NotImplemented  # TODO
+        name = "Weighted Accuracy ({:g})".format(weightPos)
+        abbreviation = "WA"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
-    def getBalancedAccuracy(priorPos) -> "RankingScore":  # TODO: implement constraint
-        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+    def getBalancedAccuracy(priorPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        importance = NotImplemented  # TODO
+        name = "Balanced Accuracy"
+        abbreviation = "BA"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
-    def getProbabilityTrueNegative(
-        priorPos,
-    ) -> "RankingScore":  # TODO: implement constraint
-        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+    def getProbabilityTrueNegative(priorPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        importance = NotImplemented  # TODO
+        name = "Probability of True Negative"
+        abbreviation = "PTN"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
-    def getProbabilityFalsePositiveComplenent(
-        priorPos,
-    ) -> "RankingScore":  # TODO: implement constraint
-        ...
+    def getProbabilityFalsePositiveComplenent(priorPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        importance = NotImplemented  # TODO
+        name = "Complement of the Probability of False Positive"
+        return RankingScore(importance, constraint=constraint, name=name)
 
     @staticmethod
-    def getProbabilityFalseNegativeComplenent(
-        priorPos,
-    ) -> "RankingScore":  # TODO: implement constraint
-        ...
+    def getProbabilityFalseNegativeComplenent(priorPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        importance = NotImplemented  # TODO
+        name = "Complement of the Probability of False Negative"
+        return RankingScore(importance, constraint=constraint, name=name)
 
     @staticmethod
-    def getProbabilityTruePositive(
-        priorPos,
-    ) -> "RankingScore":  # TODO: implement constraint
-        ...  # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+    def getProbabilityTruePositive(priorPos: float) -> "RankingScore":
+        # The argument `priorPos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedClassPriors(priorPos)
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        importance = NotImplemented  # TODO
+        name = "Probability of True Positive"
+        abbreviation = "PTP"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
-    def getDetectionRate(priorPos) -> "RankingScore":  # TODO: implement constraint
-        ...
+    def getDetectionRate(priorPos: float) -> "RankingScore":
+        rs = RankingScore.getProbabilityTruePositive(priorPos)
+        rs.name = "Detection Rate"
+        rs.abbreviation = "DR"
+        return rs
 
     @staticmethod
-    def getRejectionRate(priorPos) -> "RankingScore":  # TODO: implement constraint
-        ...
+    def getRejectionRate(priorPos: float) -> "RankingScore":
+        rs = RankingScore.getProbabilityTrueNegative(priorPos)
+        rs.name = "Rejection Rate"
+        rs.abbreviation = "RR"
+        return rs
 
     def __str__(self):
         return f"Ranking Score: {self._name} with importance {str(self._importance)}"
