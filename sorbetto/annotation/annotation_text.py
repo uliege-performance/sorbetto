@@ -2,7 +2,7 @@ from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.asbtract_tile import AbstractTile
+from sorbetto.tile.abstract_tile import AbstractTile
 
 
 class AnnotationText(AbstractAnnotation):
