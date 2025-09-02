@@ -1,14 +1,15 @@
 import numpy as np
 
+from sorbetto.core.entity import Entity
 from sorbetto.core.importance import Importance
-from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
+from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.ranking_score import RankingScore
 
 
-class RankingFlavor(AbstractSymbolicFlavor):
+class RankingFlavor(AbstractNumericFlavor):
     """
     For a given rank $r$, the *Entity Flavor* is the mathematical function that
     gives, to any Importance $I$  (that is, some application-specific preferences), the
@@ -16,74 +17,46 @@ class RankingFlavor(AbstractSymbolicFlavor):
     Ranking Score $R_I$ corresponding to the importance $I$.
     """
 
-    def __init__(self, name: str = "Entity Flavor"):
+    def __init__(
+        self,
+        entity: Entity,
+        entity_list: list[Entity],
+        name: str = "Unnamed Ranking Flavor",
+    ):
         super().__init__(name)
-
-        self.nb_entities = 0
+        self._entity = entity
+        self._entity_list = entity_list
+        self._nb_entities = len(entity_list)
+        self._performances = FiniteSetOfTwoClassClassificationPerformances(
+            [e.performance for e in entity_list]
+        )
+        for i, e in enumerate(self._entity_list):
+            if e is entity:
+                self._id_entity = i
+                break
+        else:
+            raise ValueError("The given entity was not found in the given entity list.")
 
     def __call__(
         self,
-        id_entity: int,
         importance: Importance | np.ndarray,
-        performance: FiniteSetOfTwoClassClassificationPerformances,
     ) -> float | np.ndarray:
-        self.nb_entities = len(performance)
-        if isinstance(importance, Importance):
-            itn = importance.itn
-            ifp = importance.ifp
-            ifn = importance.ifn
-            itp = importance.itp
-        elif isinstance(importance, np.ndarray):
-            assert importance.shape[-1] == 4
-            itn = importance[..., 0]
-            ifp = importance[..., 1]
-            ifn = importance[..., 2]
-            itp = importance[..., 3]
-
-        if isinstance(
-            performance,
-            (FiniteSetOfTwoClassClassificationPerformances,),
-        ):
-            ptn = performance.ptn[:, np.newaxis, np.newaxis]
-            pfp = performance.pfp[:, np.newaxis, np.newaxis]
-            pfn = performance.pfn[:, np.newaxis, np.newaxis]
-            ptp = performance.ptp[:, np.newaxis, np.newaxis]
-        elif isinstance(performance, np.ndarray):
-            assert performance.shape[-1] == 4
-            ptn = performance[..., 0][:, np.newaxis, np.newaxis]
-            pfp = performance[..., 1][:, np.newaxis, np.newaxis]
-            pfn = performance[..., 2][:, np.newaxis, np.newaxis]
-            ptp = performance[..., 3][:, np.newaxis, np.newaxis]
-
         values = RankingScore._compute(
-            itn=itn,
-            ifp=ifp,
-            ifn=ifn,
-            itp=itp,
-            ptn=ptn,
-            pfp=pfp,
-            pfn=pfn,
-            ptp=ptp,
+            importance=importance, performance=self._performances
         )
 
+        # TODO check behaviour of argsort(argsort()) with multiple identical values
+        # and allow user to choose between 'min', 'max', 'mean', ...
         ranks = np.argsort(-values, axis=0)
-
         rank_entities = np.argsort(ranks, axis=0)
-
-        return rank_entities[id_entity]
+        return rank_entities[self._id_entity]
 
     def getDefaultColormap(self):
         # FIXME discrete colormap
         return "rainbow"
 
-    def getCoDomain(self):
-        """Returns the co-domain of the flavor.
-        In Entity flavor, the co-domain is the set of all possible ranks.
-        """
-        return np.arange(0, len(self.performances))
-
     def getLowerBound(self):
         return 0.0
 
     def getUpperBound(self):
-        return self.nb_entities - 1
+        return self._nb_entities - 1

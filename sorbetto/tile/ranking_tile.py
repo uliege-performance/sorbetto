@@ -14,36 +14,25 @@ class RankingTile(AbstractNumericalTile):
     def __init__(
         self,
         name: str,
-        entity_id: str | int,
+        entity: Entity,
         parameterization: AbstractParameterization,
         flavor: RankingFlavor,
-        entities_list: list[Entity],
+        entity_list: list[Entity],
         resolution: int = 1001,
     ):
-        if isinstance(entity_id, str):
-            i = 0
-            while i < len(entities_list):
-                if entities_list[i].name == entity_id:
-                    self._entity_id = entities_list[i].id
-                    break
-                i += 1
+        self._entities = entity_list
 
-        elif isinstance(entity_id, int):
-            self._entity_id = entity_id
-
+        for i, e in enumerate(self._entities):
+            if e is entity:
+                self._id_entity = i
+                break
         else:
-            raise NotImplementedError(
-                "Entity ID must be either a string or an integer."
-            )
+            raise ValueError("The given entity was not found in the given entity list.")
 
-        self._colormap = get_colors(len(entities_list))
+        self._colormap = get_colors(len(entity_list))
         self._performance = FiniteSetOfTwoClassClassificationPerformances(
-            [ent.performance for ent in entities_list]
+            [ent.performance for ent in entity_list]
         )
-
-        self.value_tile = None
-
-        self._entities = entities_list
 
         super().__init__(
             name=name,
@@ -81,10 +70,9 @@ class RankingTile(AbstractNumericalTile):
         self._performance = value
 
     def flavorCall(self, importance):
+        assert self.flavor is not None
         return self.flavor(
-            id_entity=self._entity_id,
             importance=importance,
-            performance=self.performance,
         )
 
     def getExplanation(self):
