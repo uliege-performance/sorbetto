@@ -95,10 +95,9 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
     def getMean(self) -> TwoClassClassificationPerformance:
         """
-        The mean is know as the summarized performance as well as Fawcett's interpolated performance.
-
+        The mean is know as the summarized performance :cite:t:`Pierard2020Summarizing`
+        as well as Fawcett's interpolated performance :cite:t:`Fawcett2006AnIntroduction`.
         """
-
         ...  # TODO
 
     def getRange(self, score) -> tuple[float, float]:
