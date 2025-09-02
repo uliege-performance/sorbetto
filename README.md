@@ -1,4 +1,6 @@
-# sorbetto
+![sorbetto banner](doc/src/images/sorbetto_banner.svg)
+
+# Sorbetto
 
 Sorbetto: a Python Library for Producing Classification Tiles With Different Flavors
 
