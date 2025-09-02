@@ -25,7 +25,7 @@ class AnnotationText(AbstractAnnotation):
             label (str | None, optional): _description_. Defaults to None.
         """
 
-        assert isinstance(location, [Importance, RankingScore, Point])
+        assert isinstance(location, (Importance, RankingScore, Point))
         self._location = location
 
         if label is not None:
