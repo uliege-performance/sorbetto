@@ -1,15 +1,19 @@
 # import numpy as np
 import logging
 import math
-from typing import Self
+from typing import Self, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from sorbetto.core.importance import Importance
+from sorbetto.core.importance import Importance, _parse_importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
+from sorbetto.performance.finite_set_of_two_class_classification_performances import (
+    FiniteSetOfTwoClassClassificationPerformances,
+    _parse_performance,
+)
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
@@ -252,7 +256,27 @@ class RankingScore:
     def getPencilInROC(self, priorPos) -> PencilOfLines: ...  # TODO: implement Seb
 
     @staticmethod
-    def _compute(itn, ifp, ifn, itp, ptn, pfp, pfn, ptp) -> float:
+    def _compute(
+        importance: Importance | list[Importance] | np.ndarray | None = None,
+        performance: TwoClassClassificationPerformance
+        | FiniteSetOfTwoClassClassificationPerformances
+        | np.ndarray
+        | None = None,
+        itn: float | np.ndarray | None = None,
+        ifp: float | np.ndarray | None = None,
+        ifn: float | np.ndarray | None = None,
+        itp: float | np.ndarray | None = None,
+        ptn: float | np.ndarray | None = None,
+        pfp: float | np.ndarray | None = None,
+        pfn: float | np.ndarray | None = None,
+        ptp: float | np.ndarray | None = None,
+    ):
+        itn, ifp, ifn, itp = _parse_importance(
+            importance=importance, itn=itn, ifp=ifp, ifn=ifn, itp=itp
+        )
+        ptn, pfp, pfn, ptp = _parse_performance(
+            performance=performance, ptn=ptn, pfp=pfp, pfn=pfn, ptp=ptp
+        )
         satisfying = ptn * itn + ptp * itp
         unsatisfying = pfp * ifp + pfn * ifn
         return satisfying / (satisfying + unsatisfying)
@@ -263,15 +287,18 @@ class RankingScore:
                 f"Performance {performance} does not satisfy the constraint of "
                 f"the ranking score {self._name}"
             )
-        return RankingScore._compute(
-            self._importance.itn,
-            self._importance.ifp,
-            self._importance.ifn,
-            self._importance.itp,
-            performance.ptn,
-            performance.pfp,
-            performance.pfn,
-            performance.ptp,
+        return cast(
+            float,
+            RankingScore._compute(
+                itn=self._importance.itn,
+                ifp=self._importance.ifp,
+                ifn=self._importance.ifn,
+                itp=self._importance.itp,
+                ptn=performance.ptn,
+                pfp=performance.pfp,
+                pfn=performance.pfn,
+                ptp=performance.ptp,
+            ),
         )
 
     @staticmethod
