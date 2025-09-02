@@ -55,6 +55,9 @@ doc = [
     "sphinxcontrib-bibtex",
     "nbsphinx",
     "sphinx-gallery",
+
+    # TODO remove when nbsphinx supports Sphinx 8.2
+    "sphinxcontrib-apidoc",
 ]
 
 [project.urls]

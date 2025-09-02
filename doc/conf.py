@@ -15,7 +15,6 @@ author = "Sebastien Pierard et al."
 
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.apidoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
@@ -23,26 +22,45 @@ extensions = [
     "sphinxcontrib.bibtex",
     "nbsphinx",
     "sphinx_gallery.load_style",
+    # TODO uncomment when nbsphinx will support Sphinx 8.2
+    # "sphinx.ext.apidoc",
+    # TODO remove when nbsphinx will support Sphinx 8.2
+    "sphinxcontrib.apidoc",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-apidoc_modules = [
-    {
-        "path": "../sorbetto",
-        "destination": "api",
-        "separate_modules": True,
-        "no_headings": False,
-        "module_first": True,
-        "max_depth": 1,
-        "automodule_options": {
-            "members",
-            "undoc-members",
-            "show-inheritance",
-        },
-    }
-]
+# TODO uncomment when nbsphinx will support Sphinx 8.2
+# apidoc_modules = [
+#     {
+#         "path": "../sorbetto",
+#         "destination": "api",
+#         "separate_modules": True,
+#         "no_headings": False,
+#         "module_first": True,
+#         "max_depth": 1,
+#         "automodule_options": {
+#             "members",
+#             "undoc-members",
+#             "show-inheritance",
+#         },
+#     }
+# ]
+
+# TODO remove when nbsphinx will support Sphinx 8.2
+apidoc_module_dir = "../sorbetto"
+apidoc_output_dir = "api"
+apidoc_separate_modules = True
+apidoc_module_first = True
+apidoc_toc_file = False
+apidoc_extra_args = ["-d", "1"]
+autodoc_default_options = {
+    "show-inheritance": True,
+    "undoc-members": True,
+    "members": True,
+}
+
 
 mathjax3_config = {
     "tex": {
