@@ -6,7 +6,7 @@ from sorbetto.performance.two_class_classification import (
 
 
 class ConstraintFixedPredictionRates:
-    def __init__(self, ratePos):
+    def __init__(self, ratePos: float):
         assert isinstance(ratePos, float)
         assert ratePos >= 0.0
         assert ratePos <= 1.0
