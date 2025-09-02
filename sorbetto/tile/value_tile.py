@@ -136,7 +136,6 @@ class ValueTile(AbstractNumericalTile):
         assert self.flavor is not None
         return self.flavor(
             importance=importance,
-            performance=self.performance,
         )
 
     def getExplanation(self) -> str:
