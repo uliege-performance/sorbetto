@@ -43,6 +43,9 @@ class UniformDistributionOfTwoClassClassificationPerformances(
         )
 
     def getMean(self) -> TwoClassClassificationPerformance:
+        """
+        Computes the mean of the distribution.
+        """
         ptn = 0.25
         pfp = 0.25
         pfn = 0.25
