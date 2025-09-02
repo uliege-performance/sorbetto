@@ -1,13 +1,15 @@
 import itertools
 import logging
 
+import numpy as np
+
 from sorbetto.performance.distribution.abstract_distribution_of_two_class_classification_performances import (
     AbstractDistributionOfTwoClassClassificationPerformances,
 )
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.performance.two_class_classification import (
+from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 
@@ -30,7 +32,15 @@ class UniformDistributionOfTwoClassClassificationPerformances(
     def drawAtRandom(
         self, numPerformances
     ) -> FiniteSetOfTwoClassClassificationPerformances:
-        raise NotImplementedError()  # TODO
+        concentration_parameters = [1, 1, 1, 1]  # for uniform
+        mat = np.random.dirichlet(concentration_parameters, size=numPerformances)
+        # ptn = mat [ :, 0 ]
+        # pfp = mat [ :, 1 ]
+        # pfn = mat [ :, 2 ]
+        # ptp = mat [ :, 3 ]
+        return FiniteSetOfTwoClassClassificationPerformances(
+            mat, name="random performances"
+        )
 
     def getMean(self) -> TwoClassClassificationPerformance:
         ptn = 0.25
