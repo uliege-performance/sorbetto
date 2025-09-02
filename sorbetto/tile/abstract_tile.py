@@ -194,14 +194,9 @@ class AbstractTile(ABC):
                 tile,
                 origin="lower",
                 cmap=self._flavor.getDefaultColormap(),
-                extent=(
-                    self._flavor.getLowerBound(),
-                    self._flavor.getUpperBound(),
-                    self._flavor.getLowerBound(),
-                    self._flavor.getUpperBound(),
-                ),
-                vmin=0.8,
-                vmax=1.0,
+                extent=self.parameterization.getExtent(),
+                vmin=self._flavor.getLowerBound(),
+                vmax=self._flavor.getUpperBound(),
             )
 
             fig.colorbar(ax.images[0], ax=ax)
