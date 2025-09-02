@@ -1,9 +1,10 @@
 import numpy as np
 
-from sorbetto.core.importance import Importance
+from sorbetto.core.importance import Importance, _parse_importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
+    _parse_performance,
 )
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
@@ -42,49 +43,12 @@ class ValueFlavor(AbstractNumericFlavor):
         pfn: float | np.ndarray | None = None,
         ptp: float | np.ndarray | None = None,
     ):
-        if isinstance(importance, Importance):
-            itn = importance.itn
-            ifp = importance.ifp
-            ifn = importance.ifn
-            itp = importance.itp
-        elif isinstance(importance, np.ndarray):
-            assert importance.shape[-1] == 4
-            itn = importance[..., 0]
-            ifp = importance[..., 1]
-            ifn = importance[..., 2]
-            itp = importance[..., 3]
-        elif isinstance(importance, list):
-            itn = np.array([imp.itn for imp in importance])
-            ifp = np.array([imp.ifp for imp in importance])
-            ifn = np.array([imp.ifn for imp in importance])
-            itp = np.array([imp.itp for imp in importance])
-        else:
-            if (itn is None) or (ifp is None) or (ifn is None) or (itp is None):
-                raise ValueError(
-                    "Either importance or all itn, ifp, ifn, itp must be provided."
-                )
-
-        if isinstance(performance, TwoClassClassificationPerformance):
-            ptn = performance.ptn
-            pfp = performance.pfp
-            pfn = performance.pfn
-            ptp = performance.ptp
-        elif isinstance(performance, (FiniteSetOfTwoClassClassificationPerformances)):
-            ptn = performance.ptn[:, np.newaxis, np.newaxis]
-            pfp = performance.pfp[:, np.newaxis, np.newaxis]
-            pfn = performance.pfn[:, np.newaxis, np.newaxis]
-            ptp = performance.ptp[:, np.newaxis, np.newaxis]
-        elif isinstance(performance, np.ndarray):
-            assert performance.shape[-1] == 4
-            ptn = performance[..., 0][:, np.newaxis, np.newaxis]
-            pfp = performance[..., 1][:, np.newaxis, np.newaxis]
-            pfn = performance[..., 2][:, np.newaxis, np.newaxis]
-            ptp = performance[..., 3][:, np.newaxis, np.newaxis]
-        else:
-            if (ptn is None) or (pfp is None) or (pfn is None) or (ptp is None):
-                raise ValueError(
-                    "Either performance or all ptn, pfp, pfn, ptp must be provided."
-                )
+        itn, ifp, ifn, itp = _parse_importance(
+            importance=importance, itn=itn, ifp=ifp, ifn=ifn, itp=itp
+        )
+        ptn, pfp, pfn, ptp = _parse_performance(
+            performance=performance, ptn=ptn, pfp=pfp, pfn=pfn, ptp=ptp
+        )
 
         return RankingScore._compute(
             itn=itn,
