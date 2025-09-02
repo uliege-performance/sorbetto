@@ -1,4 +1,5 @@
 import itertools
+import logging
 
 from sorbetto.performance.distribution.abstract_distribution_of_two_class_classification_performances import (
     AbstractDistributionOfTwoClassClassificationPerformances,
@@ -14,8 +15,30 @@ from sorbetto.performance.two_class_classification import (
 class UniformDistributionOfTwoClassClassificationPerformances(
     AbstractDistributionOfTwoClassClassificationPerformances
 ):
+    """
+    All instances of this class represent the uniform distribution of two-class classification performances,
+    over the whole performance space. This is equivalent to a Dirichlet distribution with all concentration
+    parameters set to one.
+
+    See https://en.wikipedia.org/wiki/Continuous_uniform_distribution
+    See https://en.wikipedia.org/wiki/Dirichlet_distribution
+    """
+
     def __init__(self, name):
         super().__init__(name)
+
+    def drawAtRandom(
+        self, numPerformances
+    ) -> FiniteSetOfTwoClassClassificationPerformances:
+        raise NotImplementedError()  # TODO
+
+    def getMean(self) -> TwoClassClassificationPerformance:
+        ptn = 0.25
+        pfp = 0.25
+        pfn = 0.25
+        ptp = 0.25
+        name = 'mean of distribution "{}"'.format(self.name)
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
 
     def sampleOnRegularGrid(
         self, grid_size: int
@@ -32,7 +55,18 @@ class UniformDistributionOfTwoClassClassificationPerformances(
             Iterator[FiniteSetOfTwoClassClassificationPerformances]: _description_
         """
 
-        # TODO: implement a warning if grid_size is too large.
+        assert isinstance(grid_size, int)
+        assert grid_size > 0
+        if grid_size >= 300:
+            raise RuntimeError(
+                "You are asking for too many performances. Use a grid size smaller than 300."
+            )
+        elif grid_size >= 180:
+            logging.warning(
+                "You are asking for a huge amount of performances. With a grid size larger than 180, "
+                "you are going to obtain more than one million performances."
+            )
+
         def gen():
             ss = [0, 1, 2, 3]
             for seq in itertools.combinations_with_replacement(ss, grid_size):
