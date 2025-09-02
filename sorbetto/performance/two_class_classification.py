@@ -50,40 +50,40 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     @property
     def ptn(self) -> float:
         """
-        The probability of a true negative, $P( \{ tn \} )$.
+        The probability of a true negative, $P( \\{ tn \\} )$.
 
         Returns:
-            float: The probability of a true negative, $P( \{ tn \} )$.
+            float: The probability of a true negative, $P( \\{ tn \\} )$.
         """
         return self._ptn
 
     @property
     def pfp(self) -> float:
         """
-        The probability of a false positive, $P( \{ fp \} )$.
+        The probability of a false positive, $P( \\{ fp \\} )$.
 
         Returns:
-            float: The probability of a false positive, $P( \{ fp \} )$.
+            float: The probability of a false positive, $P( \\{ fp \\} )$.
         """
         return self._pfp
 
     @property
     def pfn(self) -> float:
         """
-        The probability of a false negative, $P( \{ fn \} )$.
+        The probability of a false negative, $P( \\{ fn \\} )$.
 
         Returns:
-            float: The probability of a false negative, $P( \{ fn \} )$.
+            float: The probability of a false negative, $P( \\{ fn \\} )$.
         """
         return self._pfn
 
     @property
     def ptp(self) -> float:
         """
-        The probability of a true positive, $P( \{ tp \} )$.
+        The probability of a true positive, $P( \\{ tp \\} )$.
 
         Returns:
-            float: The probability of a true positive, $P( \{ tp \} )$.
+            float: The probability of a true positive, $P( \\{ tp \\} )$.
         """
         return self._ptp
 
