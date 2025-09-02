@@ -16,16 +16,30 @@ class ValueFlavor(AbstractNumericFlavor):
     value taken by the Ranking Score $R_I$ corresponding to this importance.
     """
 
-    def __init__(self, name: str = "Value Flavor"):
-        super().__init__(name)
-
-    def __call__(
+    def __init__(
         self,
-        importance: Importance | np.ndarray,
+        performance: TwoClassClassificationPerformance,
+        name: str = "Unnamed Value Flavor",
+    ):
+        super().__init__(name)
+        self._performance = performance
+
+    @staticmethod
+    def _compute(
+        importance: Importance | list[Importance] | np.ndarray | None = None,
         performance: TwoClassClassificationPerformance
         | FiniteSetOfTwoClassClassificationPerformances
-        | np.ndarray,
-    ) -> float | np.ndarray:
+        | np.ndarray
+        | None = None,
+        itn: float | np.ndarray | None = None,
+        ifp: float | np.ndarray | None = None,
+        ifn: float | np.ndarray | None = None,
+        itp: float | np.ndarray | None = None,
+        ptn: float | np.ndarray | None = None,
+        pfp: float | np.ndarray | None = None,
+        pfn: float | np.ndarray | None = None,
+        ptp: float | np.ndarray | None = None,
+    ):
         if isinstance(importance, Importance):
             itn = importance.itn
             ifp = importance.ifp
@@ -37,8 +51,18 @@ class ValueFlavor(AbstractNumericFlavor):
             ifp = importance[..., 1]
             ifn = importance[..., 2]
             itp = importance[..., 3]
+        elif isinstance(importance, list):
+            itn = np.array([imp.itn for imp in importance])
+            ifp = np.array([imp.ifp for imp in importance])
+            ifn = np.array([imp.ifn for imp in importance])
+            itp = np.array([imp.itp for imp in importance])
+        else:
+            if (itn is None) or (ifp is None) or (ifn is None) or (itp is None):
+                raise ValueError(
+                    "Either importance or all itn, ifp, ifn, itp must be provided."
+                )
 
-        if isinstance(performance, (TwoClassClassificationPerformance)):
+        if isinstance(performance, TwoClassClassificationPerformance):
             ptn = performance.ptn
             pfp = performance.pfp
             pfn = performance.pfn
@@ -54,6 +78,11 @@ class ValueFlavor(AbstractNumericFlavor):
             pfp = performance[..., 1][:, np.newaxis, np.newaxis]
             pfn = performance[..., 2][:, np.newaxis, np.newaxis]
             ptp = performance[..., 3][:, np.newaxis, np.newaxis]
+        else:
+            if (ptn is None) or (pfp is None) or (pfn is None) or (ptp is None):
+                raise ValueError(
+                    "Either performance or all ptn, pfp, pfn, ptp must be provided."
+                )
 
         return RankingScore._compute(
             itn=itn,
@@ -64,6 +93,15 @@ class ValueFlavor(AbstractNumericFlavor):
             pfp=pfp,
             pfn=pfn,
             ptp=ptp,
+        )
+
+    def __call__(
+        self,
+        importance: Importance | np.ndarray,
+    ) -> float | np.ndarray:
+        return self._compute(
+            importance=importance,
+            performance=self._performance,
         )
 
     def getDefaultColormap(self):
