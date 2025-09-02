@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from sorbetto.core.importance import Importance
+from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.performance.two_class_classification import (
@@ -112,8 +113,8 @@ class RankingScore:
         Kb = ptn1 * (pfn2 - pfp2) - ptn2 * (pfn1 - pfp1)
         Kab = (ptp1 - ptn1) * (pfn2 - pfp2) - (ptp2 - ptn2) * (pfn1 - pfp1)
 
-        # a x^2 + b x y + c y^2 + d x + e y + f = 0
-        return Conic(0.0, Kab, 0.0, Ka, Kb, K, "equivalent")
+        # return Conic(0.0, Kab, 0.0, Ka, Kb, K, "equivalent")
+        return BilinearCurve(Kab, Ka, Kb, K, "equivalent")
 
     def isCanonical(self, tol=1e-8) -> bool:
         """

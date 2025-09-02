@@ -1,3 +1,4 @@
+import logging
 import math
 
 import jax
@@ -20,6 +21,13 @@ class Conic(AbstractGeometricObject2D):
         assert isinstance(d, float)
         assert isinstance(e, float)
         assert isinstance(f, float)
+        if a == 0.0 and b == 0:
+            # FIXME: what happens if we initialize a BilinearCurve object, which in its __init__ calls
+            # the __init__ of its parent class Conic? In this case, I think that we will print the
+            # warning while we should not.
+            logging.warning(
+                "Using conic sections where the more efficient bilinear curves could be used."
+            )
         self._a = a
         self._b = b
         self._c = c
@@ -292,7 +300,7 @@ class Conic(AbstractGeometricObject2D):
         e = self._e
         f = self._f
 
-        #     a x^2 + b x y + c y^2 + d x + e y + f = 0 = 0
+        #     a x^2 + b x y + c y^2 + d x + e y + f = 0
         # <=> y^2 ( c ) + y^1 ( b x + e ) + y^0 ( a x^2 + d x + f ) = 0
 
         A = c
