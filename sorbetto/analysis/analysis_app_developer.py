@@ -43,7 +43,12 @@ class AnalysisForAppDeveloper(AbstractAnalysis):
             flavor=flavor,
             parameterization=self._parameterization,
             resolution=self._resolution,
+            name="Value Tile",
         )
 
     def getAdvice(self, fmt) -> str:  # fmt can be: txt, html, latex
         ...  # TODO
+
+    def genTiles(self):
+        # TODO ?
+        raise NotImplementedError("Method not implemented yet.")
