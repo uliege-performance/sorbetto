@@ -1,14 +1,9 @@
+import math
+
 import numpy as np
 
 from sorbetto.performance.abstract_performance import AbstractPerformance
-
-
-def getTpr(tp, fn):
-    return tp / (tp + fn)
-
-
-def getFpr(fp, tn):
-    return fp / (fp + tn)
+from sorbetto.performance.roc import setupROC
 
 
 class TwoClassClassificationPerformance(AbstractPerformance):
@@ -20,50 +15,111 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     tol = 1e-10
 
-    def __init__(self, ptn, pfp, pfn, ptp, name: str = "Two class P"):
+    def __init__(
+        self,
+        ptn,  # TODO: type ? float ?
+        pfp,  # TODO: type ? float ?
+        pfn,  # TODO: type ? float ?
+        ptp,  # TODO: type ? float ?
+        name: str = None,
+    ):
+        if False:  # TODO : @Simon est-ce OK pour toi ou veux-tu généraliser?
+            assert isinstance(ptn, float)
+            assert isinstance(pfp, float)
+            assert isinstance(pfn, float)
+            assert isinstance(ptp, float)
+            assert ptn >= 0
+            assert pfp >= 0
+            assert pfn >= 0
+            assert ptp >= 0
+            sum = ptn + pfp + pfn + ptp
+            assert math.isclose(sum, 1.0, abs_tol=1e-8)
+
         self._ptn = ptn
         self._pfp = pfp
         self._pfn = pfn
         self._ptp = ptp
 
+        if name is None:
+            name = "unnamed two-class classification performance"
+        else:
+            if not isinstance(name, str):
+                name = str(name)
         super().__init__(name=name)
 
     @property
     def ptn(self) -> float:
-        # P (tn)
+        """
+        The probability of a true negative, $P( \{ tn \} )$.
+
+        Returns:
+            float: The probability of a true negative, $P( \{ tn \} )$.
+        """
         return self._ptn
 
     @property
     def pfp(self) -> float:
-        # P (fp)
+        """
+        The probability of a false positive, $P( \{ fp \} )$.
+
+        Returns:
+            float: The probability of a false positive, $P( \{ fp \} )$.
+        """
         return self._pfp
 
     @property
     def pfn(self) -> float:
+        """
+        The probability of a false negative, $P( \{ fn \} )$.
+
+        Returns:
+            float: The probability of a false negative, $P( \{ fn \} )$.
+        """
         return self._pfn
 
     @property
     def ptp(self) -> float:
+        """
+        The probability of a true positive, $P( \{ tp \} )$.
+
+        Returns:
+            float: The probability of a true positive, $P( \{ tp \} )$.
+        """
         return self._ptp
 
     def getMassFunction(self):
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
     def isNoSkill(self) -> bool:
-        tpr = getTpr(self._ptp, self._pfn)
-        fpr = getFpr(self._pfp, self._ptn)
+        ptn = self._ptn
+        pfp = self._pfp
+        pfn = self._pfn
+        ptp = self._ptp
+
+        fpr = pfp / (ptn + pfp)
+        tpr = ptp / (pfn + ptp)
 
         return np.isclose(tpr, fpr, atol=self.tol)
 
     def isAboveNoSkills(self) -> bool:
-        tpr = getTpr(self._ptp, self._pfn)
-        fpr = getFpr(self._pfp, self._ptn)
+        ptn = self._ptn
+        pfp = self._pfp
+        pfn = self._pfn
+        ptp = self._ptp
+
+        fpr = pfp / (ptn + pfp)
+        tpr = ptp / (pfn + ptp)
 
         return (tpr - self.tol) >= fpr
 
     def isBelowNoSkills(self) -> bool:
-        tpr = getTpr(self._ptp, self._pfn)
-        fpr = getFpr(self._pfp, self._ptn)
+        ptn = self._ptn
+        pfp = self._pfp
+        pfn = self._pfn
+        ptp = self._ptp
+
+        fpr = pfp / (ptn + pfp)
+        tpr = ptp / (pfn + ptp)
 
         return (tpr + self.tol) <= fpr
 
@@ -85,9 +141,31 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         raise NotImplementedError()
 
     def drawInROC(self, fig, ax) -> None:
-        # TODO do we need the fig?
-        tpr = getTpr(self._ptp, self._pfn)
-        fpr = getFpr(self._pfp, self._ptn)
+        """
+        See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
+
+        Args:
+            fig (_type_): _description_
+            ax (_type_): _description_
+        """
+
+        ptn = self._ptn
+        pfp = self._pfp
+        pfn = self._pfn
+        ptp = self._ptp
+
+        fpr = pfp / (ptn + pfp)
+        tpr = ptp / (pfn + ptp)
+        priorPos = self._pfn + self._ptp
+
+        setupROC(
+            fig,
+            ax,
+            priorPos=priorPos,
+            show_no_skills=True,
+            show_priors=True,
+            show_unbiased=True,
+        )
 
         ax.plot(fpr, tpr, marker="o", label=self._name)
 
