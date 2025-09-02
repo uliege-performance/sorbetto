@@ -72,7 +72,7 @@ class EntityFlavor(AbstractSymbolicFlavor):
         # FIXME discrete colormap
         return "rainbow"
 
-    def getCoDomain(self):
+    def getCodomain(self):
         """Returns the co-domain of the flavor.
         In Entity flavor, the co-domain is the set of all possible ranks.
         """
