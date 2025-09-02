@@ -1,20 +1,24 @@
-.. sorbetto documentation master file, created by
-   sphinx-quickstart on Wed Aug 27 13:02:12 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to sorbetto's documentation!
+====================================
 
-sorbetto
-========
+Sorbetto is a Python Library for producing classification tiles with different
+flavors.
 
-This is the documentation for `sorbetto`. It will be completed over time.
+This documentation provides an introduction to the main concepts used in this
+library through interactive demos, as well as more advanced examples of usage
+scenarios. You will also find a complete API reference.
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
-   self
+   install
+   demos
    examples
+   contributing
+   authors
+   citing
    references
 
 .. toctree::

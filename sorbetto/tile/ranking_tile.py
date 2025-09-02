@@ -1,6 +1,5 @@
 import numpy as np
 
-from sorbetto.core.entity import Entity
 from sorbetto.flavor.ranking_flavor import RankingFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
@@ -14,32 +13,23 @@ class RankingTile(AbstractNumericalTile):
     def __init__(
         self,
         name: str,
-        entity: Entity,
         parameterization: AbstractParameterization,
         flavor: RankingFlavor,
-        entity_list: list[Entity],
         resolution: int = 1001,
     ):
-        self._entities = entity_list
-
-        for i, e in enumerate(self._entities):
-            if e is entity:
-                self._id_entity = i
-                break
-        else:
-            raise ValueError("The given entity was not found in the given entity list.")
-
-        self._colormap = get_colors(len(entity_list))
-        self._performance = FiniteSetOfTwoClassClassificationPerformances(
-            [ent.performance for ent in entity_list]
-        )
-
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
         )
+
+        self._entities = flavor._entity_list
+        self._performance = flavor._performances
+        self._id_entity = flavor._id_entity
+
+        # FIXME properly get colors from the Entities themselves
+        self._colormap = get_colors(len(self._entities))
 
     @property
     def entities(self):

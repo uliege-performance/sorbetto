@@ -1,5 +1,6 @@
 import numpy as np
 
+from sorbetto.core.entity import Entity
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
@@ -16,57 +17,31 @@ class EntityFlavor(AbstractSymbolicFlavor):
     Ranking Score $R_I$ corresponding to the importance $I$.
     """
 
-    def __init__(self, name: str = "Entity Flavor"):
+    def __init__(
+        self,
+        rank: int,
+        entity_list: list[Entity],
+        name: str = "Unnamed Entity Flavor",
+    ):
         super().__init__(name)
 
-        self.nb_entities = 0
+        self._rank = rank
+        self._entity_list = entity_list
+        self._nb_entities = len(entity_list)
+        self._performances = FiniteSetOfTwoClassClassificationPerformances(
+            [e.performance for e in entity_list]
+        )
 
     def __call__(
         self,
-        rank: int,
         importance: Importance | np.ndarray,
-        performance: FiniteSetOfTwoClassClassificationPerformances,
     ) -> float | np.ndarray:
-        self.nb_entities = len(performance)
-        if isinstance(importance, Importance):
-            itn = importance.itn
-            ifp = importance.ifp
-            ifn = importance.ifn
-            itp = importance.itp
-        elif isinstance(importance, np.ndarray):
-            assert importance.shape[-1] == 4
-            itn = importance[..., 0]
-            ifp = importance[..., 1]
-            ifn = importance[..., 2]
-            itp = importance[..., 3]
-
-        if isinstance(
-            performance,
-            (FiniteSetOfTwoClassClassificationPerformances,),
-        ):
-            ptn = performance.ptn[:, np.newaxis, np.newaxis]
-            pfp = performance.pfp[:, np.newaxis, np.newaxis]
-            pfn = performance.pfn[:, np.newaxis, np.newaxis]
-            ptp = performance.ptp[:, np.newaxis, np.newaxis]
-        elif isinstance(performance, np.ndarray):
-            assert performance.shape[-1] == 4
-            ptn = performance[..., 0][:, np.newaxis, np.newaxis]
-            pfp = performance[..., 1][:, np.newaxis, np.newaxis]
-            pfn = performance[..., 2][:, np.newaxis, np.newaxis]
-            ptp = performance[..., 3][:, np.newaxis, np.newaxis]
-
         values = RankingScore._compute(
-            itn=itn,
-            ifp=ifp,
-            ifn=ifn,
-            itp=itp,
-            ptn=ptn,
-            pfp=pfp,
-            pfn=pfn,
-            ptp=ptp,
+            importance=importance,
+            performance=self._performances,
         )
 
-        return np.argsort(-values, axis=0)[rank]
+        return np.argsort(-values, axis=0)[self._rank]
 
     def getDefaultColormap(self):
         # FIXME discrete colormap
@@ -76,10 +51,4 @@ class EntityFlavor(AbstractSymbolicFlavor):
         """Returns the co-domain of the flavor.
         In Entity flavor, the co-domain is the set of all possible ranks.
         """
-        return np.arange(0, len(self.performances))
-
-    def getLowerBound(self):
-        return 0.0
-
-    def getUpperBound(self):
-        return self.nb_entities - 1
+        return set(range(1, self._nb_entities + 1))

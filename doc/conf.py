@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "sorbetto"
+project = "Sorbetto"
 copyright = "2025, Sebastien Pierard et al."
 author = "Sebastien Pierard et al."
 
@@ -78,6 +78,9 @@ bibtex_default_style = "plain"
 html_theme = "sphinx_rtd_theme"
 # html_static_path = ["_static"]
 html_logo = "src/images/sorbetto_banner.svg"
+html_favicon = "src/images/sorbetto_logo.svg"
 html_theme_options = {
     "logo_only": True,
+    "collapse_navigation": False,
+    "titles_only": True,
 }
