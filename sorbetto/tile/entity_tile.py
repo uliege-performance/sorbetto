@@ -14,18 +14,15 @@ class EntityTile(AbstractSymbolicTile):
     def __init__(
         self,
         name: str,
-        rank: int,
         parameterization: AbstractParameterization,
         flavor: EntityFlavor,
         entities_list: list[Entity],
         resolution: int = 1001,
     ):
-        self._rank = rank
-        self._entities = entities_list
+        self._rank = flavor._rank
+        self._entities = flavor._entity_list
         self._colormap = get_colors(len(entities_list))
-        self._performance = FiniteSetOfTwoClassClassificationPerformances(
-            [ent.performance for ent in entities_list]
-        )
+        self._performance = flavor._performances
 
         self.value_tile = None
 
@@ -65,10 +62,9 @@ class EntityTile(AbstractSymbolicTile):
         self._performance = value
 
     def flavorCall(self, importance):
+        assert self.flavor is not None
         return self.flavor(
-            rank=self.rank,
             importance=importance,
-            performance=self.performance,
         )
 
     def getExplanation(self):
