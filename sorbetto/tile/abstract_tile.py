@@ -136,10 +136,14 @@ class AbstractTile(ABC):
         return self.resolution
 
     def getVecParam1(self) -> np.ndarray:
-        return self.sample_A
+        return (
+            self.sample_A
+        )  # TODO: self.sample_A does not exist. What is the meaning of A?
 
     def getVecParam2(self) -> np.ndarray:
-        return self.sample_B
+        return (
+            self.sample_B
+        )  # TODO: self.sample_B does not exist. What is the meaning of B?
 
     # @abstractmethod
     # def getMat(self) -> np.ndarray: ...  # TODO
@@ -183,7 +187,9 @@ class AbstractTile(ABC):
 
         tile = self.compute_tile(A, B)
 
-        if isinstance(self._flavor, AbstractNumericFlavor):
+        if isinstance(
+            self._flavor, AbstractNumericFlavor
+        ):  # TODO: remove this (illogical)
             ax.imshow(
                 tile,
                 origin="lower",
@@ -200,9 +206,9 @@ class AbstractTile(ABC):
 
             fig.colorbar(ax.images[0], ax=ax)
 
-            ax.set_xlim(parameterization.getBoundsParameter1())
-            ax.set_ylim(parameterization.getBoundsParameter2())
-        elif isinstance(self._flavor, AbstractSymbolicFlavor):
+        elif isinstance(
+            self._flavor, AbstractSymbolicFlavor
+        ):  # TODO: remove this (illogical)
             # FIXME and/or add stuff there
             ax.imshow(
                 tile,
@@ -214,11 +220,11 @@ class AbstractTile(ABC):
 
         # TODO should be annotation
 
+        ax.set_xlim(parameterization.getBoundsParameter1())
+        ax.set_ylim(parameterization.getBoundsParameter2())
+        ax.set_aspect("equal")
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
-        ax.set_aspect("equal")
-        ax.set_xlabel(self.parameterization.getNameParameter1())
-        ax.set_ylabel(self.parameterization.getNameParameter2())
         ax.set_title(self.name)
 
         return fig, ax
