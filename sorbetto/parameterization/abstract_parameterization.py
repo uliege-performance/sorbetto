@@ -30,6 +30,13 @@ class AbstractParameterization(ABC):
     def getBoundsParameter2(self) -> tuple[float, float]:
         pass
 
+    def getExtent(self):
+        min_x, max_x = self.getBoundsParameter1()
+        assert min_x < max_x
+        min_y, max_y = self.getBoundsParameter2()
+        assert min_y < max_y
+        return [min_x, max_x, min_y, max_y]
+
     def getCanonicalImportance(self, param1: float, param2: float) -> Importance:
         """Returns the canonical importance corresponding to the given parameters.
 
