@@ -2,7 +2,9 @@ import numpy as np
 
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
-from sorbetto.flavor.ranking_flavor import FiniteSetOfTwoClassClassificationPerformances
+from sorbetto.performance.finite_set_of_two_class_classification_performances import (
+    FiniteSetOfTwoClassClassificationPerformances,
+)
 from sorbetto.performance.two_class_classification import (
     TwoClassClassificationPerformance,
 )
