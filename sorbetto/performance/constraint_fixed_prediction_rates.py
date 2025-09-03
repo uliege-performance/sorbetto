@@ -17,10 +17,10 @@ class ConstraintFixedPredictionRates:
         value = performance.pfp + performance.ptp
         return math.isclose(value, self._ratePos, abs_tol=1e-8)
 
-    def getrateNeg(self):
+    def getRateNeg(self):
         return 1 - self._ratePos
 
-    def getratePos(self):
+    def getRatePos(self):
         return self._ratePos
 
     def __str__(self):
