@@ -24,6 +24,10 @@ class NumericTile(Tile):
             resolution=resolution,
         )
 
+    @property
+    def flavor(self) -> AbstractNumericFlavor:
+        return super().flavor  # type: ignore
+
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:
@@ -38,10 +42,10 @@ class NumericTile(Tile):
             self.mat_value,
             origin="lower",
             interpolation="bilinear",
-            cmap=self._flavor.getDefaultColormap(),
+            cmap=self.flavor.getDefaultColormap(),
             extent=self._zoom,  # extent is (left, right, bottom, top)
-            vmin=self._flavor.getLowerBound(),
-            vmax=self._flavor.getUpperBound(),
+            vmin=self.flavor.getLowerBound(),
+            vmax=self.flavor.getUpperBound(),
         )
         Tile.draw(self, fig, ax)
         return fig, ax

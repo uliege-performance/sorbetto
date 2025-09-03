@@ -1,14 +1,19 @@
 import logging
 from typing import Callable, Literal
 
+import numpy as np
 from scipy import stats
+from tqdm import tqdm
 
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
-from sorbetto.flavor.value_flavor import ValueFlavor
+from sorbetto.performance.finite_set_of_two_class_classification_performances import (
+    FiniteSetOfTwoClassClassificationPerformances,
+)
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
+from sorbetto.ranking.ranking_score import RankingScore
 
 
 class CorrelationFlavor(AbstractNumericFlavor):
@@ -20,50 +25,70 @@ class CorrelationFlavor(AbstractNumericFlavor):
     importance.
     """
 
-    def __init__(self, name: str = "Correlation Flavor"):
+    def __init__(
+        self,
+        performances: FiniteSetOfTwoClassClassificationPerformances,
+        score: Callable[
+            [
+                TwoClassClassificationPerformance
+                | FiniteSetOfTwoClassClassificationPerformances
+            ],
+            np.ndarray,
+        ],
+        correlation_coefficient: Literal[
+            "pearsonr", "spearmanr", "kendalltau"
+        ] = "pearsonr",
+        name: str = "Correlation Flavor",
+    ):
         super().__init__(name)
+        self._performances = performances
+        self._score = score
+        self._correlation_coefficient = correlation_coefficient
 
     def __call__(
         self,
-        importance: Importance,
-        performances: list[TwoClassClassificationPerformance],
-        X: Callable[
-            [
-                list[TwoClassClassificationPerformance]
-                | TwoClassClassificationPerformance
-            ],
-            float,
-        ],
-        correlation_coefficient: Literal["pearsonr", "spearmanr"],
+        importance: Importance | np.ndarray,
     ):
         try:  # try if X is vectorized
-            x_scores = X(performances)
+            x_scores = self._score(self._performances)
         except Exception as e:  # else fallback to loop
             logging.warning(
                 "The score given to the Correlation Flavor is not vectorized. "
                 "Continuing with sequential loop.\n"
                 f"Got : {e!r}.\n"
             )
-            x_scores = [X(p) for p in performances]
+            x_scores = [self._score(p) for p in self._performances]
 
-        value_flavor = ValueFlavor()
-        value_scores = [value_flavor(importance, p) for p in performances]
+        value_scores = RankingScore._compute(
+            importance=importance, performance=self._performances
+        )
 
-        if correlation_coefficient == "pearsonr":
-            return stats.pearsonr(x_scores, value_scores)
+        correlation = np.empty((value_scores.shape[1], value_scores.shape[2]))
+        if self._correlation_coefficient == "pearsonr":
 
-        elif correlation_coefficient == "spearmanr":
-            return stats.spearmanr(x_scores, value_scores)
+            def corr_func(x, y):
+                return stats.pearsonr(x, y).correlation  # type:ignore
+        elif self._correlation_coefficient == "spearmanr":
+
+            def corr_func(x, y):
+                return stats.spearmanr(x, y).correlation  # type:ignore
+        elif self._correlation_coefficient == "kendalltau":
+
+            def corr_func(x, y):
+                return stats.kendalltau(x, y).correlation  # type:ignore
         else:
             raise ValueError(
-                f"Unknown correlation coefficient: {correlation_coefficient}. "
+                f"Unknown correlation coefficient: {self._correlation_coefficient}. "
                 "Available options are 'pearsonr' and 'spearmanr'."
             )
 
-        # TODO how do we select the coefficient ? add more options ?
+        for x in tqdm(range(value_scores.shape[1])):
+            for y in range(value_scores.shape[2]):
+                correlation[x, y] = corr_func(x_scores, value_scores[:, x, y])
+        return correlation
 
     def getDefaultColormap(self):
-        return "gray"
+        return "gist_rainbow"
 
     def getLowerBound(self):
         return -1.0

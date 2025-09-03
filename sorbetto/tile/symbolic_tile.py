@@ -24,6 +24,10 @@ class SymbolicTile(Tile):
             resolution=resolution,
         )
 
+    @property
+    def flavor(self) -> AbstractSymbolicFlavor:
+        return super().flavor  # type: ignore
+
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:
@@ -37,10 +41,10 @@ class SymbolicTile(Tile):
             self.mat_value,
             origin="lower",
             interpolation="bilinear",
-            cmap=self._flavor.getDefaultColormap(),
+            cmap=self.flavor.getDefaultColormap(),
             extent=self._zoom,  # extent is (left, right, bottom, top)
             vmin=0,
-            vmax=len(self._flavor.getCodomain()) - 1,
+            vmax=len(self.flavor.getCodomain()) - 1,
         )
         Tile.draw(self, fig, ax)
         return fig, ax
