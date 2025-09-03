@@ -25,14 +25,20 @@ class AnnotationGeometric(AbstractAnnotation):
         assert isinstance(geom, AbstractGeometricObject2D)
         self._geom = geom
 
+        if name is None:
+            name = geom.name
+        else:
+            if not isinstance(name, str):
+                name = str(name)
+
         self._plt_kwargs = plt_kwargs
 
         AbstractAnnotation.__init__(self, name)
 
     def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
         assert isinstance(tile, Tile)
-        parameterization = tile.getParameterization()
+        parameterization = tile.parameterization
         min1, max1 = parameterization.getBoundsParameter1()
         min2, max2 = parameterization.getBoundsParameter2()
         extent = [min1, max1, min2, max2]
-        self._geom.draw(fig, ax, extent, self._plt_kwargs)
+        self._geom.draw(fig, ax, extent, **self._plt_kwargs)
