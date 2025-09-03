@@ -70,4 +70,4 @@ class RankingTile(NumericTile):
         )
 
     def getExplanation(self):
-        return "Explanation of the entity tile not yet defined"
+        return "Explanation of the Ranking tile not yet defined"
