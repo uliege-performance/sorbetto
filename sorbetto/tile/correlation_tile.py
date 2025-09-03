@@ -2,26 +2,35 @@ import math
 
 import numpy as np
 
-from sorbetto.core.entity import Entity
-from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
+from sorbetto.flavor.correlation_flavor import CorrelationFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
-from sorbetto.tile.numeric_tile import AbstractNumericTile
+from sorbetto.tile.numeric_tile import NumericTile
 
 
-class CorrelationTile(AbstractNumericTile):
+class CorrelationTile(NumericTile):
     def __init__(
         self,
         name: str,
         parameterization: AbstractParameterization,
-        symbolic_flavor: AbstractSymbolicFlavor,
-        entities_list: list[Entity],
+        flavor: CorrelationFlavor,
         resolution: int = 1001,
     ):
         super().__init__(
-            name, parameterization, symbolic_flavor, entities_list, resolution
+            parameterization=parameterization,
+            flavor=flavor,
+            name=name,
+            resolution=resolution,
         )
 
-    def minimize(self, precison: float = 1e-8):
+        self._score = self.flavor.score
+        self._correlation_coefficient = self.flavor.correlation_coefficient
+        self._performance = self.flavor.performances
+
+    @property
+    def flavor(self) -> CorrelationFlavor:
+        return super().flavor  # type: ignore
+
+    def minimize(self, precision: float = 1e-8):
         """
         Tries to minimize the value. There is no guarantee to find the minimum with the implemented algorithm.
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,
@@ -31,7 +40,7 @@ class CorrelationTile(AbstractNumericTile):
         is small enough.
 
         Args:
-            precison (float, optional): the desired precision for the coordinates of the point on the Tile. Defaults to 1e-8.
+            precision (float, optional): the desired precision for the coordinates of the point on the Tile. Defaults to 1e-8.
 
         Returns:
             float: the first coordinate of the point on the Tile where the smallest value has been found.
@@ -41,6 +50,7 @@ class CorrelationTile(AbstractNumericTile):
 
         parameterization = self.parameterization
         flavor = self.flavor
+        assert flavor is not None
 
         min_x, max_x = parameterization.getBoundsParameter1()
         min_y, max_y = parameterization.getBoundsParameter2()
@@ -53,7 +63,7 @@ class CorrelationTile(AbstractNumericTile):
         scale_x = max_x - min_x
         scale_y = max_y - min_y
         for _ in range(64):
-            if precison > scale_x and precison > scale_y:
+            if precision > scale_x and precision > scale_y:
                 break
             scale_x = scale_x * 0.5
             scale_y = scale_y * 0.5
@@ -72,7 +82,7 @@ class CorrelationTile(AbstractNumericTile):
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min
 
-    def maximize(self, precison: float = 1e-8):
+    def maximize(self, precision: float = 1e-8):
         """
         Tries to maximize the value. There is no guarantee to find the maximum with the implemented algorithm.
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,
@@ -82,7 +92,7 @@ class CorrelationTile(AbstractNumericTile):
         is small enough.
 
         Args:
-            precison (float, optional): the desired precision for the coordinates of the point on the Tile. Defaults to 1e-8.
+            precision (float, optional): the desired precision for the coordinates of the point on the Tile. Defaults to 1e-8.
 
         Returns:
             float: the first coordinate of the point on the Tile where the largest value has been found.
@@ -92,6 +102,7 @@ class CorrelationTile(AbstractNumericTile):
 
         parameterization = self.parameterization
         flavor = self.flavor
+        assert flavor is not None
 
         min_x, max_x = parameterization.getBoundsParameter1()
         min_y, max_y = parameterization.getBoundsParameter2()
@@ -104,7 +115,7 @@ class CorrelationTile(AbstractNumericTile):
         scale_x = max_x - min_x
         scale_y = max_y - min_y
         for _ in range(64):
-            if precison > scale_x and precison > scale_y:
+            if precision > scale_x and precision > scale_y:
                 break
             scale_x = scale_x * 0.5
             scale_y = scale_y * 0.5
@@ -122,3 +133,10 @@ class CorrelationTile(AbstractNumericTile):
                         best_val_min = val
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min
+
+    def flavorCall(self, importance: np.ndarray) -> np.ndarray:
+        assert self.flavor is not None
+        return self.flavor(importance=importance)
+
+    def getExplanation(self) -> str:
+        return "Not implemented for CorrelationTile yet."

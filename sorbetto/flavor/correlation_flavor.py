@@ -45,6 +45,26 @@ class CorrelationFlavor(AbstractNumericFlavor):
         self._score = score
         self._correlation_coefficient = correlation_coefficient
 
+    @property
+    def performances(self) -> FiniteSetOfTwoClassClassificationPerformances:
+        return self._performances
+
+    @property
+    def score(
+        self,
+    ) -> Callable[
+        [
+            TwoClassClassificationPerformance
+            | FiniteSetOfTwoClassClassificationPerformances
+        ],
+        np.ndarray,
+    ]:
+        return self._score
+
+    @property
+    def correlation_coefficient(self) -> str:
+        return self._correlation_coefficient
+
     def __call__(
         self,
         importance: Importance | np.ndarray,
