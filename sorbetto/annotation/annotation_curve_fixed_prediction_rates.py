@@ -1,7 +1,10 @@
+import math
+
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.flavor.value_flavor import ValueFlavor
 from sorbetto.performance.constraint_fixed_prediction_rates import (
     ConstraintFixedPredictionRates,
 )
@@ -36,6 +39,13 @@ class AnnotationCurveFixedPredictionRates(AbstractAnnotation):
 
     def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
         assert isinstance(tile, Tile)
+
+        flavor = tile.flavor
+        if isinstance(flavor, ValueFlavor):
+            performance = flavor.performance
+            ratePos = performance.pfp + performance.ptp
+            if not math.isclose(ratePos, self._ratePos, abs_tol=1e-6):
+                raise RuntimeError("wrong prediction rates")
 
         parameterization = tile.parameterization
         min1, max1 = parameterization.getBoundsParameter1()
