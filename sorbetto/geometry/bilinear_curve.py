@@ -106,7 +106,7 @@ class BilinearCurve(Conic):
             d_num_d_y = Ky
             d_den_d_y = Kxy
             d_x_d_y = -(d_num_d_y * den - d_den_d_y * num) / (den * den)
-            bad = np.logical_or(np.abs(d_x_d_y) >= 1, out_of_bounds)
+            bad = np.logical_or(np.abs(d_x_d_y) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
             ax.plot(x, y, "-", **plt_kwargs)
@@ -122,7 +122,7 @@ class BilinearCurve(Conic):
             d_num_d_x = Kx
             d_den_d_x = Kxy
             d_y_d_x = -(d_num_d_x * den - d_den_d_x * num) / (den * den)
-            bad = np.logical_or(np.abs(d_y_d_x) >= 1, out_of_bounds)
+            bad = np.logical_or(np.abs(d_y_d_x) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
             ax.plot(x, y, "-", **plt_kwargs)
