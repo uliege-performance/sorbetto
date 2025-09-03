@@ -1,3 +1,6 @@
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.point import Point
 
@@ -43,7 +46,7 @@ class LineSegment(AbstractGeometricObject2D):
         """
         return self._p2
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         Plots the line segment in some given Pyplot axes.
         TODO: extent is currently ignored.

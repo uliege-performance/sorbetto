@@ -1,3 +1,6 @@
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.core.entity import Entity
 from sorbetto.flavor.entity_flavor import EntityFlavor
@@ -37,7 +40,7 @@ class AnalysisForBenchmarker(AbstractAnalysis):
     def entities(self) -> list[Entity]:
         return self._entities
 
-    def drawInROC(self, fig, ax):  # and options ?
+    def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
         ...  # TODO
 
     def getValueTile(self, entity_id) -> ValueTile:

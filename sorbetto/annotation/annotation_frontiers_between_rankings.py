@@ -1,5 +1,8 @@
 import logging
 
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.parameterization.parameterization_default import ParameterizationDefault
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
@@ -22,7 +25,7 @@ class FrontiersBetweenRankings(AbstractAnnotation):
             logging.warning(message)
         super().__init__(name)
 
-    def draw(self, tile: AbstractTile, fig, ax) -> None:
+    def draw(self, tile: AbstractTile, fig: Figure, ax: Axes) -> None:
         performances = self._performances
         for i, p1 in enumerate(performances):
             for j, p2 in enumerate(performances):

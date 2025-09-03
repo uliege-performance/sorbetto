@@ -1,6 +1,8 @@
 import math
 
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.performance.abstract_performance import AbstractPerformance
 from sorbetto.performance.roc import setupROC
@@ -140,13 +142,13 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     ) -> "TwoClassClassificationPerformance":
         raise NotImplementedError()
 
-    def drawInROC(self, fig, ax) -> None:
+    def drawInROC(self, fig: Figure, ax: Axes) -> None:
         """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
-            fig (_type_): _description_
-            ax (_type_): _description_
+            fig (Figure): _description_
+            ax (Axes): _description_
         """
 
         ptn = self._ptn

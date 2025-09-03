@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.geometry.conic import Conic
 
@@ -71,7 +73,7 @@ class BilinearCurve(Conic):
         # TODO: This equation is a linear fractional transformation. We have a class to represent it.
         #       It could be useful to have a method returning it.
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         Draws the part of the bilinear curve that is within some axis-aligned box in some given Pyplot axes.
 

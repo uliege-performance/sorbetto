@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.line import Line
@@ -88,7 +90,7 @@ class PencilOfLines(AbstractGeometricObject2D):
             )
         return vertex
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         Draws the part of the pencil of lines that is within some axis-aligned box in some given Pyplot axes.
 

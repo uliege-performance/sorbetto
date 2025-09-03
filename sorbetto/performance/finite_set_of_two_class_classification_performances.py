@@ -1,6 +1,8 @@
 import logging
 
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
@@ -119,7 +121,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
         return (min_val, max_val)
 
-    def drawInROC(self, fig, ax):  # and options ?
+    def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
         for perf in self._performance_list:
             perf.drawInROC(fig, ax)
 

@@ -1,3 +1,6 @@
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.point import Point
@@ -36,7 +39,7 @@ class AnnotationText(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, label)
 
-    def draw(self, tile: AbstractTile, fig, ax) -> None:
+    def draw(self, tile: AbstractTile, fig: Figure, ax: Axes) -> None:
         assert isinstance(tile, AbstractTile)
         parameterization = tile.parameterization
         location = self._location

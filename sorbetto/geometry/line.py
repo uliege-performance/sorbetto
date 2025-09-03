@@ -1,6 +1,9 @@
 import math
 from typing import Self
 
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.line_segment import LineSegment
 from sorbetto.geometry.point import Point
@@ -221,7 +224,7 @@ class Line(AbstractGeometricObject2D):
             p2 = Point(p2.x, p2.y, "endpoint 2")
             return LineSegment(p1, p2, self.name)
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         Draws the part of the line that is within some axis-aligned box in some given Pyplot axes.
 

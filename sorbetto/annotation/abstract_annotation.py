@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.tile.abstract_tile import AbstractTile
 
 
@@ -28,7 +31,7 @@ class AbstractAnnotation(ABC):
         return self._name
 
     @abstractmethod
-    def draw(self, tile: AbstractTile, fig, ax) -> None:
+    def draw(self, tile: AbstractTile, fig: Figure, ax: Axes) -> None:
         pass
 
     def __str__(self) -> str:

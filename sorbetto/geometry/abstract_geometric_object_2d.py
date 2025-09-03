@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 
 class AbstractGeometricObject2D(ABC):
     def __init__(self, name=None):
@@ -11,7 +14,7 @@ class AbstractGeometricObject2D(ABC):
         ABC.__init__(self)
 
     @abstractmethod
-    def draw(self, fig, ax, extent, **plt_kwargs) -> None: ...
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs) -> None: ...
 
     @property
     def name(self) -> str:

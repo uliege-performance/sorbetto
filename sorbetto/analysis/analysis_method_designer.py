@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.flavor.baseline_flavor import BaselineFlavor
@@ -79,7 +81,7 @@ class AnalysisForMethodDesigner(AbstractAnalysis):
 
     def getRankingTile(self) -> AbstractNumericalTile: ...  # TODO
 
-    def drawInROC(self, fig, ax):  # and options ?
+    def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
         ...  # TODO
 
     def getAdvice(self, fmt) -> str:  # fmt can be: txt, html, latex

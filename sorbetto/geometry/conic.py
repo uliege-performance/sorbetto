@@ -3,6 +3,8 @@ import math
 
 import jax
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 
@@ -387,7 +389,7 @@ class Conic(AbstractGeometricObject2D):
 
         return self._solve_quadratic_equation_max(A, B, C)
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         Draws the part of the conic section that is within some axis-aligned box in some given Pyplot axes.
 

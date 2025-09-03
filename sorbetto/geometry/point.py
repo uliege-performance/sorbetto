@@ -1,3 +1,6 @@
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 
 
@@ -42,7 +45,7 @@ class Point(AbstractGeometricObject2D):
         """
         return self._y
 
-    def draw(self, fig, ax, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """
         If the point is withing some axis-aligned box, then plots it in some given Pyplot axes.
 
