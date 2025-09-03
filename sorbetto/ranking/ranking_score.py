@@ -90,7 +90,7 @@ class RankingScore:
 
     @abbreviation.setter
     def abbreviation(self, abbreviation):
-        assert isinstance(abbreviation, str)
+        assert abbreviation is None or isinstance(abbreviation, str)
         if self._abbreviation is not None:
             raise RuntimeError("The name should be set before the abbreviation")
         else:
@@ -102,7 +102,7 @@ class RankingScore:
 
     @symbol.setter
     def symbol(self, symbol):
-        assert isinstance(symbol, str)
+        assert symbol is None or isinstance(symbol, str)
         if self._symbol is not None:
             raise RuntimeError("The abbreviation should be set before the symbol")
         else:
