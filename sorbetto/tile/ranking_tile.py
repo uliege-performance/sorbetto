@@ -24,9 +24,9 @@ class RankingTile(NumericTile):
             resolution=resolution,
         )
 
-        self._entities = self.flavor._entity_list
-        self._performance = self.flavor._performances
-        self._id_entity = self.flavor._id_entity
+        self._entities = self.flavor.entity_list
+        self._performance = self.flavor.performances
+        self._id_entity = self.flavor.id_entity
 
         # FIXME properly get colors from the Entities themselves
         self._colormap = get_colors(len(self._entities))

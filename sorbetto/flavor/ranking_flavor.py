@@ -37,6 +37,26 @@ class RankingFlavor(AbstractNumericFlavor):
         else:
             raise ValueError("The given entity was not found in the given entity list.")
 
+    @property
+    def entity(self) -> Entity:
+        return self._entity
+
+    @property
+    def entity_list(self) -> list[Entity]:
+        return self._entity_list
+
+    @property
+    def nb_entities(self) -> int:
+        return self._nb_entities
+
+    @property
+    def performances(self) -> FiniteSetOfTwoClassClassificationPerformances:
+        return self._performances
+
+    @property
+    def id_entity(self) -> int:
+        return self._id_entity
+
     def __call__(
         self,
         importance: Importance | np.ndarray,
