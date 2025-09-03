@@ -3,6 +3,7 @@ import math
 import numpy as np
 
 from sorbetto.core.importance import Importance
+from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -191,6 +192,85 @@ class ParameterizationDefault(AbstractParameterization):
         """
         f = ParameterizationDefault.getRateNegPredictionsForIsoValuedNoSkillPerformances
         return 1.0 - f(param1, param2)
+
+    def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
+        self, priorPos: float
+    ) -> BilinearCurve:
+        """
+        The set of performance orderings induced by ranking scores that put all no-skill
+        performances, for given class priors $(\\pi_-, \\pi_+)$, on an equal footing is given by
+        $$ \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\} $$
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
+        # See Theorem 3 of future "paper 6".
+        # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
+
+        Args:
+            priorPos (float): the prior of the positive class, $\\pi_+$
+
+        Returns:
+            BilinearCurve: The locus (a curve).
+        """
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        priorPosSq = priorPos * priorPos
+        priorNegSq = priorNeg * priorNeg
+
+        #     pi_pos^2 itp ifn = pi_neg^2 itn ifp
+        # <=> pi_pos^2 a b = pi_neg^2 (1-a) (1-b)
+        # <=> ( pi_pos^2 - pi_neg^2 ) a b + ( pi_neg^2 ) a + ( pi_neg^2 ) b + ( - pi_neg^2 ) = 0
+
+        Kab = priorPosSq - priorNegSq
+        Ka = priorNegSq
+        Kb = priorNegSq
+        K = -priorNegSq
+
+        name = "locus of performance orderings putting all no-skill performances with the class priors ({:g}, {:g}) on an equal footing".format(
+            priorNeg, priorPos
+        )
+        return BilinearCurve(Kab, Ka, Kb, K, name)
+
+    def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
+        self, ratePos: float
+    ) -> BilinearCurve:
+        """
+        The set of performance orderings induced by ranking scores that put all no-skill
+        performances, for given prediction rates $(\\tau_-, \\tau_+)$, on an equal footing is given by
+        $$ \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\} $$
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
+        # See Theorem 4 of future "paper 6".
+
+        Args:
+            ratePos (float): the prediction rate for the positive class, $\\tau_+$
+
+        Returns:
+            AbstractGeometricObject2D: The locus (a curve).
+        """
+        assert isinstance(ratePos, float)
+        assert ratePos > 0.0
+        assert ratePos < 1.0
+        rateNeg = 1.0 - ratePos
+
+        ratePosSq = ratePos * ratePos
+        rateNegSq = rateNeg * rateNeg
+
+        #     tau_pos^2 itp ifp = tau_neg^2 itn ifn
+        # <=> tau_pos^2 a (1-b) = tau_neg^2 (1-a) b
+        # <=> ( tau_neg^2 - tau_pos^2 ) a b + ( tau_pos^2 ) a + ( - tau_neg^2 ) b + ( 0 ) = 0
+
+        Kab = rateNegSq - ratePosSq
+        Ka = ratePosSq
+        Kb = -rateNegSq
+        K = 0.0
+
+        name = "locus of performance orderings putting all no-skill performances with the prediction rates ({:g}, {:g}) on an equal footing".format(
+            rateNeg, ratePos
+        )
+        return BilinearCurve(Kab, Ka, Kb, K, name)
 
     def getName(self):
         return "default"

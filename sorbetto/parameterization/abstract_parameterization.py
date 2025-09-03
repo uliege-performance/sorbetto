@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 from sorbetto.core.importance import Importance
+from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
@@ -338,14 +339,46 @@ class AbstractParameterization(ABC):
     def locateClaytonSkillScore(self, ratePos) -> Point:
         raise NotImplementedError()  # TODO
 
-    # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6.
-    def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFooting(
-        self, priorPos, ratePos
-    ) -> Point | Conic:
+    @abstractmethod
+    def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
+        self, priorPos: float
+    ) -> AbstractGeometricObject2D:
+        """
+        The set of performance orderings induced by ranking scores that put all no-skill
+        performances, for given class priors $(\\pi_-, \\pi_+)$, on an equal footing is given by
+        $$ \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\} $$
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
         # See Theorem 3 of future "paper 6".
+        # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
+
+        Args:
+            priorPos (float): the prior of the positive class, $\\pi_+$
+
+        Returns:
+            AbstractGeometricObject2D: The locus (a curve).
+        """
+        ...
+
+    @abstractmethod
+    def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
+        self, ratePos: float
+    ) -> AbstractGeometricObject2D:
+        """
+        The set of performance orderings induced by ranking scores that put all no-skill
+        performances, for given prediction rates $(\\tau_-, \\tau_+)$, on an equal footing is given by
+        $$ \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\} $$
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         # See Theorem 4 of future "paper 6".
-        # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8
-        raise NotImplementedError()  # TODO
+
+        Args:
+            ratePos (float): the prediction rate for the positive class, $\\tau_+$
+
+        Returns:
+            AbstractGeometricObject2D: The locus (a curve).
+        """
+        ...
 
     def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
         """
