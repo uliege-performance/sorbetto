@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import cast
+from typing import cast, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -308,6 +308,96 @@ class RankingScore:
             self.name, priorPos
         )
         return PencilOfLines(line_0, line_1, name)
+
+    @overload
+    @staticmethod
+    def _compute(
+        importance: Importance,
+        performance: TwoClassClassificationPerformance,
+    ) -> float: ...
+
+    # Importance + Performance mixed
+    @overload
+    @staticmethod
+    def _compute(
+        importance: Importance,
+        performance: FiniteSetOfTwoClassClassificationPerformances | np.ndarray,
+    ) -> np.ndarray: ...
+
+    @overload
+    @staticmethod
+    def _compute(
+        importance: list[Importance] | np.ndarray,
+        performance: TwoClassClassificationPerformance,
+    ) -> np.ndarray: ...
+
+    # Importance + Performance array mode
+    @overload
+    @staticmethod
+    def _compute(
+        importance: list[Importance] | np.ndarray,
+        performance: FiniteSetOfTwoClassClassificationPerformances | np.ndarray,
+    ) -> np.ndarray: ...
+
+    # I=float, P=float → float
+    @overload
+    @staticmethod
+    def _compute(
+        *,
+        itn: float,
+        ifp: float,
+        ifn: float,
+        itp: float,
+        ptn: float,
+        pfp: float,
+        pfn: float,
+        ptp: float,
+    ) -> float: ...
+
+    # I=float, P=np.ndarray → ndarray
+    @overload
+    @staticmethod
+    def _compute(
+        *,
+        itn: float,
+        ifp: float,
+        ifn: float,
+        itp: float,
+        ptn: np.ndarray,
+        pfp: np.ndarray,
+        pfn: np.ndarray,
+        ptp: np.ndarray,
+    ) -> np.ndarray: ...
+
+    # I=np.ndarray, P=float → ndarray
+    @overload
+    @staticmethod
+    def _compute(
+        *,
+        itn: np.ndarray,
+        ifp: np.ndarray,
+        ifn: np.ndarray,
+        itp: np.ndarray,
+        ptn: float,
+        pfp: float,
+        pfn: float,
+        ptp: float,
+    ) -> np.ndarray: ...
+
+    # I=np.ndarray, P=np.ndarray → ndarray
+    @overload
+    @staticmethod
+    def _compute(
+        *,
+        itn: np.ndarray,
+        ifp: np.ndarray,
+        ifn: np.ndarray,
+        itp: np.ndarray,
+        ptn: np.ndarray,
+        pfp: np.ndarray,
+        pfn: np.ndarray,
+        ptp: np.ndarray,
+    ) -> np.ndarray: ...
 
     @staticmethod
     def _compute(
