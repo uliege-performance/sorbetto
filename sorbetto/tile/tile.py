@@ -226,7 +226,8 @@ class Tile:
             tile = self
             try:
                 annotation.draw(tile, fig, ax)
-            except ...:
+            except Exception as err:
+                print(f"Unexpected {err=}, {type(err)=}")
                 message = 'Something went wrong while drawing annotation "{}"'.format(
                     annotation.name
                 )
