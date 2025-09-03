@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
+from sorbetto.flavor.value_flavor import ValueFlavor
 from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -10,7 +10,7 @@ from sorbetto.parameterization.parameterization_default import ParameterizationD
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
-from sorbetto.tile.numeric_tile import AbstractNumericalTile
+from sorbetto.tile.numeric_tile import NumericTile
 
 
 def __vut_default_param(ptn, pfp, pfn, ptp):
@@ -49,22 +49,25 @@ def __vut_default_param(ptn, pfp, pfn, ptp):
         return 0.5 - 0.5 * num / den
 
 
-class ValueTile(AbstractNumericalTile):
+class ValueTile(NumericTile):
     def __init__(
         self,
         name: str,
         parameterization: AbstractParameterization,
-        flavor: AbstractNumericFlavor,
-        performance: TwoClassClassificationPerformance,
+        flavor: ValueFlavor,
         resolution: int = 1001,
     ):
-        self._performance = performance
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
         )
+        self._performance = self.flavor.performance
+
+    @property
+    def flavor(self) -> ValueFlavor:
+        return super().flavor  # type: ignore
 
     @property
     def performance(self) -> TwoClassClassificationPerformance:
@@ -131,12 +134,6 @@ class ValueTile(AbstractNumericalTile):
             line_1, line_2, "pencil for performance {}".format(self._performance)
         )
         return pencil
-
-    def flavorCall(self, importance: np.ndarray) -> np.ndarray:
-        assert self.flavor is not None
-        return self.flavor(
-            importance=importance,
-        )
 
     def getExplanation(self) -> str:
         return "Explanation for this tile is not implemented yet"
