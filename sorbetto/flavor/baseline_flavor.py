@@ -26,6 +26,18 @@ class BaselineFlavor(AbstractNumericFlavor):
         self._nb_entities = len(entity_list)
         self._performances = performances
 
+    @property
+    def entity_list(self) -> list[Entity]:
+        return self._entity_list
+
+    @property
+    def nb_entities(self) -> int:
+        return self._nb_entities
+
+    @property
+    def performances(self) -> FiniteSetOfTwoClassClassificationPerformances:
+        return self._performances
+
     def __call__(
         self,
         importance: Importance | np.ndarray,
