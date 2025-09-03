@@ -113,8 +113,8 @@ class RankingScore:
         return self._importance
 
     # TODO: this method might not be in the right class. Should we move it in ParameterizationDefault ?
+    @staticmethod
     def equivalent(
-        self,
         p1: TwoClassClassificationPerformance,
         p2: TwoClassClassificationPerformance,
     ) -> Conic:
