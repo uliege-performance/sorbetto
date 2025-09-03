@@ -5,11 +5,11 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.symbolic_tile import AbstractSymbolicTile
+from sorbetto.tile.symbolic_tile import SymbolicTile
 from sorbetto.tile.utils import get_colors
 
 
-class EntityTile(AbstractSymbolicTile):
+class EntityTile(SymbolicTile):
     def __init__(
         self,
         name: str,
@@ -23,12 +23,16 @@ class EntityTile(AbstractSymbolicTile):
             flavor=flavor,
             resolution=resolution,
         )
-        self._rank = flavor._rank
-        self._entities = flavor._entity_list
-        self._colormap = get_colors(len(self._entities))
-        self._performance = flavor._performances
+        self._rank = self.flavor.rank
+        self._entities = self.flavor.entity_list
+        self._colormap = get_colors(len(self.entities))  # FIXME
+        self._performance = self.flavor.performances
 
         self.value_tile = None
+
+    @property
+    def flavor(self) -> EntityFlavor:
+        return super().flavor  # type: ignore
 
     @property
     def entities(self):
@@ -46,17 +50,9 @@ class EntityTile(AbstractSymbolicTile):
     def rank(self) -> int:
         return self._rank
 
-    @rank.setter
-    def rank(self, value: int):
-        self._rank = value
-
     @property
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
-
-    @performance.setter
-    def performance(self, value: FiniteSetOfTwoClassClassificationPerformances):
-        self._performance = value
 
     def flavorCall(self, importance):
         assert self.flavor is not None
