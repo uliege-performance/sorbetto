@@ -24,12 +24,16 @@ class RankingTile(NumericTile):
             resolution=resolution,
         )
 
-        self._entities = flavor._entity_list
-        self._performance = flavor._performances
-        self._id_entity = flavor._id_entity
+        self._entities = self.flavor._entity_list
+        self._performance = self.flavor._performances
+        self._id_entity = self.flavor._id_entity
 
         # FIXME properly get colors from the Entities themselves
         self._colormap = get_colors(len(self._entities))
+
+    @property
+    def flavor(self) -> RankingFlavor:
+        return super().flavor  # type: ignore
 
     @property
     def entities(self):
