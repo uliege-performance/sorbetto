@@ -5,11 +5,11 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.numeric_tile import AbstractNumericalTile
+from sorbetto.tile.numeric_tile import NumericTile
 from sorbetto.tile.utils import get_colors
 
 
-class RankingTile(AbstractNumericalTile):
+class RankingTile(NumericTile):
     def __init__(
         self,
         name: str,
