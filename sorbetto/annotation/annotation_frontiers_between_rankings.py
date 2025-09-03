@@ -9,10 +9,10 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.abstract_tile import AbstractTile
+from sorbetto.tile.tile import Tile
 
 
-class FrontiersBetweenRankings(AbstractAnnotation):
+class AnnotationFrontiersBetweenRankings(AbstractAnnotation):
     def __init__(
         self, performnances: FiniteSetOfTwoClassClassificationPerformances, name=None
     ):
@@ -25,14 +25,14 @@ class FrontiersBetweenRankings(AbstractAnnotation):
             logging.warning(message)
         super().__init__(name)
 
-    def draw(self, tile: AbstractTile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
         performances = self._performances
         for i, p1 in enumerate(performances):
             for j, p2 in enumerate(performances):
                 if i < j:
                     if isinstance(tile.parameterization, ParameterizationDefault):
                         # TDOO: RankingScore.equivalent is only for the default parameterization
-                        curve = RankingScore.equivalent(p1, p1)
+                        curve = RankingScore.equivalent(p1, p2)
                         extent = tile.parameterization.getExtent()
                         plt_kwargs = dict()
                         plt_kwargs["color"] = [0.7, 0.7, 0.7]

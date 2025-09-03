@@ -12,8 +12,8 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
 from sorbetto.tile.correlation_tile import CorrelationTile
+from sorbetto.tile.numeric_tile import AbstractNumericalTile
 
 
 class AnalysisForTheoreticalAnalyst(AbstractAnalysis):

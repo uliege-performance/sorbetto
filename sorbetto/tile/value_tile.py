@@ -10,7 +10,7 @@ from sorbetto.parameterization.parameterization_default import ParameterizationD
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
-from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
+from sorbetto.tile.numeric_tile import AbstractNumericalTile
 
 
 def __vut_default_param(ptn, pfp, pfn, ptp):

@@ -10,7 +10,7 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.abstract_numerical_tile import AbstractNumericalTile
+from sorbetto.tile.numeric_tile import AbstractNumericalTile
 from sorbetto.tile.value_tile import ValueTile
 
 

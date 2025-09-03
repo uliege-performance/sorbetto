@@ -3,7 +3,7 @@ from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
-from sorbetto.tile.asbtract_tile import AbstractTile
+from sorbetto.tile.tile import Tile
 
 
 class AnnotationGeometric(AbstractAnnotation):
@@ -29,8 +29,8 @@ class AnnotationGeometric(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, name)
 
-    def draw(self, tile: AbstractTile, fig: Figure, ax: Axes) -> None:
-        assert isinstance(tile, AbstractTile)
+    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
+        assert isinstance(tile, Tile)
         parameterization = tile.getParameterization()
         min1, max1 = parameterization.getBoundsParameter1()
         min2, max2 = parameterization.getBoundsParameter2()
