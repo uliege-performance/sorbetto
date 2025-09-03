@@ -62,6 +62,6 @@ doc = [
 ]
 
 [project.urls]
-Documentation = "https://cbi-toolbox.readthedocs.io/en/latest/"
-Source = "https://github.com/pierard/sorbetto"
-Issues = "https://github.com/pierard/sorbetto/issues"
+Documentation = "https://sorbetto.readthedocs.io/en/latest/"
+Source = "https://github.com/uliege-performance/sorbetto"
+Issues = "https://github.com/uliege-performance/sorbetto/issues"

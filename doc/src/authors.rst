@@ -7,6 +7,7 @@ Summer Workshop on Artificial Intelligence
 <https://trail.ac/en/trail-summer-workshops/>`_.
 
 
+.. _Authors:
 Authors
 -------
 
@@ -18,7 +19,7 @@ The main contributors of this library are listed here below:
 * Simon Pernas [3]_ <simonpernas@orange.fr>
 * Jérôme Pierre [1]_ <jepi1202@gmail.com>
 
-.. [1] ULiège, Mons, Belgium
+.. [1] ULiège, Liège, Belgium
 .. [2] UMONS, Mons, Belgium
 .. [3] Multitel, Mons, Belgium
 
