@@ -8,6 +8,7 @@ class AbstractGeometricObject2D(ABC):
         elif not isinstance(name, str):
             name = str(name)
         self._name = name
+        ABC.__init__(self)
 
     @abstractmethod
     def draw(self, fig, ax, extent, **plt_kwargs) -> None: ...

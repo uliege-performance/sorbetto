@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 class AbstractHomogeneousBinaryRelationOnPerformances(ABC):
     def __init__(self, name: str | None = None):
         self._name = name
+        ABC.__init__(self)
 
     @property
     def name(self) -> str | None:
