@@ -101,9 +101,11 @@ class Tile:
             max_y = min(max_y_1, max_y_2)
             assert min_x < max_x
             assert min_y < max_y
-            return [min_x, max_x, min_y, max_y]
+            return (min_x, max_x, min_y, max_y)
 
-        assert isinstance(zoom, Extent)
+        assert isinstance(zoom, tuple)
+        assert len(zoom) == 4
+        assert all(isinstance(v, float) for v in zoom)
         extent = self._parameterization.getExtent()
         self._zoom = intersection(zoom, extent)
 
@@ -226,9 +228,11 @@ class Tile:
             tile = self
             try:
                 annotation.draw(tile, fig, ax)
-            except ...:
-                message = 'Something went wrong while drawing annotation "{}"'.format(
-                    annotation.name
+            except Exception as e:
+                message = (
+                    "Something went wrong while drawing annotation {!r}, got {}".format(
+                        annotation.name, e
+                    )
                 )
                 logging.warning(message)
 
@@ -238,8 +242,8 @@ class Tile:
         assert x_min < x_max
         assert y_min < y_max
 
-        ax.set_xlim([x_min, x_max])
-        ax.set_ylim([y_min, y_max])
+        ax.set_xlim((x_min, x_max))
+        ax.set_ylim((y_min, y_max))
         ax.set_aspect("equal")
         parameterization = self.parameterization
         ax.set_xlabel(parameterization.getNameParameter1())
