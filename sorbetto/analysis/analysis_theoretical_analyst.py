@@ -5,7 +5,7 @@ import scipy.stats
 
 from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
-from sorbetto.performance.distribution.distribution_two_class_classification import (
+from sorbetto.performance.distribution.abstract_distribution_of_two_class_classification_performances import (
     AbstractDistributionOfTwoClassClassificationPerformances,
 )
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
@@ -13,7 +13,7 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
 )
 from sorbetto.ranking.ranking_score import RankingScore
 from sorbetto.tile.correlation_tile import CorrelationTile
-from sorbetto.tile.numeric_tile import AbstractNumericalTile
+from sorbetto.tile.numeric_tile import AbstractNumericTile
 
 
 class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
@@ -98,7 +98,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getPearsonCorrelationTile(
         self,
-    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.pearsonr
         return CorrelationTile(
             self._parameterization,
@@ -111,7 +111,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getKendallCorrelationTile(
         self,
-    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.kendalltau
         return CorrelationTile(
             self._parameterization,
@@ -124,7 +124,7 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
 
     def getSpearmanCorrelationTile(
         self,
-    ) -> AbstractNumericalTile:  # FIXME when CorrelationTile is done
+    ) -> AbstractNumericTile:  # FIXME when CorrelationTile is done
         correlation_fct = scipy.stats.spearmanr
         return CorrelationTile(
             self._parameterization,
@@ -134,3 +134,6 @@ class AnalysisForTheoreticalAnalyst(AbstractAnalysis):
             self._resolution,
             self._colormap,
         )
+
+    def getAdvice(self, fmt) -> str:  # fmt can be: txt, html, latex
+        ...  # TODO
