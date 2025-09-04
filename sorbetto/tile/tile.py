@@ -1,6 +1,6 @@
 import io
 import logging
-from typing import Iterator
+from typing import Iterator, SupportsIndex
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -66,9 +66,10 @@ class Tile:
 
         self._zoom = self._parameterization.getExtent()
 
+        self._mat_value = None
         self._update_grid()
 
-        self._annotations = list()
+        self._annotations: list[AbstractAnnotation] = list()
 
         self._disable_colorbar = disable_colorbar
 
@@ -208,6 +209,21 @@ class Tile:
     def removeAnnotation(self, annotation):
         assert isinstance(annotation, AbstractAnnotation)
         self._annotations.remove(annotation)
+
+    def popAnnotation(self, index: SupportsIndex = -1) -> AbstractAnnotation:
+        """
+        Remove and return an annotation at index (default last).
+
+        Args:
+            index (SupportsIndex, optional): index of the annotation to pop. Defaults to -1.
+
+        Returns:
+            AbstractAnnotation: the annotation at the specified index.
+
+        Raises:
+            IndexError: if the index is out of range.
+        """
+        return self._annotations.pop(index)
 
     def clearAnnotations(self):
         self._annotations.clear()
