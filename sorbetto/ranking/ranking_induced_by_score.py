@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.core.performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
@@ -47,6 +49,8 @@ class RankingInducedByScore(AbstractRanking):
         return self._vals
 
     def getAllStableRanks(self) -> np.ndarray:
+        # In case of equivalence (equal values), the returned rank decreases with the
+        # position in the list of entities.
         sorted_idx = self._sorted_idx
         N = sorted_idx.size
         tmp = np.empty(N, dtype=int)
@@ -88,3 +92,14 @@ class RankingInducedByScore(AbstractRanking):
             for idx, entity in enumerate(self._entities)
             if min_ranks_all[idx] <= rank <= max_ranks_all[idx]
         ]
+
+    def draw(
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        value_axis_label: str = "",
+    ) -> tuple[Figure, Axes]:
+        if value_axis_label == "":
+            score = self.performance_ordering.score
+            value_axis_label = 'value taken by the score\n"{}"'.format(score.name)
+        return AbstractRanking.draw(self, fig, ax, value_axis_label)
