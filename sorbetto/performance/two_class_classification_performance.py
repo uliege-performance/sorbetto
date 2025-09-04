@@ -19,23 +19,22 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     def __init__(
         self,
-        ptn,  # TODO: type ? float ?
-        pfp,  # TODO: type ? float ?
-        pfn,  # TODO: type ? float ?
-        ptp,  # TODO: type ? float ?
-        name: str = None,
+        ptn: float,
+        pfp: float,
+        pfn: float,
+        ptp: float,
+        name: str | None = None,
     ):
-        if False:  # TODO : @Simon est-ce OK pour toi ou veux-tu généraliser?
-            assert isinstance(ptn, float)
-            assert isinstance(pfp, float)
-            assert isinstance(pfn, float)
-            assert isinstance(ptp, float)
-            assert ptn >= 0
-            assert pfp >= 0
-            assert pfn >= 0
-            assert ptp >= 0
-            sum = ptn + pfp + pfn + ptp
-            assert math.isclose(sum, 1.0, abs_tol=1e-8)
+        assert isinstance(ptn, float)
+        assert isinstance(pfp, float)
+        assert isinstance(pfn, float)
+        assert isinstance(ptp, float)
+        assert ptn >= 0
+        assert pfp >= 0
+        assert pfn >= 0
+        assert ptp >= 0
+        sum = ptn + pfp + pfn + ptp
+        assert math.isclose(sum, 1.0, abs_tol=1e-8)
 
         self._ptn = ptn
         self._pfp = pfp
@@ -101,7 +100,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         fpr = pfp / (ptn + pfp)
         tpr = ptp / (pfn + ptp)
 
-        return np.isclose(tpr, fpr, atol=self.tol)
+        return np.isclose(tpr, fpr, atol=self.tol)  # type: ignore
 
     def isAboveNoSkills(self) -> bool:
         ptn = self._ptn
@@ -125,13 +124,13 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
         return (tpr + self.tol) <= fpr
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         comps = np.isclose(
             [self._ptn, self._pfp, self._pfn, self._ptp],
             [other._ptn, other._pfp, other._pfn, other._ptp],
             atol=self.tol,
         )
-        return np.all(comps)
+        return np.all(comps)  # type: ignore
 
     def __ne__(self, other):
         return not self.__eq__(other)
