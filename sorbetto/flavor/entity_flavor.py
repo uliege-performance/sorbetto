@@ -1,5 +1,6 @@
 from typing import Any
 
+import matplotlib.colors
 import numpy as np
 
 from sorbetto.core.entity import Entity
@@ -60,11 +61,11 @@ class EntityFlavor(AbstractSymbolicFlavor):
             performance=self._performances,
         )
 
-        return np.argsort(-values, axis=0)[self._rank]
+        return np.argsort(-values, axis=0)[self._rank - 1]
 
     def getDefaultColormap(self):
-        # FIXME discrete colormap
-        return "rainbow"
+        colors = [e.color for e in self._entity_list]
+        return matplotlib.colors.ListedColormap(colors)
 
     def getCodomain(self):
         """Returns the co-domain of the flavor.
