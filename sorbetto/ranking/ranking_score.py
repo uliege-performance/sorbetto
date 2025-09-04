@@ -17,7 +17,7 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
     _parse_performance,
 )
-from sorbetto.performance.roc import setupROC
+from sorbetto.performance.roc import _setupROC
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
@@ -273,7 +273,7 @@ class RankingScore:
         if show_values_map and show_colorbar:
             fig.colorbar(im, ax=ax, label=self.name)  # type: ignore
 
-        setupROC(
+        _setupROC(
             fig,
             ax,
             priorPos=priorPos,

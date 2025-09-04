@@ -1,7 +1,7 @@
 import math
 
 
-def setupROC(
+def _setupROC(
     fig,
     ax,
     priorPos: float = None,

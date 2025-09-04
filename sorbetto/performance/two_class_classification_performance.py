@@ -1,11 +1,12 @@
 import math
+from typing import Self
 
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.performance.abstract_performance import AbstractPerformance
-from sorbetto.performance.roc import setupROC
+from sorbetto.performance.roc import _setupROC
 
 
 class TwoClassClassificationPerformance(AbstractPerformance):
@@ -91,6 +92,46 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     def getMassFunction(self):
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
+    @staticmethod
+    def getNoSkill(
+        *,
+        priorNeg: float | None = None,
+        priorPos: float | None = None,
+        rateNeg: float | None = None,
+        ratePos: float | None = None,
+        name: str | None = None,
+    ) -> Self:
+        def snoopy(v1: float | None = None, v2: float | None = None):
+            if v1 is not None:
+                assert isinstance(v1, float)
+                assert 0.0 <= v1 and v1 <= 1.0
+            if v2 is not None:
+                assert isinstance(v2, float)
+                assert 0.0 <= v2 and v2 <= 1.0
+
+            if v1 is None:
+                if v2 is None:
+                    assert False
+                else:
+                    v1 = 1.0 - v2
+            else:
+                if v2 is None:
+                    v2 = 1.0 - v1
+                else:
+                    assert math.isclose(v1 + v2, 1.0, abs_tol=1e-8)
+
+            return v1, v2
+
+        priorNeg, priorPos = snoopy(priorNeg, priorPos)
+        rateNeg, ratePos = snoopy(rateNeg, ratePos)
+
+        ptn = priorNeg * rateNeg
+        pfp = priorNeg * ratePos
+        pfn = priorPos * rateNeg
+        ptp = priorPos * ratePos
+
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
+
     def isNoSkill(self) -> bool:
         ptn = self._ptn
         pfp = self._pfp
@@ -159,7 +200,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         tpr = ptp / (pfn + ptp)
         priorPos = self._pfn + self._ptp
 
-        setupROC(
+        _setupROC(
             fig,
             ax,
             priorPos=priorPos,
