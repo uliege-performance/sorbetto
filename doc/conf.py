@@ -34,7 +34,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # TODO uncomment when nbsphinx will support Sphinx 8.2
 # apidoc_modules = [
 #     {
-#         "path": "../../sorbetto",
+#         "path": "../sorbetto",
 #         "destination": "api",
 #         "separate_modules": True,
 #         "no_headings": False,
@@ -49,7 +49,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # ]
 
 # TODO remove when nbsphinx will support Sphinx 8.2
-apidoc_module_dir = "../../sorbetto"
+apidoc_module_dir = "../sorbetto"
 apidoc_output_dir = "api"
 apidoc_separate_modules = True
 apidoc_module_first = True
@@ -77,8 +77,8 @@ bibtex_default_style = "plain"
 
 html_theme = "sphinx_rtd_theme"
 # html_static_path = ["_static"]
-html_logo = "src/images/sorbetto_banner.svg"
-html_favicon = "src/images/sorbetto_logo.svg"
+html_logo = "images/sorbetto_banner.svg"
+html_favicon = "images/sorbetto_logo.svg"
 html_theme_options = {
     "logo_only": True,
     "collapse_navigation": False,

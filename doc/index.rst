@@ -29,14 +29,14 @@ directly (see :ref:`Authors`).
    :maxdepth: 1
    :caption: Contents:
 
-   install
-   tutorial
-   examples
-   demos
-   contributing
-   authors
-   citing
-   references
+   src/install
+   src/tutorial
+   src/examples
+   src/demos
+   src/contributing
+   src/authors
+   src/citing
+   src/references
 
 .. toctree::
    :maxdepth: 3

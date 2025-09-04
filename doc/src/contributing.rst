@@ -127,7 +127,7 @@ can add new entries if you need to cite references that are not included yet.
 Including images and figures
 """"""""""""""""""""""""""""
 
-It is possible to include static images from the ``sorbetto/doc/src/images``
+It is possible to include static images from the ``sorbetto/doc/images``
 directory in the documentation. The syntax is as follows:
 
 .. code-block:: rst
@@ -135,7 +135,7 @@ directory in the documentation. The syntax is as follows:
     .. image:: /images/<your image name>
 
 You can also use software-generated figures (see below) from the
-``sorbetto/doc/src/figures`` directory:
+``sorbetto/doc/figures`` directory:
 
 .. code-block:: rst
 
@@ -152,7 +152,7 @@ In order to include software-generated figures in the documentation, you must
 create a script in ``sorbetto/doc/scripts``. All the Python scripts in that
 directory are automatically detected and run in order to generate the figures
 for the documentation. They must be saved in the correct directory to be
-accessible from the documentation: ``sorbetto/doc/src/figures``.
+accessible from the documentation: ``sorbetto/doc/figures``.
 
 In order to facilitate this process, we provide the
 ``sorbetto/doc/scripts/utils.py`` helper script which implements a
@@ -170,7 +170,7 @@ You can automatically generate all figures as follows:
     make figures
 
 You can check that all figures were correctly generated under
-``sorbetto/doc/src/figures/``.
+``sorbetto/doc/figures/``.
 
 
 Adding new demos and examples

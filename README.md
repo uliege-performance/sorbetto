@@ -1,4 +1,4 @@
-![sorbetto banner](doc/src/images/sorbetto_banner.svg)
+![sorbetto banner](doc/images/sorbetto_banner.svg)
 
 **Disclaimer: Sorbetto is currently in its early development phase, coming
 updates might introduce some breaking changes.**
