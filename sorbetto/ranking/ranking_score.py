@@ -61,10 +61,6 @@ class RankingScore:
         self._abbreviation = None
         self._symbol = None
 
-        self.name = name
-        self.abbreviation = abbreviation
-        self.symbol = symbol
-
     @property
     def name(self):
         return self._name

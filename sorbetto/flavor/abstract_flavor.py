@@ -14,7 +14,7 @@ class AbstractFlavor(ABC):
 
     def __init__(self, name: str = "Unnamed Flavor", colormap: Any = None):
         assert isinstance(name, str)
-        self.name = name
+        self._name = name
         self._colormap = colormap
         ABC.__init__(self)
 
