@@ -27,11 +27,9 @@ class EntityTile(SymbolicTile):
             disable_colorbar=disable_colorbar,
         )
         self._rank = self.flavor.rank
-        self._entities = self.flavor.entity_list
+        self._entities = self.flavor.entity_set
         self._colormap = self.flavor.colormap
         self._performance = self.flavor.performances
-
-        self.value_tile = None
 
     @property
     def flavor(self) -> EntityFlavor:
@@ -67,6 +65,6 @@ class EntityTile(SymbolicTile):
 
         im = ax.images[-1]
         im.set_clim(0.5, self.flavor.nb_entities + 0.5)
-        im.colorbar.set_ticks(range(1, self.flavor.nb_entities + 1))  # type: ignore
+        im.colorbar.set_ticks([self.flavor.mapper(e) for e in self.flavor.entity_set])  # type: ignore
 
         return fig, ax
