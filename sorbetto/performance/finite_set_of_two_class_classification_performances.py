@@ -9,11 +9,11 @@ from sorbetto.performance.two_class_classification_performance import (
 )
 
 
-def getTpr(tp, fn):
+def _getTpr(tp, fn):  # TODO: remove this
     return tp / (tp + fn)
 
 
-def getFpr(fp, tn):
+def _getFpr(fp, tn):  # TODO: remove this
     return fp / (fp + tn)
 
 
@@ -124,12 +124,6 @@ class FiniteSetOfTwoClassClassificationPerformances:
     def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
         for perf in self._performance_list:
             perf.drawInROC(fig, ax)
-
-    def getWorstValueTile(self, parameterization):  # and options ?
-        ...  # TODO
-
-    def getBestValueTile(self, parameterization):  # and options ?
-        ...  # TODO
 
     def __str__(self):
         txt = (

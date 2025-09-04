@@ -63,7 +63,7 @@ class AnnotationText(AbstractAnnotation):
             x = point.x
             y = point.y
         else:
-            assert False  # should never happen
+            assert False  # This should never happen
         min_x, max_x = parameterization.getBoundsParameter1()
         min_y, max_y = parameterization.getBoundsParameter2()
         if x < min_x or x > max_x:

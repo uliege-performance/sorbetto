@@ -40,25 +40,24 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         AbstractAnnotation.__init__(self, name)
 
     @staticmethod
-    def _get_auto_levels(
-        mat_values: np.ndarray, low: float = 0.0, hi: float = 1.0
-    ) -> np.ndarray:
+    def _get_auto_levels(mat_values: np.ndarray) -> np.ndarray:
         max_val = np.max(mat_values)
         min_val = np.min(mat_values)
-        if max_val - min_val < 0.01:
-            return np.linspace(low, hi, 1001)
-        elif max_val - min_val < 0.02:
-            return np.linspace(low, hi, 501)
-        elif max_val - min_val < 0.05:
-            return np.linspace(low, hi, 201)
-        if max_val - min_val < 0.1:
-            return np.linspace(low, hi, 101)
-        elif max_val - min_val < 0.2:
-            return np.linspace(low, hi, 51)
-        elif max_val - min_val < 0.5:
-            return np.linspace(low, hi, 21)
-        else:
-            return np.linspace(low, hi, 11)
+
+        if np.abs(max_val - min_val) < 1e-6:
+            return np.empty(0)
+
+        delta = max_val - min_val
+        log_delta = np.log10(delta)
+        scale = 10 ** (np.floor(log_delta) - 1)
+
+        min_val = np.floor(min_val / scale)
+        max_val = np.ceil(max_val / scale)
+        num = int(max_val - min_val + 1)
+        min_val = min_val * scale
+        max_val = max_val * scale
+        assert num > 0
+        return np.linspace(min_val, max_val, num)
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile.numeric_tile import NumericTile
@@ -77,9 +76,7 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
 
         levels = self._levels
         if levels is None:
-            low = tile.flavor.getLowerBound()
-            hi = tile.flavor.getUpperBound()
-            levels = self._get_auto_levels(mat_values, low, hi)
+            levels = self._get_auto_levels(mat_values)
 
         vec_x = tile._vec_x
         assert isinstance(vec_x, np.ndarray)

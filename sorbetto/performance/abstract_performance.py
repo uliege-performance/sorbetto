@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 
 class AbstractPerformance(ABC):
     def __init__(self, name: str):
@@ -7,8 +9,7 @@ class AbstractPerformance(ABC):
         ABC.__init__(self)
 
     @abstractmethod
-    def getMassFunction(self):
-        pass
+    def getMassFunction(self) -> np.ndarray: ...
 
     @property
     def name(self) -> str:

@@ -89,7 +89,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         """
         return self._ptp
 
-    def getMassFunction(self):
+    def getMassFunction(self) -> np.ndarray:
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
     @staticmethod

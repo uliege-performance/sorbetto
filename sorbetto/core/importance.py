@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 
@@ -13,31 +15,31 @@ class Importance:
 
     def __init__(
         self,
-        itn: float,
-        ifp: float,
-        ifn: float,
-        itp: float,
+        itn: float | int,
+        ifp: float | int,
+        ifn: float | int,
+        itp: float | int,
         name: str = "I",
     ):
-        assert isinstance(itn, (int, float))
-        assert isinstance(ifp, (int, float))
-        assert isinstance(ifn, (int, float))
-        assert isinstance(itp, (int, float))
+        assert isinstance(itn, (float, int))
+        assert isinstance(ifp, (float, int))
+        assert isinstance(ifn, (float, int))
+        assert isinstance(itp, (float, int))
 
-        if itn < 0 or ifp < 0 or ifn < 0 or itp < 0:
+        if itn < 0.0 or ifp < 0.0 or ifn < 0.0 or itp < 0.0:
             raise ValueError(
                 f"Importance values must be non-negative. Received [TN:{itn}, FP:{ifp}, FN:{ifn}, TP:{itp}]"
             )
 
-        if itn == 0 and ifp == 0 and ifn == 0 and itp == 0:
+        if math.isclose(itn + ifp + ifn + itp, 0.0, abs_tol=self.tol):
             raise ValueError(
                 f"At least one importance value must be positive. Received [TN:{itn}, FP:{ifp}, FN:{ifn}, TP:{itp}]"
             )
 
-        self._itn = itn
-        self._ifp = ifp
-        self._ifn = ifn
-        self._itp = itp
+        self._itn = float(itn)
+        self._ifp = float(ifp)
+        self._ifn = float(ifn)
+        self._itp = float(itp)
         self._name = name
 
     @property
@@ -64,7 +66,7 @@ class Importance:
         if not isinstance(other, Importance):
             return False
 
-        return (
+        return (  # TODO: would math.fabs be better than abs?
             abs(self.itn - other.itn) <= self.tol
             and abs(self.ifp - other.ifp) <= self.tol
             and abs(self.ifn - other.ifn) <= self.tol
@@ -79,15 +81,15 @@ class Importance:
 # TODO get even better typing there (output as tuple of single type, based on inputs)
 def _parse_importance(
     importance: Importance | list[Importance] | np.ndarray | None = None,
-    itn: float | np.ndarray | None = None,
-    ifp: float | np.ndarray | None = None,
-    ifn: float | np.ndarray | None = None,
-    itp: float | np.ndarray | None = None,
+    itn: float | int | np.ndarray | None = None,
+    ifp: float | int | np.ndarray | None = None,
+    ifn: float | int | np.ndarray | None = None,
+    itp: float | int | np.ndarray | None = None,
 ) -> tuple[
-    float | np.ndarray,
-    float | np.ndarray,
-    float | np.ndarray,
-    float | np.ndarray,
+    float | int | np.ndarray,
+    float | int | np.ndarray,
+    float | int | np.ndarray,
+    float | int | np.ndarray,
 ]:
     if isinstance(importance, Importance):
         itn_ = importance.itn

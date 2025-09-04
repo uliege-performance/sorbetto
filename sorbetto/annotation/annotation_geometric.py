@@ -44,7 +44,5 @@ class AnnotationGeometric(AbstractAnnotation):
 
         assert isinstance(tile, Tile)
         parameterization = tile.parameterization
-        min1, max1 = parameterization.getBoundsParameter1()
-        min2, max2 = parameterization.getBoundsParameter2()
-        extent = [min1, max1, min2, max2]
+        extent = parameterization.getExtent()
         self._geom.draw(fig, ax, extent, **self._plt_kwargs)

@@ -41,11 +41,14 @@ class ParameterizationAdaptedToClassPriors(AbstractParameterization):
     def getBoundsParameter2(self) -> tuple[float, float]:
         return 0.0, 1.0
 
-    def getCanonicalImportance(self, param1, param2) -> Importance: ...
+    def getCanonicalImportance(self, param1, param2) -> Importance:
+        raise NotImplementedError()  # TODO: implement this!
 
-    def getValueParameter1(self, rankingScore) -> float: ...
+    def getValueParameter1(self, rankingScore) -> float:
+        raise NotImplementedError()  # TODO: implement this!
 
-    def getValueParameter2(self, rankingScore) -> float: ...
+    def getValueParameter2(self, rankingScore) -> float:
+        raise NotImplementedError()  # TODO: implement this!
 
     def getName(self):
         return "adapted to class priors (pos: {:g})".format(self._priorPos)

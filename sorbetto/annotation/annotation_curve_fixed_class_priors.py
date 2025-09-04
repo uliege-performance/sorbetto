@@ -50,12 +50,14 @@ class AnnotationCurveFixedClassPriors(AbstractAnnotation):
             performance = flavor.performance
             priorPos = performance.pfn + performance.ptp
             if not math.isclose(priorPos, self._priorPos, abs_tol=1e-6):
-                raise RuntimeError("wrong class priors")
+                message = "wrong class priors: the value flavor is for ({}, {}) while the curve is for ({}, {})"
+                message = message.format(
+                    1.0 - priorPos, priorPos, 1.0 - self._priorPos, self._priorPos
+                )
+                raise RuntimeError(message)
 
         parameterization = tile.parameterization
-        min1, max1 = parameterization.getBoundsParameter1()
-        min2, max2 = parameterization.getBoundsParameter2()
-        extent = [min1, max1, min2, max2]
+        extent = parameterization.getExtent()
 
         curve = parameterization.locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
             self._priorPos

@@ -32,14 +32,22 @@ class AnnotationFrontiersBetweenRankings(AbstractAnnotation):
         from sorbetto.tile.tile import Tile
 
         assert isinstance(tile, Tile)
-        performances = self._performances
-        for i, p1 in enumerate(performances):
-            for j, p2 in enumerate(performances):
-                if i < j:
-                    if isinstance(tile.parameterization, ParameterizationDefault):
-                        # TDOO: RankingScore.equivalent is only for the default parameterization
+
+        plt_kwargs = dict()
+        plt_kwargs["color"] = [0.7, 0.7, 0.7]
+
+        if isinstance(tile.parameterization, ParameterizationDefault):
+            # TDOO: RankingScore.equivalent is only for the default parameterization
+            extent = tile.parameterization.getExtent()
+            performances = self._performances
+            for i, p1 in enumerate(performances):
+                for j, p2 in enumerate(performances):
+                    if i < j:
                         curve = RankingScore.equivalent(p1, p2)
-                        extent = tile.parameterization.getExtent()
-                        plt_kwargs = dict()
-                        plt_kwargs["color"] = [0.7, 0.7, 0.7]
                         curve.draw(fig, ax, extent, **plt_kwargs)
+        else:
+            message = (
+                "AnnotationFrontiersBetweenRankings only works for ParameterizationDefault in this version.\n"
+                "See RankingScore.equivalent for more information about this limitation."
+            )
+            logging.warning(message)

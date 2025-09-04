@@ -4,15 +4,15 @@ from matplotlib.figure import Figure
 
 from sorbetto.analysis.abstract_analysis import AbstractAnalysis
 from sorbetto.core.entity import Entity
-from sorbetto.flavor.baseline_flavor import BaselineFlavor
-from sorbetto.flavor.sota_flavor import SOTAFlavor
+from sorbetto.flavor.best_flavor import BestFlavor
+from sorbetto.flavor.worst_flavor import WorstFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.baseline_tile import BaselineTile
-from sorbetto.tile.sota_tile import SOTATile
+from sorbetto.tile.best_tile import BestTile
 from sorbetto.tile.tile import Tile
+from sorbetto.tile.worst_tile import WorstTile
 
 
 class AnalysisForMethodDesigner(AbstractAnalysis):
@@ -81,10 +81,8 @@ class AnalysisForMethodDesigner(AbstractAnalysis):
         ...  # TODO
 
     def getBaselineValueTile(self, name: str = "Baseline Value Tile") -> Tile:
-        flavor = BaselineFlavor(
-            performances=self.performances, entity_list=self.entities
-        )
-        tile = BaselineTile(
+        flavor = WorstFlavor(performances=self.performances, entity_list=self.entities)
+        tile = WorstTile(
             parameterization=self.parameterization,
             flavor=flavor,
             resolution=self._resolution,
@@ -94,8 +92,8 @@ class AnalysisForMethodDesigner(AbstractAnalysis):
         return tile
 
     def getSOTAValueTile(self, name: str = "SOTA Value Tile") -> Tile:
-        flavor = SOTAFlavor(performances=self.performances, entity_list=self.entities)
-        tile = SOTATile(
+        flavor = BestFlavor(performances=self.performances, entity_list=self.entities)
+        tile = BestTile(
             parameterization=self.parameterization,
             flavor=flavor,
             resolution=self._resolution,

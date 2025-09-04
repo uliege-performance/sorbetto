@@ -11,16 +11,18 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
 from sorbetto.ranking.ranking_score import RankingScore
 
 
-class BaselineFlavor(AbstractNumericFlavor):
+class BestFlavor(AbstractNumericFlavor):
     """
     TODO actual description
+
+    Example of Best Flavor: the SOTA Flavor.
     """
 
     def __init__(
         self,
         performances: FiniteSetOfTwoClassClassificationPerformances,
         entity_list: list[Entity],
-        name: str = "Unnamed Baseline Flavor",
+        name: str = "Unnamed SOTA Flavor",
         colormap: Any = None,
     ):
         super().__init__(name=name, colormap=colormap)
@@ -49,7 +51,7 @@ class BaselineFlavor(AbstractNumericFlavor):
             importance=importance, performance=self._performances
         )
 
-        return np.min(values, axis=0)
+        return np.max(values, axis=0)
 
     def getDefaultColormap(self):
         return "gray"

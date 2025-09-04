@@ -29,9 +29,11 @@ class ParameterizationAdaptedToPredictionRates(AbstractParameterization):
     def getRateOfPositivePredictions(self) -> float:
         return self._ratePos
 
-    def getNameParameter1(self): ...
+    def getNameParameter1(self):
+        raise NotImplementedError()  # TODO: implement this!
 
-    def getNameParameter2(self): ...
+    def getNameParameter2(self):
+        raise NotImplementedError()  # TODO: implement this!
 
     def getBoundsParameter1(self) -> tuple[float, float]:
         return 0.0, 1.0
@@ -39,11 +41,14 @@ class ParameterizationAdaptedToPredictionRates(AbstractParameterization):
     def getBoundsParameter2(self) -> tuple[float, float]:
         return 0.0, 1.0
 
-    def getCanonicalImportance(self, param1, param2) -> Importance: ...
+    def getCanonicalImportance(self, param1, param2) -> Importance:
+        raise NotImplementedError()  # TODO: implement this!
 
-    def getValueParameter1(self, rankingScore) -> float: ...
+    def getValueParameter1(self, rankingScore) -> float:
+        raise NotImplementedError()  # TODO: implement this!
 
-    def getValueParameter2(self, rankingScore) -> float: ...
+    def getValueParameter2(self, rankingScore) -> float:
+        raise NotImplementedError()  # TODO: implement this!
 
     def getName(self):
         return "adapted to prediction rates (pos: {:g})".format(self._ratePos)

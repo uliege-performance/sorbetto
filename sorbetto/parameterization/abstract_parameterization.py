@@ -22,12 +22,10 @@ class AbstractParameterization(ABC):
     def getNameParameter2(self) -> str: ...
 
     @abstractmethod
-    def getBoundsParameter1(self) -> tuple[float, float]:
-        pass
+    def getBoundsParameter1(self) -> tuple[float, float]: ...
 
     @abstractmethod
-    def getBoundsParameter2(self) -> tuple[float, float]:
-        pass
+    def getBoundsParameter2(self) -> tuple[float, float]: ...
 
     def getExtent(self) -> tuple[float, float, float, float]:
         min_x, max_x = self.getBoundsParameter1()
@@ -82,12 +80,10 @@ class AbstractParameterization(ABC):
         return RankingScore(importance)
 
     @abstractmethod
-    def getValueParameter1(self, rankingScore) -> float:
-        pass
+    def getValueParameter1(self, rankingScore) -> float: ...
 
     @abstractmethod
-    def getValueParameter2(self, rankingScore) -> float:
-        pass
+    def getValueParameter2(self, rankingScore) -> float: ...
 
     def locateRankingScore(self, rankingScore) -> Point:
         assert isinstance(rankingScore, RankingScore)
@@ -193,28 +189,28 @@ class AbstractParameterization(ABC):
         This score is related to the accuracy $A$ by $S=2A-1$.
         Reference: :cite:t:`Warrens2012TheEffect`.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateSimilarityCoefficientsT(self) -> Point:
         """
         Similarity coefficients of the family $T_\\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateSimilarityCoefficientsS(self) -> Point:
         """
         Similarity coefficients of the family $S_\\theta$, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateSimilarityCoefficients(self) -> Conic:
         """
         Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
         See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateStandardizedNegativePredictiveValue(self, priorPos) -> Point:
         """
@@ -223,7 +219,7 @@ class AbstractParameterization(ABC):
         $\\scoreSNPV=\\frac{\\scoreTNR}{\\scoreTNR+\\scoreFNR}=\\frac{\\scoreNPV\\priorpos}{\\scoreNPV(\\priorpos-\\priorneg)+\\priorneg}$
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateStandardizedPositivePredictiveValue(self, priorPos) -> Point:
         """
@@ -232,16 +228,15 @@ class AbstractParameterization(ABC):
         $\\scoreSPPV=\\frac{\\scoreTPR}{\\scoreFPR+\\scoreTPR}=\\frac{\\scorePPV\\priorneg}{\\scorePPV(\\priorneg-\\priorpos)+\\priorpos}$
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateNegativeLikelihoodRatioComplement(self, priorPos) -> Point:
         """
         Negative Likelihood Ratio.
-        References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
+        References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        # TODO add Gardner2006Receiver-operating to the bib
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locatePositiveLikelihoodRatio(self, priorPos) -> Point:
         """
@@ -249,7 +244,7 @@ class AbstractParameterization(ABC):
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateSkewInsensitiveVersionOfF(self, priorPos) -> Point:
         """
@@ -275,16 +270,16 @@ class AbstractParameterization(ABC):
         Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locatePeirceSkillScore(self, priorPos) -> Point:
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateInformedness(self, priorPos) -> Point:
         """
         See :cite:t:`Pierard2025Foundations`, Section A.7.4
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateCohenKappa(self, priorPos) -> Point:
         """
@@ -294,10 +289,10 @@ class AbstractParameterization(ABC):
         Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateHeidkeSkillScore(self, priorPos) -> Point:
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateProbabilityTrueNegative(self, priorPos) -> Point:
         return self.locateRankingScore(RankingScore.getProbabilityTrueNegative())
@@ -326,7 +321,7 @@ class AbstractParameterization(ABC):
         The determinant of the normalized confusion matrix is $\\scoreConfusionMatrixDeterminant=\\priorneg\\priorpos\\scoreYoudenJ$.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateMarkedness(self, ratePos) -> Point:
         """
@@ -334,10 +329,10 @@ class AbstractParameterization(ABC):
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as $\\scoreNPV+\\scorePPV-1$.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateClaytonSkillScore(self, ratePos) -> Point:
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     @abstractmethod
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
@@ -386,7 +381,7 @@ class AbstractParameterization(ABC):
         = \\left\\{ R_I : a(I) = b(I) \\right\\}$$
         """
         # See Theorem 1 of future "paper 6".
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
         """
@@ -394,7 +389,7 @@ class AbstractParameterization(ABC):
         = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}$$
         """
         # See Theorem 2 of future "paper 6".
-        raise NotImplementedError()  # TODO
+        raise NotImplementedError()  # TODO: Implement this!
 
     @abstractmethod
     def getName(self):

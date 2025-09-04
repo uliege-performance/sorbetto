@@ -50,12 +50,14 @@ class AnnotationCurveFixedPredictionRates(AbstractAnnotation):
             performance = flavor.performance
             ratePos = performance.pfp + performance.ptp
             if not math.isclose(ratePos, self._ratePos, abs_tol=1e-6):
-                raise RuntimeError("wrong prediction rates")
+                message = "wrong prediction rates: the value flavor is for ({}, {}) while the curve is for ({}, {})"
+                message = message.format(
+                    1.0 - ratePos, ratePos, 1.0 - self._ratePos, self._ratePos
+                )
+                raise RuntimeError(message)
 
         parameterization = tile.parameterization
-        min1, max1 = parameterization.getBoundsParameter1()
-        min2, max2 = parameterization.getBoundsParameter2()
-        extent = [min1, max1, min2, max2]
+        extent = parameterization.getExtent()
 
         curve = parameterization.locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
             self._ratePos

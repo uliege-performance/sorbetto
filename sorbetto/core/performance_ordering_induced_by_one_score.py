@@ -63,7 +63,19 @@ class PerformanceOrderingInducedByOneScore(
         p1: TwoClassClassificationPerformance,
         p2: TwoClassClassificationPerformance,
     ) -> bool:
-        # Theorem 1 of :cite:t:`Pierard2025Foundations`.
+        """
+        Return `True` if and only if the performance `p1` is worse than or equivalent to
+        the performance `p2` according to the preorder induced by the score.
+
+        See Theorem 1 of :cite:t:`Pierard2025Foundations`.
+
+        Args:
+            p1 (TwoClassClassificationPerformance): the first performance to compare
+            p2 (TwoClassClassificationPerformance): the seconc performance to compare
+
+        Returns:
+            bool: the comparison between `p1` and `p2`.
+        """
 
         if p1 == p2:
             return True
@@ -75,11 +87,8 @@ class PerformanceOrderingInducedByOneScore(
 
         if np.isnan(v1) or np.isnan(v2):
             return False
-
-        if v1 <= v2:
-            return True
-
-        return False
+        else:
+            return v1 <= v2
 
     # We have four cases depending on the results of self(p1, p2) and self(p2, p1).
     # A.3.2
@@ -119,5 +128,3 @@ class PerformanceOrderingInducedByOneScore(
 
     def getRelationComparable(self) -> AbstractHomogeneousBinaryRelationOnPerformances:
         return ~self.getRelationIncomparable()
-
-    # TODO ...

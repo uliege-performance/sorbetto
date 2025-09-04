@@ -15,8 +15,8 @@ class AbstractFlavor(ABC):
     def __init__(self, name: str = "Unnamed Flavor", colormap: Any = None):
         assert isinstance(name, str)
         self.name = name
-        ABC.__init__(self)
         self._colormap = colormap
+        ABC.__init__(self)
 
     @property
     def colormap(self) -> Any:
