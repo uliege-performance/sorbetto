@@ -23,7 +23,8 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         """
 
         if levels is not None:
-            assert isinstance(levels, list[float])
+            assert isinstance(levels, list)
+            assert all(isinstance(x, float) for x in levels)
         self._levels = levels
 
         if name is None:
@@ -91,5 +92,3 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         )
         tiny = 6
         ax.clabel(cs, inline=True, fontsize=tiny, **self._plt_kwargs)
-
-        return fig, ax
