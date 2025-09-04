@@ -36,8 +36,8 @@ class CorrelationFlavor(AbstractNumericFlavor):
             np.ndarray,
         ],
         correlation_coefficient: Literal[
-            "pearsonr", "spearmanr", "kendalltau"
-        ] = "pearsonr",
+            "pearson_r", "spearman_rho", "kendall_tau"
+        ] = "pearson_r",
         name: str = "Correlation Flavor",
     ):
         super().__init__(name)
@@ -84,22 +84,22 @@ class CorrelationFlavor(AbstractNumericFlavor):
         )
 
         correlation = np.empty((value_scores.shape[1], value_scores.shape[2]))
-        if self._correlation_coefficient == "pearsonr":
+        if self._correlation_coefficient == "pearson_r":
 
             def corr_func(x, y):
-                return stats.pearsonr(x, y).correlation  # type:ignore
-        elif self._correlation_coefficient == "spearmanr":
+                return stats.pearson_r(x, y).correlation  # type:ignore
+        elif self._correlation_coefficient == "spearman_rho":
 
             def corr_func(x, y):
-                return stats.spearmanr(x, y).correlation  # type:ignore
-        elif self._correlation_coefficient == "kendalltau":
+                return stats.spearman_rho(x, y).correlation  # type:ignore
+        elif self._correlation_coefficient == "kendall_tau":
 
             def corr_func(x, y):
-                return stats.kendalltau(x, y).correlation  # type:ignore
+                return stats.kendall_tau(x, y).correlation  # type:ignore
         else:
             raise ValueError(
                 f"Unknown correlation coefficient: {self._correlation_coefficient}. "
-                "Available options are 'pearsonr' and 'spearmanr'."
+                "Available options are 'pearson_r' and 'spearman_rho'."
             )
 
         for x in tqdm(range(value_scores.shape[1])):
