@@ -66,7 +66,6 @@ class AnnotationText(AbstractAnnotation):
             return
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
-        print(self._plt_kwargs)
         ax.plot(x, y, "o", **self._plt_kwargs)
         if x < center_x:
             if y < center_y:
