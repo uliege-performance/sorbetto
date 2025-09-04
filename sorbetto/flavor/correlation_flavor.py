@@ -87,15 +87,15 @@ class CorrelationFlavor(AbstractNumericFlavor):
         if self._correlation_coefficient == "pearson_r":
 
             def corr_func(x, y):
-                return stats.pearson_r(x, y).correlation  # type:ignore
+                return stats.pearsonr(x, y).correlation  # type:ignore
         elif self._correlation_coefficient == "spearman_rho":
 
             def corr_func(x, y):
-                return stats.spearman_rho(x, y).correlation  # type:ignore
+                return stats.spearmanr(x, y).correlation  # type:ignore
         elif self._correlation_coefficient == "kendall_tau":
 
             def corr_func(x, y):
-                return stats.kendall_tau(x, y).correlation  # type:ignore
+                return stats.kendalltau(x, y).correlation  # type:ignore
         else:
             raise ValueError(
                 f"Unknown correlation coefficient: {self._correlation_coefficient}. "
