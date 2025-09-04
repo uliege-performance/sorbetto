@@ -58,15 +58,10 @@ class AnalysisForAppDeveloper(AbstractAnalysis):
 
         return entity_tile
 
-    def getValueTile(self, entity: Entity) -> ValueTile:
-        performance = entity.performance
-        flavor = ValueFlavor(performance=performance)
-        return ValueTile(
-            flavor=flavor,
-            parameterization=self._parameterization,
-            resolution=self._resolution,
-            name="Value Tile",
-        )
+    def getValueTile(self, entity: Entity, name: str | None = None) -> ValueTile:
+        if name is None:
+            name = f"Value Tile for {entity.name}"
+        return self._getValueTile(entity=entity, name=name)
 
     def getCorrelationTile(self, score, correlation_fct):
         performances = self.performances
