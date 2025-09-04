@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections.abc import Iterable as iterable
 
 import numpy as np
@@ -6,7 +6,7 @@ import numpy as np
 from sorbetto.core.entity import Entity
 
 
-class AbstractRanking:
+class AbstractRanking(ABC):
     """
     See Axiom 1 in :cite:t:`Pierard2025Foundations`.
     """
@@ -28,6 +28,8 @@ class AbstractRanking:
             name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.getName()}"
         self._name = name
 
+        ABC.__init__(self)
+
     @property
     def entities(self) -> iterable:
         return self._entities
@@ -42,28 +44,28 @@ class AbstractRanking:
 
     @property
     @abstractmethod
-    def values(self) -> np.ndarray:
-        raise NotImplementedError()
+    def values(self) -> np.ndarray: ...
 
     @abstractmethod
-    def getAllMinRanks(self) -> np.ndarray:
-        raise NotImplementedError()
+    def getAllStableRanks(self) -> np.ndarray: ...
 
     @abstractmethod
-    def getMinRank(self, entity) -> int:
-        raise NotImplementedError()
+    def getStableRank(self, entity) -> int: ...
 
     @abstractmethod
-    def getAllMaxRanks(self) -> np.ndarray:
-        raise NotImplementedError()
+    def getAllMinRanks(self) -> np.ndarray: ...
 
     @abstractmethod
-    def getMaxRank(self, entity) -> int:
-        raise NotImplementedError()
+    def getMinRank(self, entity) -> int: ...
 
     @abstractmethod
-    def getEntitiesAtRank(self, rank: int) -> list:
-        raise NotImplementedError()
+    def getAllMaxRanks(self) -> np.ndarray: ...
+
+    @abstractmethod
+    def getMaxRank(self, entity) -> int: ...
+
+    @abstractmethod
+    def getEntitiesAtRank(self, rank: int) -> list: ...
 
     def getAllAvgRanks(self) -> np.ndarray:
         min_ranks = self.getAllMinRanks()

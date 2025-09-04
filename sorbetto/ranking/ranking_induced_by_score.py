@@ -17,7 +17,7 @@ class RankingInducedByScore(AbstractRanking):
         vals = np.asarray(vals)
         self._vals = vals
 
-        idxs = np.argsort(vals)
+        idxs = np.argsort(vals, kind="stable")
 
         # keep the ordering in cache and create a link from entities to the sorted idxs
         self._sorted_idx = idxs
@@ -45,6 +45,19 @@ class RankingInducedByScore(AbstractRanking):
     @property
     def values(self) -> np.ndarray:
         return self._vals
+
+    def getAllStableRanks(self) -> np.ndarray:
+        sorted_idx = self._sorted_idx
+        N = sorted_idx.size
+        tmp = np.empty(N, dtype=int)
+        tmp[sorted_idx] = np.arange(N)
+        return N - tmp
+
+    def getStableRank(self, entity) -> int:
+        id_entity = self._dico_entities[entity]
+        # TODO: optimize this.
+        all_stable_ranks = self.getAllStableRanks()
+        return all_stable_ranks[id_entity]
 
     def getAllMinRanks(self) -> np.ndarray:
         return 1 + self._num_gt

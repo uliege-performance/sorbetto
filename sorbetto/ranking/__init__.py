@@ -1,5 +1,5 @@
+from .ranking_induced_by_score import RankingInducedByScore
 from .ranking_score import RankingScore
-from .ranking import RankingInducedByScore
 
 __all__ = [
     "RankingScore",
