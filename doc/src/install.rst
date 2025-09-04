@@ -30,11 +30,12 @@ package, you can install it by cloning the GitHub repo:
     cd sorbetto
     pip install .
 
+
 Where to start
 --------------
 
-After installing Sorbetto, we suggest that you go try our :ref:`Demos` to get
-the hang of the core concepts of our library thanks to interactive guides.
+After installing Sorbetto, we suggest that you head over to our :ref:`Getting
+started` guide to get the hang of the core concepts of the library.
 
 You can also check out our :ref:`Examples` to see what can be achieved with
-Sorbetto.
+Sorbetto, or try out our interactive :ref:`Demos`.
