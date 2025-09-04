@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -5,7 +7,9 @@ from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.tile import Tile
+
+if TYPE_CHECKING:
+    from sorbetto.tile.tile import Tile
 
 
 class AnnotationText(AbstractAnnotation):
@@ -39,7 +43,9 @@ class AnnotationText(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, label)
 
-    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile.tile import Tile
+
         assert isinstance(tile, Tile)
         parameterization = tile.parameterization
         location = self._location

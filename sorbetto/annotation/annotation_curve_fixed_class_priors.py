@@ -1,4 +1,5 @@
 import math
+from typing import TYPE_CHECKING
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -8,7 +9,9 @@ from sorbetto.flavor.value_flavor import ValueFlavor
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
 )
-from sorbetto.tile.tile import Tile
+
+if TYPE_CHECKING:
+    from sorbetto.tile.tile import Tile
 
 
 class AnnotationCurveFixedClassPriors(AbstractAnnotation):
@@ -37,7 +40,9 @@ class AnnotationCurveFixedClassPriors(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, name)
 
-    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile.tile import Tile
+
         assert isinstance(tile, Tile)
 
         flavor = tile.flavor

@@ -1,4 +1,5 @@
 import logging
+from typing import TYPE_CHECKING
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -9,7 +10,9 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.ranking_score import RankingScore
-from sorbetto.tile.tile import Tile
+
+if TYPE_CHECKING:
+    from sorbetto.tile.tile import Tile
 
 
 class AnnotationFrontiersBetweenRankings(AbstractAnnotation):
@@ -25,7 +28,10 @@ class AnnotationFrontiersBetweenRankings(AbstractAnnotation):
             logging.warning(message)
         super().__init__(name)
 
-    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile.tile import Tile
+
+        assert isinstance(tile, Tile)
         performances = self._performances
         for i, p1 in enumerate(performances):
             for j, p2 in enumerate(performances):

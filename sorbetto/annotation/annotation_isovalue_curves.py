@@ -1,12 +1,14 @@
 import logging
+from typing import TYPE_CHECKING
 
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
-from sorbetto.tile.numeric_tile import NumericTile
-from sorbetto.tile.tile import Tile
+
+if TYPE_CHECKING:
+    from sorbetto.tile.tile import Tile
 
 
 class AnnotationIsovalueCurves(AbstractAnnotation):
@@ -58,7 +60,9 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         else:
             return np.linspace(low, hi, 11)
 
-    def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile.numeric_tile import NumericTile
+
         if not isinstance(tile, NumericTile):
             message = "It makes no sense to draw isovalue curves on a Tile that is not numeric."
             logging.warning(message)
