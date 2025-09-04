@@ -136,9 +136,5 @@ class CorrelationTile(NumericTile):
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min
 
-    def flavorCall(self, importance: np.ndarray) -> np.ndarray:
-        assert self.flavor is not None
-        return self.flavor(importance=importance)
-
     def getExplanation(self) -> str:
         return "Not implemented for CorrelationTile yet."

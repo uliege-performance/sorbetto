@@ -56,11 +56,5 @@ class EntityTile(SymbolicTile):
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
 
-    def flavorCall(self, importance):
-        assert self.flavor is not None
-        return self.flavor(
-            importance=importance,
-        )
-
     def getExplanation(self):
         return "Explanation of the entity tile not yet defined"

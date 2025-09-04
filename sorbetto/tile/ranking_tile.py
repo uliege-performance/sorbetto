@@ -65,11 +65,5 @@ class RankingTile(NumericTile):
     def performance(self, value: FiniteSetOfTwoClassClassificationPerformances):
         self._performance = value
 
-    def flavorCall(self, importance):
-        assert self.flavor is not None
-        return self.flavor(
-            importance=importance,
-        )
-
     def getExplanation(self):
         return "Explanation of the Ranking tile not yet defined"
