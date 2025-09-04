@@ -142,6 +142,11 @@ class FiniteSetOfTwoClassClassificationPerformances:
     def __iter__(self):
         return iter(self._performance_list)
 
+    def __getitem__(self, index: int) -> TwoClassClassificationPerformance:
+        if index < 0 or index >= len(self._performance_list):
+            raise IndexError("Index out of range")
+        return self._performance_list[index]
+
     def __len__(self):
         return len(self._performance_list)
 
