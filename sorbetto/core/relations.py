@@ -60,22 +60,22 @@ class AbstractHomogeneousBinaryRelationOnPerformances(ABC):
         pass
 
     def __invert__(self) -> "AbstractHomogeneousBinaryRelationOnPerformances":
-        return __Complement(self)
+        return _Complement(self)
 
     def __and__(self, other) -> "AbstractHomogeneousBinaryRelationOnPerformances":
-        return __Intersection(self, other)
+        return _Intersection(self, other)
 
     def __or__(self, other) -> "AbstractHomogeneousBinaryRelationOnPerformances":
-        return __Union(self, other)
+        return _Union(self, other)
 
     def getDual(self):
-        return __Dual(self)
+        return _Dual(self)
 
     def __str__(self):
         return f"AbstractHomogeneousBinaryRelationOnPerformances(name={self._name})"
 
 
-class __Intersection(AbstractHomogeneousBinaryRelationOnPerformances):
+class _Intersection(AbstractHomogeneousBinaryRelationOnPerformances):
     def __init__(
         self,
         rel1: AbstractHomogeneousBinaryRelationOnPerformances,
@@ -122,7 +122,7 @@ class __Intersection(AbstractHomogeneousBinaryRelationOnPerformances):
         return self._rel1(p1, p2) and self._rel2(p1, p2)
 
 
-class __Union(AbstractHomogeneousBinaryRelationOnPerformances):
+class _Union(AbstractHomogeneousBinaryRelationOnPerformances):
     def __init__(
         self,
         rel1: AbstractHomogeneousBinaryRelationOnPerformances,
@@ -169,7 +169,7 @@ class __Union(AbstractHomogeneousBinaryRelationOnPerformances):
         return self._rel1(p1, p2) or self._rel2(p1, p2)
 
 
-class __Complement(AbstractHomogeneousBinaryRelationOnPerformances):
+class _Complement(AbstractHomogeneousBinaryRelationOnPerformances):
     def __init__(self, rel1: AbstractHomogeneousBinaryRelationOnPerformances):
         super().__init__(name=f"Negation({rel1.name})")
         self._rel1 = rel1
@@ -211,7 +211,7 @@ class __Complement(AbstractHomogeneousBinaryRelationOnPerformances):
         return not (self._rel1(p1, p2))
 
 
-class __Dual(AbstractHomogeneousBinaryRelationOnPerformances):
+class _Dual(AbstractHomogeneousBinaryRelationOnPerformances):
     def __init__(self, rel1: AbstractHomogeneousBinaryRelationOnPerformances):
         super().__init__(name=f"Dual({rel1.name})")
         self._rel1 = rel1
