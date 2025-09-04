@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+
+if TYPE_CHECKING:
+    from sorbetto.tile.tile import Tile
 
 
 class AbstractAnnotation(ABC):
@@ -29,7 +33,7 @@ class AbstractAnnotation(ABC):
         return self._name
 
     @abstractmethod
-    def draw(self, tile, fig: Figure, ax: Axes) -> None:
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         pass
 
     def __str__(self) -> str:
