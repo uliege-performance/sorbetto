@@ -52,7 +52,6 @@ class SOTAFlavor(AbstractNumericFlavor):
         return np.max(values, axis=0)
 
     def getDefaultColormap(self):
-        # FIXME discrete colormap
         return "gray"
 
     def getLowerBound(self):
