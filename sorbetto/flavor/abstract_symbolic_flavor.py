@@ -24,7 +24,6 @@ class AbstractSymbolicFlavor(AbstractFlavor, Generic[T]):
         Returns:
             The codomain of the flavor.
         """
-        pass
 
     def _getSortedCodomain(self) -> list[T]:
         """Returns the codomain of the flavor, sorted in a stable way.
@@ -55,8 +54,8 @@ class AbstractSymbolicFlavor(AbstractFlavor, Generic[T]):
         codomain = self._getSortedCodomain()
         try:
             return codomain.index(value) + 1
-        except ValueError:
-            raise ValueError(f"Value {value!r} not in codomain {codomain}")
+        except ValueError as exc:
+            raise ValueError(f"Value {value!r} not in codomain {codomain}") from exc
 
     def reverse_mapper(self, index: int) -> T:
         """Maps an integer in [1, n], where n is the size of the codomain, to a value

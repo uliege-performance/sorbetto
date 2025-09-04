@@ -71,7 +71,7 @@ class CorrelationFlavor(AbstractNumericFlavor):
         importance: Importance | np.ndarray,
     ):
         try:  # try if X is vectorized
-            x_scores = self._score(self._performances)
+            x_scores: list | np.ndarray = self._score(self._performances)
         except Exception as e:  # else fallback to loop
             logging.warning(
                 "The score given to the Correlation Flavor is not vectorized. "

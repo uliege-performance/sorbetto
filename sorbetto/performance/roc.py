@@ -4,7 +4,7 @@ import math
 def _setupROC(
     fig,
     ax,
-    priorPos: float = None,
+    priorPos: float | None = None,
     show_no_skills: bool = True,
     show_priors: bool = True,
     show_unbiased=True,

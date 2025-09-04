@@ -52,7 +52,6 @@ class BaselineFlavor(AbstractNumericFlavor):
         return np.min(values, axis=0)
 
     def getDefaultColormap(self):
-        # FIXME discrete colormap
         return "gray"
 
     def getLowerBound(self):
@@ -60,5 +59,3 @@ class BaselineFlavor(AbstractNumericFlavor):
 
     def getUpperBound(self):
         return 1.0
-
-    # TODO getNoSkillTile
