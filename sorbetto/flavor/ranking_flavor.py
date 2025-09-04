@@ -30,12 +30,12 @@ class RankingFlavor(AbstractNumericFlavor):
         self._performances = FiniteSetOfTwoClassClassificationPerformances(
             [e.performance for e in entity_list]
         )
-        for i, e in enumerate(self._entity_list):
-            if e is entity:
-                self._id_entity = i
-                break
-        else:
-            raise ValueError("The given entity was not found in the given entity list.")
+        try:
+            self._id_entity = self._entity_list.index(entity)
+        except ValueError as exc:
+            raise ValueError(
+                "The given entity was not found in the given entity list."
+            ) from exc
 
     @property
     def entity(self) -> Entity:
