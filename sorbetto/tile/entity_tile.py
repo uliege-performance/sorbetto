@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.flavor.entity_flavor import EntityFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -6,7 +8,6 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.tile.symbolic_tile import SymbolicTile
-from sorbetto.tile.utils import get_colors
 
 
 class EntityTile(SymbolicTile):
@@ -27,7 +28,7 @@ class EntityTile(SymbolicTile):
         )
         self._rank = self.flavor.rank
         self._entities = self.flavor.entity_list
-        self._colormap = get_colors(len(self.entities))  # FIXME
+        self._colormap = self.flavor.colormap
         self._performance = self.flavor.performances
 
         self.value_tile = None
@@ -58,3 +59,14 @@ class EntityTile(SymbolicTile):
 
     def getExplanation(self):
         return "Explanation of the entity tile not yet defined"
+
+    def draw(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
+        fig, ax = super().draw(fig, ax)
+
+        im = ax.images[-1]
+        im.set_clim(0.5, self.flavor.nb_entities + 0.5)
+        im.colorbar.set_ticks(range(1, self.flavor.nb_entities + 1))  # type: ignore
+
+        return fig, ax

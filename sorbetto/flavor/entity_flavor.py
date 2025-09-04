@@ -61,7 +61,7 @@ class EntityFlavor(AbstractSymbolicFlavor):
             performance=self._performances,
         )
 
-        return np.argsort(-values, axis=0)[self._rank - 1]
+        return np.argsort(-values, axis=0)[self._rank - 1] + 1
 
     def getDefaultColormap(self):
         colors = [e.color for e in self._entity_list]
