@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Any
 
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
 
@@ -9,8 +10,8 @@ class AbstractSymbolicFlavor(AbstractFlavor):
     given importance values.
     """
 
-    def __init__(self, name: str = "Unnamed Symbolic Flavor"):
-        super().__init__(name)
+    def __init__(self, name: str = "Unnamed Symbolic Flavor", colormap: Any = None):
+        super().__init__(name=name, colormap=colormap)
 
     @abstractmethod
     def getCodomain(self) -> set:

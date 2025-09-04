@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 
 import numpy as np
 from scipy import stats
@@ -39,8 +39,9 @@ class CorrelationFlavor(AbstractNumericFlavor):
             "pearson_r", "spearman_rho", "kendall_tau"
         ] = "pearson_r",
         name: str = "Correlation Flavor",
+        colormap: Any = None,
     ):
-        super().__init__(name)
+        super().__init__(name=name, colormap=colormap)
         self._performances = performances
         self._score = score
         self._correlation_coefficient = correlation_coefficient

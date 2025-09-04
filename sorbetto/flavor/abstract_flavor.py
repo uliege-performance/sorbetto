@@ -12,10 +12,21 @@ class AbstractFlavor(ABC):
     importance values.
     """
 
-    def __init__(self, name: str = "Unnamed Flavor"):
+    def __init__(self, name: str = "Unnamed Flavor", colormap: Any = None):
         assert isinstance(name, str)
         self.name = name
         ABC.__init__(self)
+        self._colormap = colormap
+
+    @property
+    def colormap(self) -> Any:
+        if self._colormap is None:
+            return self.getDefaultColormap()
+        return self._colormap
+
+    @colormap.setter
+    def colormap(self, colormap: Any) -> None:
+        self._colormap = colormap
 
     @abstractmethod
     def __call__(self, importance: Importance | np.ndarray) -> Any:
