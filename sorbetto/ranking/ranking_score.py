@@ -4,6 +4,7 @@ from typing import cast, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from sorbetto.core.importance import Importance, _parse_importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
@@ -260,6 +261,11 @@ class RankingScore:
                 cmap=cmap,
             )
 
+            if show_colorbar:
+                divider = make_axes_locatable(ax)
+                cax = divider.append_axes("right", size="5%", pad="5%")
+                fig.colorbar(im, ax=cax, label=self.name)
+
         if show_iso_value_lines:
             cs = ax.contour(
                 vec_fpr,
@@ -269,9 +275,6 @@ class RankingScore:
                 colors="cornflowerblue",
             )
             ax.clabel(cs, inline=True, fontsize=8)
-
-        if show_values_map and show_colorbar:
-            fig.colorbar(im, ax=ax, label=self.name)  # type: ignore
 
         _setupROC(
             fig,
