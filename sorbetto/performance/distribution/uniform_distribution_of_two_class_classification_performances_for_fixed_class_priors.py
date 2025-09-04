@@ -59,6 +59,32 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors
         """
         return 1.0 - self._priorPos
 
+    def drawOneAtRandom(self) -> TwoClassClassificationPerformance:
+        """
+        Draw a two-class classification performances at random,
+        uniformy, in the performances corresponding to fixed class prios.
+
+        Returns:
+            TwoClassClassificationPerformance: the performance.
+        """
+        priorNeg = self.priorNeg
+        priorPos = self.priorPos
+
+        name = "randomly chosen performance"
+
+        tnr = random.random()  # true negative rate
+        tpr = random.random()  # true positive rate
+        fpr = 1.0 - tnr  # false positive rate
+        fnr = 1.0 - tpr  # false negative rate
+
+        ptn = tnr * priorNeg  # probability of a true negative
+        pfp = fpr * priorNeg  # probability of a false positive
+        pfn = fnr * priorPos  # probability of a false negative
+        ptp = tpr * priorPos  # probability of a true positive
+
+        p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
+        return p
+
     def drawAtRandom(
         self, numPerformances: int
     ) -> FiniteSetOfTwoClassClassificationPerformances:
@@ -78,6 +104,8 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors
         priorNeg = self.priorNeg
         priorPos = self.priorPos
 
+        name = "randomly chosen performance"
+
         performances = list()
         for _ in range(numPerformances):
             tnr = random.random()  # true negative rate
@@ -90,7 +118,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors
             pfn = fnr * priorPos  # probability of a false negative
             ptp = tpr * priorPos  # probability of a true positive
 
-            p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp)
+            p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
             performances.append(p)
 
         return FiniteSetOfTwoClassClassificationPerformances(performances)

@@ -23,6 +23,9 @@ class AbstractDistributionOfTwoClassClassificationPerformances(ABC):
         return self._name
 
     @abstractmethod
+    def drawOneAtRandom(self) -> TwoClassClassificationPerformance: ...
+
+    @abstractmethod
     def drawAtRandom(
         self, numPerformances: int
     ) -> FiniteSetOfTwoClassClassificationPerformances: ...

@@ -59,6 +59,32 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
         """
         return 1.0 - self._ratePos
 
+    def drawOneAtRandom(self) -> TwoClassClassificationPerformance:
+        """
+        Draw a two-class classification performances at random,
+        uniformy, in the performances corresponding to fixed prediction rates.
+
+        Returns:
+            TwoClassClassificationPerformance: the performance.
+        """
+        rateNeg = self.rateNeg
+        ratePos = self.ratePos
+
+        name = "randomly chosen performance"
+
+        val_npv = random.random()  # negative predictive value
+        val_ppv = random.random()  # positive predictive value
+        val_for = 1.0 - val_npv  # false omission rate
+        val_fdr = 1.0 - val_ppv  # false discovery rate
+
+        ptn = val_npv * rateNeg  # probability of a true negative
+        pfp = val_fdr * ratePos  # probability of a false positive
+        pfn = val_for * rateNeg  # probability of a false negative
+        ptp = val_ppv * ratePos  # probability of a true positive
+
+        p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
+        return p
+
     def drawAtRandom(
         self, numPerformances: int
     ) -> FiniteSetOfTwoClassClassificationPerformances:
@@ -78,6 +104,8 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
         rateNeg = self.rateNeg
         ratePos = self.ratePos
 
+        name = "randomly chosen performance"
+
         performances = list()
         for _ in range(numPerformances):
             val_npv = random.random()  # negative predictive value
@@ -90,7 +118,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
             pfn = val_for * rateNeg  # probability of a false negative
             ptp = val_ppv * ratePos  # probability of a true positive
 
-            p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp)
+            p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
             performances.append(p)
 
         return FiniteSetOfTwoClassClassificationPerformances(performances)

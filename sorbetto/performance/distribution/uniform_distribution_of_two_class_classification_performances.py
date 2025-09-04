@@ -29,6 +29,28 @@ class UniformDistributionOfTwoClassClassificationPerformances(
     def __init__(self, name):
         super().__init__(name)
 
+    def drawOneAtRandom(self) -> TwoClassClassificationPerformance:
+        """
+        Draw a two-class classification performances at random,
+        uniformy, in the set of all performances.
+
+        Returns:
+            TwoClassClassificationPerformance: the performance.
+        """
+
+        name = "randomly chosen performance"
+
+        concentration_parameters = [1, 1, 1, 1]  # for uniform
+        numPerformances = 1
+        mat = np.random.dirichlet(concentration_parameters, size=numPerformances)
+        ptn = mat[0, 0]
+        pfp = mat[0, 1]
+        pfn = mat[0, 2]
+        ptp = mat[0, 3]
+
+        p = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name=name)
+        return p
+
     def drawAtRandom(
         self, numPerformances
     ) -> FiniteSetOfTwoClassClassificationPerformances:
