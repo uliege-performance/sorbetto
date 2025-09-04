@@ -101,5 +101,5 @@ class RankingInducedByScore(AbstractRanking):
     ) -> tuple[Figure, Axes]:
         if value_axis_label == "":
             score = self.performance_ordering.score
-            value_axis_label = 'value taken by the score\n"{}"'.format(score.name)
+            value_axis_label = 'Value taken by the score\n"{}"'.format(score.name)
         return AbstractRanking.draw(self, fig, ax, value_axis_label)
