@@ -42,7 +42,7 @@ class NumericTile(Tile):
             self.mat_value,
             origin="lower",
             interpolation="bilinear",
-            cmap=self.flavor.getDefaultColormap(),
+            cmap=self.flavor.colormap,
             extent=self._zoom,  # extent is (left, right, bottom, top)
             vmin=self.flavor.getLowerBound(),
             vmax=self.flavor.getUpperBound(),
