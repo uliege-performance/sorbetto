@@ -37,23 +37,25 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         AbstractAnnotation.__init__(self, name)
 
     @staticmethod
-    def _get_auto_levels(mat_values):
+    def _get_auto_levels(
+        mat_values: np.ndarray, low: float = 0.0, hi: float = 1.0
+    ) -> np.ndarray:
         max_val = np.max(mat_values)
         min_val = np.min(mat_values)
         if max_val - min_val < 0.01:
-            return np.linspace(0, 1, 1001)
+            return np.linspace(low, hi, 1001)
         elif max_val - min_val < 0.02:
-            return np.linspace(0, 1, 501)
+            return np.linspace(low, hi, 501)
         elif max_val - min_val < 0.05:
-            return np.linspace(0, 1, 201)
+            return np.linspace(low, hi, 201)
         if max_val - min_val < 0.1:
-            return np.linspace(0, 1, 101)
+            return np.linspace(low, hi, 101)
         elif max_val - min_val < 0.2:
-            return np.linspace(0, 1, 51)
+            return np.linspace(low, hi, 51)
         elif max_val - min_val < 0.5:
-            return np.linspace(0, 1, 21)
+            return np.linspace(low, hi, 21)
         else:
-            return np.linspace(0, 1, 11)
+            return np.linspace(low, hi, 11)
 
     def draw(self, tile: Tile, fig: Figure, ax: Axes) -> None:
         if not isinstance(tile, NumericTile):
@@ -70,7 +72,9 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
 
         levels = self._levels
         if levels is None:
-            levels = self._get_auto_levels(mat_values)
+            low = tile.flavor.getLowerBound()
+            hi = tile.flavor.getUpperBound()
+            levels = self._get_auto_levels(mat_values, low, hi)
 
         vec_x = tile._vec_x
         assert isinstance(vec_x, np.ndarray)
