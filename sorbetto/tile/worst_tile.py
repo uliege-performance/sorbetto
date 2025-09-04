@@ -13,15 +13,15 @@ class WorstTile(NumericTile):
 
     def __init__(
         self,
-        name: str,
         parameterization: AbstractParameterization,
         flavor: WorstFlavor,
+        name: str = "Worst Tile",
         resolution: int = 1001,
     ):
         super().__init__(
-            name=name,
             parameterization=parameterization,
             flavor=flavor,
+            name=name,
             resolution=resolution,
         )
         self._performances = self.flavor.performances

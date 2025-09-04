@@ -29,7 +29,7 @@ class Tile:
         self,
         parameterization: AbstractParameterization,
         flavor: AbstractFlavor | None = None,
-        name: str = "Unnamed Tile",
+        name: str = "Tile",
         resolution: int = 1001,
         disable_colorbar: bool = True,
     ):
@@ -57,7 +57,7 @@ class Tile:
                 )
         self._flavor = flavor
 
-        self.name = name
+        self._name = name
 
         if (not isinstance(resolution, int)) or resolution <= 0:
             raise TypeError(

@@ -12,7 +12,7 @@ class SymbolicTile(Tile):
         self,
         parameterization: AbstractParameterization,
         flavor: AbstractSymbolicFlavor,
-        name: str = "Unnamed Symbolic Tile",
+        name: str = "Symbolic Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):

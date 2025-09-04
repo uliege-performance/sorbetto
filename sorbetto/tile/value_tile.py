@@ -52,16 +52,16 @@ def __vut_default_param(ptn, pfp, pfn, ptp):
 class ValueTile(NumericTile):
     def __init__(
         self,
-        name: str,
         parameterization: AbstractParameterization,
         flavor: ValueFlavor,
+        name: str = "Value Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
         super().__init__(
-            name=name,
             parameterization=parameterization,
             flavor=flavor,
+            name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
         )

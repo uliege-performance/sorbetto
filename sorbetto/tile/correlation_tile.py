@@ -10,9 +10,9 @@ from sorbetto.tile.numeric_tile import NumericTile
 class CorrelationTile(NumericTile):
     def __init__(
         self,
-        name: str,
         parameterization: AbstractParameterization,
         flavor: CorrelationFlavor,
+        name: str = "Correlation Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):

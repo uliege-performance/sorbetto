@@ -13,16 +13,16 @@ from sorbetto.tile.symbolic_tile import SymbolicTile
 class EntityTile(SymbolicTile):
     def __init__(
         self,
-        name: str,
         parameterization: AbstractParameterization,
         flavor: EntityFlavor,
+        name: str = "Entity Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
         super().__init__(
-            name=name,
             parameterization=parameterization,
             flavor=flavor,
+            name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
         )

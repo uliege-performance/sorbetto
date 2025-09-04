@@ -12,16 +12,16 @@ from sorbetto.tile.utils import get_colors
 class RankingTile(NumericTile):
     def __init__(
         self,
-        name: str,
         parameterization: AbstractParameterization,
         flavor: RankingFlavor,
+        name: str = "Ranking Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
         super().__init__(
-            name=name,
             parameterization=parameterization,
             flavor=flavor,
+            name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
         )

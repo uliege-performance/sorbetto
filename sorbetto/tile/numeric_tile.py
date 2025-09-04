@@ -12,7 +12,7 @@ class NumericTile(Tile):
         self,
         parameterization: AbstractParameterization,
         flavor: AbstractNumericFlavor,
-        name: str = "Unnamed Numeric Tile",
+        name: str = "Numeric Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
