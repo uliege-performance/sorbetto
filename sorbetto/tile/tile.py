@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.types import Extent
@@ -66,7 +67,7 @@ class Tile:
 
         self._zoom = self._parameterization.getExtent()
 
-        self._mat_value = None
+        self._mat_value: np.ndarray | None = None
         self._update_grid()
 
         self._annotations: list[AbstractAnnotation] = list()
@@ -280,7 +281,10 @@ class Tile:
         ax.set_title(self.name)
 
         if not self.disable_colorbar:
-            fig.colorbar(ax.images[0])
+            # Create a subdivision of the axis to add a colorbar of same height
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad="5%")
+            fig.colorbar(ax.images[0], cax)
 
         return fig, ax
 
