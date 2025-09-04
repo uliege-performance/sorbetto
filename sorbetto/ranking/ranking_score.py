@@ -109,6 +109,16 @@ class RankingScore:
             self._symbol = symbol
 
     @property
+    def label(self):
+        if self.symbol is not None:
+            label = self.symbol
+        elif self.abbreviation is not None:
+            label = self.abbreviation
+        else:
+            label = self.name
+        return label
+
+    @property
     def importance(self) -> Importance:
         return self._importance
 
