@@ -14,6 +14,7 @@ class SymbolicTile(Tile):
         flavor: AbstractSymbolicFlavor,
         name: str = "Unnamed Symbolic Tile",
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         assert isinstance(flavor, AbstractSymbolicFlavor)
         Tile.__init__(
@@ -22,6 +23,7 @@ class SymbolicTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
 
     @property

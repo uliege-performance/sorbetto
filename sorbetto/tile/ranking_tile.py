@@ -16,12 +16,14 @@ class RankingTile(NumericTile):
         parameterization: AbstractParameterization,
         flavor: RankingFlavor,
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
 
         self._entities = self.flavor.entity_list
@@ -62,12 +64,6 @@ class RankingTile(NumericTile):
     @performance.setter
     def performance(self, value: FiniteSetOfTwoClassClassificationPerformances):
         self._performance = value
-
-    def flavorCall(self, importance):
-        assert self.flavor is not None
-        return self.flavor(
-            importance=importance,
-        )
 
     def getExplanation(self):
         return "Explanation of the Ranking tile not yet defined"

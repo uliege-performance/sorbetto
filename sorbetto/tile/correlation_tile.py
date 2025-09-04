@@ -14,12 +14,14 @@ class CorrelationTile(NumericTile):
         parameterization: AbstractParameterization,
         flavor: CorrelationFlavor,
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
             name=name,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
 
         self._score = self.flavor.score
@@ -133,10 +135,6 @@ class CorrelationTile(NumericTile):
                         best_val_min = val
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min
-
-    def flavorCall(self, importance: np.ndarray) -> np.ndarray:
-        assert self.flavor is not None
-        return self.flavor(importance=importance)
 
     def getExplanation(self) -> str:
         return "Not implemented for CorrelationTile yet."

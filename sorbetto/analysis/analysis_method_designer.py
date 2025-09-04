@@ -3,83 +3,129 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.analysis.abstract_analysis import AbstractAnalysis
+from sorbetto.core.entity import Entity
 from sorbetto.flavor.baseline_flavor import BaselineFlavor
 from sorbetto.flavor.sota_flavor import SOTAFlavor
-from sorbetto.flavor.value_flavor import ValueFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
-from sorbetto.tile.numeric_tile import AbstractNumericalTile
-from sorbetto.tile.value_tile import ValueTile
+from sorbetto.tile.baseline_tile import BaselineTile
+from sorbetto.tile.sota_tile import SOTATile
+from sorbetto.tile.tile import Tile
 
 
 class AnalysisForMethodDesigner(AbstractAnalysis):
     def __init__(
         self,
-        performance: FiniteSetOfTwoClassClassificationPerformances,
-        competitors,
+        entities: list[Entity],
         parameterization: AbstractParameterization,
         resolution: int = 1001,
-        **kwargs,
     ):
-        self._parameterization = parameterization
-        self._performance = performance  # what is that ?
+        if not isinstance(entities, list):
+            raise TypeError(f"entities must be a list, got {type(entities)}")
+        for item in entities:
+            if not isinstance(item, Entity):
+                raise TypeError(
+                    f"all items in entities must be instances of Entity, got {type(item)}"
+                )
 
-        print("Why competitors?")
+        if not isinstance(parameterization, AbstractParameterization):
+            raise TypeError(
+                f"parameterization must be an instance of AbstractParameterization, got {type(parameterization)}"
+            )
+
+        if not isinstance(resolution, int):
+            if isinstance(resolution, float):
+                resolution = int(resolution)
+            else:
+                raise TypeError(f"resolution must be an int, got {type(resolution)}")
+
+        self._entities = entities
+        self._performances = FiniteSetOfTwoClassClassificationPerformances(
+            [entity.performance for entity in entities]
+        )
 
         AbstractAnalysis.__init__(self, parameterization, resolution)
 
     @property
-    def parameterization(self):
-        return self._parameterization
+    def entities(self) -> list[Entity]:
+        return self._entities
+
+    @entities.setter
+    def entities(self, value: list[Entity]):
+        if not isinstance(value, list):
+            raise TypeError(f"entities must be a list, got {type(value)}")
+        for item in value:
+            if not isinstance(item, Entity):
+                raise TypeError(
+                    f"all items in entities must be instances of Entity, got {type(item)}"
+                )
+        self._entities = value
 
     @property
-    def performance(self):
-        return self._performance
+    def performances(self):
+        return self._performances
+
+    @performances.setter
+    def performances(self, value: FiniteSetOfTwoClassClassificationPerformances):
+        if not isinstance(value, FiniteSetOfTwoClassClassificationPerformances):
+            raise TypeError(
+                f"performance must be an instance of FiniteSetOfTwoClassClassificationPerformances, got {type(value)}"
+            )
+        self._performances = value
 
     def getNoSkillTile(
         self,
-    ) -> AbstractNumericalTile:  # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 9.
+    ) -> Tile:  # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 9.
         ...  # TODO
 
-    def getBaselineValueTile(self) -> AbstractNumericalTile:
-        flavor = BaselineFlavor()
-        values = ValueTile(
-            performance=self._performance,
-            parameterization=self._parameterization,
+    def getBaselineValueTile(self, name: str = "Baseline Value Tile") -> Tile:
+        flavor = BaselineFlavor(
+            performances=self.performances, entity_list=self.entities
+        )
+        tile = BaselineTile(
+            parameterization=self.parameterization,
             flavor=flavor,
             resolution=self._resolution,
-            name="Baseline Value Tile",
+            name=name,
         )
 
-        return np.min(values, axis=0)
+        return tile
 
-    def getStateOfTheArtValueTile(self) -> AbstractNumericalTile:
-        flavor = SOTAFlavor()
-        values = ValueTile(
-            performance=self._performance,
-            parameterization=self._parameterization,
+    def getSOTAValueTile(self, name: str = "SOTA Value Tile") -> Tile:
+        flavor = SOTAFlavor(performances=self.performances, entity_list=self.entities)
+        tile = SOTATile(
+            parameterization=self.parameterization,
             flavor=flavor,
             resolution=self._resolution,
-            name="SOTA Value Tile",
+            name=name,
         )
 
-        return np.max(values, axis=0)
+        return tile
 
-    def getValueTile(self, id) -> ValueTile:
-        flavor = ValueFlavor()
-        values = ValueTile(
-            performance=self._performance[id],
-            parameterization=self._parameterization,
-            flavor=flavor,
-            resolution=self._resolution,
-            name="Value Tile",
+    def getValueTile(self, entity: Entity, name: str = "Value Tile") -> Tile:
+        return self._getValueTile(entity=entity, name=name)
+
+    def getRankingTile(self, entity: Entity, name: str | None = None) -> Tile:
+        if name is None:
+            name = f"Ranking Tile for {entity.name}"
+
+        return self._getRankingTile(
+            entity=entity, entitiy_list=self.entities, name=name
         )
 
-        return values
+    def compare_tiles(self, entity: Entity) -> np.ndarray:
+        baseline_tile = self.getBaselineValueTile()
+        sota_tile = self.getSOTAValueTile()
+        value_tile = self.getValueTile(entity=entity)
 
-    def getRankingTile(self) -> AbstractNumericalTile: ...  # TODO
+        difference_baseline_entity = np.abs(
+            self._compare_tiles(baseline_tile, value_tile)
+        )
+        difference_sota_entity = np.abs(self._compare_tiles(sota_tile, value_tile))
+
+        return difference_baseline_entity, difference_sota_entity
 
     def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
         ...  # TODO
@@ -89,4 +135,4 @@ class AnalysisForMethodDesigner(AbstractAnalysis):
 
     def genTiles(self):
         # TODO: discuss if this should retieve the SOTA tile
-        return self.getStateOfTheArtValueTile()
+        ...

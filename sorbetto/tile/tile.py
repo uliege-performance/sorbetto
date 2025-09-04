@@ -30,6 +30,7 @@ class Tile:
         flavor: AbstractFlavor | None = None,
         name: str = "Unnamed Tile",
         resolution: int = 1001,
+        disable_colorbar: bool = True,
     ):
         """
         Args:
@@ -68,6 +69,8 @@ class Tile:
         self._update_grid()
 
         self._annotations = list()
+
+        self._disable_colorbar = disable_colorbar
 
     @property
     def resolution(self) -> int:
@@ -134,6 +137,16 @@ class Tile:
     @property
     def flavor(self) -> AbstractFlavor | None:
         return self._flavor
+
+    @property
+    def disable_colorbar(self) -> bool:
+        return self._disable_colorbar
+
+    @disable_colorbar.setter
+    def disable_colorbar(self, value: bool):
+        if not isinstance(value, bool):
+            raise TypeError(f"disable_colorbar must be a bool, got {type(value)}")
+        self._disable_colorbar = value
 
     def _update_grid(self):
         x_min, x_max, y_min, y_max = self._zoom
@@ -249,6 +262,9 @@ class Tile:
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
         ax.set_title(self.name)
+
+        if not self.disable_colorbar:
+            fig.colorbar(ax.images[0])
 
         return fig, ax
 
