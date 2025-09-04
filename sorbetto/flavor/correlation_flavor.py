@@ -100,7 +100,7 @@ class CorrelationFlavor(AbstractNumericFlavor):
         else:
             raise ValueError(
                 f"Unknown correlation coefficient: {self._correlation_coefficient}. "
-                "Available options are 'pearson_r' and 'spearman_rho'."
+                "Available options are 'pearson_r' and 'spearman_rho' and 'kendall_tau'."
             )
 
         for x in tqdm(range(value_scores.shape[1])):
