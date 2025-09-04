@@ -125,7 +125,7 @@ class AbstractRanking(ABC):
 
             y = 0.5
             ax.plot([0.5 - u, 0.5 + u], [y, y], "k-")
-            label = "{} ({:.3f})".format(e.name, value)
+            label = "{} ({:g})".format(e.name, value)
             ax.text(0.5 + 2 * u, y, label, ha="left", va="center")
 
         else:
