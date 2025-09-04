@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 from sorbetto.core.entity import Entity
@@ -19,8 +21,9 @@ class SOTAFlavor(AbstractNumericFlavor):
         performances: FiniteSetOfTwoClassClassificationPerformances,
         entity_list: list[Entity],
         name: str = "Unnamed SOTA Flavor",
+        colormap: Any = None,
     ):
-        super().__init__(name)
+        super().__init__(name=name, colormap=colormap)
 
         self._entity_list = entity_list
         self._nb_entities = len(entity_list)

@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 from sorbetto.core.importance import Importance
@@ -19,8 +21,9 @@ class ValueFlavor(AbstractNumericFlavor):
         self,
         performance: TwoClassClassificationPerformance,
         name: str = "Unnamed Value Flavor",
+        colormap: Any = None,
     ):
-        super().__init__(name)
+        super().__init__(name=name, colormap=colormap)
         self._performance = performance
 
     @property

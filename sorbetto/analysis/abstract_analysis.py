@@ -1,6 +1,15 @@
 from abc import ABC, abstractmethod
 
+from sorbetto.core.entity import Entity
+from sorbetto.flavor.correlation_flavor import CorrelationFlavor
+from sorbetto.flavor.entity_flavor import EntityFlavor
+from sorbetto.flavor.ranking_flavor import RankingFlavor
+from sorbetto.flavor.value_flavor import ValueFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
+from sorbetto.tile.correlation_tile import CorrelationTile
+from sorbetto.tile.entity_tile import EntityTile
+from sorbetto.tile.ranking_tile import RankingTile
+from sorbetto.tile.value_tile import ValueTile
 
 
 class AbstractAnalysis(ABC):
@@ -19,6 +28,123 @@ class AbstractAnalysis(ABC):
             raise TypeError(f"resolution must be an integer, got {type(resolution)}")
         self._resolution = resolution
 
+    @property
+    def parameterization(self) -> AbstractParameterization:
+        return self._parameterization
+
+    @parameterization.setter
+    def parameterization(self, value: AbstractParameterization):
+        if not isinstance(value, AbstractParameterization):
+            raise TypeError(
+                f"parameterization must be an instance of AbstractParameterization, got {type(value)}"
+            )
+        self._parameterization = value
+
+    @property
+    def resolution(self) -> int:
+        return self._resolution
+
+    @resolution.setter
+    def resolution(self, value: int):
+        if not isinstance(value, int):
+            raise TypeError(f"resolution must be an integer, got {type(value)}")
+        self._resolution = value
+
     @abstractmethod
     def genTiles(self):  # generator
         ...
+
+    def _getValueTile(self, entity: Entity, name: str | None = None) -> ValueTile:
+        if name is None:
+            name = "Value Tile"
+
+        performance = entity.performance
+        flavor = ValueFlavor(performance=performance)
+        return ValueTile(
+            flavor=flavor,
+            parameterization=self.parameterization,
+            resolution=self.resolution,
+            name=name,
+        )
+
+    def _getEntityTile(self, rank, entities, name: str | None = None) -> EntityTile:
+        if name is None:
+            name = f"Entity Tile for rank {rank}"
+
+        flavor = EntityFlavor(rank=rank, entity_list=entities)
+
+        entity_tile = EntityTile(
+            parameterization=self.parameterization,
+            flavor=flavor,
+            resolution=self.resolution,
+            name=name,
+        )
+
+        return entity_tile
+
+    def _getRankingTile(self, entity, entitiy_list, name="Ranking Tile") -> RankingTile:
+        flavor = RankingFlavor(entity=entity, entity_list=entitiy_list)
+        ranking_tile = RankingTile(
+            name=name,
+            parameterization=self.parameterization,
+            flavor=flavor,
+            resolution=self.resolution,
+        )
+
+        return ranking_tile
+
+    def _getCorrelationTile(
+        self,
+        performances,
+        correlation_fct,
+        score,
+        name="Correlation Tile",
+    ):
+        correlation_flavor = CorrelationFlavor(
+            performances=performances,
+            correlation_coefficient=correlation_fct,
+            score=score,
+        )
+        correlation_tile = CorrelationTile(
+            name=name,
+            parameterization=self.parameterization,
+            flavor=correlation_flavor,
+            resolution=self.resolution,
+        )
+
+        return correlation_tile
+
+    def _getAllValueTiles(self, entities: list[Entity], name="All Value Tiles"):
+        tiles = []
+        for entity in entities:
+            tile = self._getValueTile(entity=entity, name=name)
+            tiles.append(tile)
+        return tiles
+
+    def _getAllEntityTiles(self, entities: list[Entity], name="All Entity Tiles"):
+        tiles = []
+        for rank in range(len(entities)):
+            tile = self._getEntityTile(rank=rank, entities=entities, name=name)
+            tiles.append(tile)
+        return tiles
+
+    def _getAllRankingTiles(self, entities: list[Entity], name="All Ranking Tiles"):
+        tiles = []
+        for entity in entities:
+            tile = self._getRankingTile(entity=entity, entitiy_list=entities, name=name)
+            tiles.append(tile)
+        return tiles
+
+    def _getAllCorrelationTiles(
+        self, performances, correlation_fct, score, name="All Correlation Tiles"
+    ):
+        tiles = []
+        for score in score:
+            tile = self._getCorrelationTile(
+                performances=performances,
+                correlation_fct=correlation_fct,
+                score=score,
+                name=name,
+            )
+            tiles.append(tile)
+        return tiles
