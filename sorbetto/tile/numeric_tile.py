@@ -14,6 +14,7 @@ class NumericTile(Tile):
         flavor: AbstractNumericFlavor,
         name: str = "Unnamed Numeric Tile",
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         assert isinstance(flavor, AbstractNumericFlavor)
         Tile.__init__(
@@ -22,6 +23,7 @@ class NumericTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
 
     @property

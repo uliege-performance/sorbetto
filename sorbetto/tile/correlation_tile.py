@@ -14,12 +14,14 @@ class CorrelationTile(NumericTile):
         parameterization: AbstractParameterization,
         flavor: CorrelationFlavor,
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
             name=name,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
 
         self._score = self.flavor.score

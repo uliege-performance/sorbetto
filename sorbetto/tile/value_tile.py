@@ -56,12 +56,14 @@ class ValueTile(NumericTile):
         parameterization: AbstractParameterization,
         flavor: ValueFlavor,
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
         self._performance = self.flavor.performance
 

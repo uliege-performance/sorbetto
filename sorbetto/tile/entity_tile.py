@@ -16,12 +16,14 @@ class EntityTile(SymbolicTile):
         parameterization: AbstractParameterization,
         flavor: EntityFlavor,
         resolution: int = 1001,
+        disable_colorbar: bool = False,
     ):
         super().__init__(
             name=name,
             parameterization=parameterization,
             flavor=flavor,
             resolution=resolution,
+            disable_colorbar=disable_colorbar,
         )
         self._rank = self.flavor.rank
         self._entities = self.flavor.entity_list
