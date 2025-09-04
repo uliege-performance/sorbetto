@@ -1,6 +1,7 @@
 import logging
 from typing import TYPE_CHECKING
 
+import matplotlib.ticker as ticker
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -47,17 +48,9 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
         if np.abs(max_val - min_val) < 1e-6:
             return np.empty(0)
 
-        delta = max_val - min_val
-        log_delta = np.log10(delta)
-        scale = 10 ** (np.floor(log_delta) - 1)
-
-        min_val = np.floor(min_val / scale)
-        max_val = np.ceil(max_val / scale)
-        num = int(max_val - min_val + 1)
-        min_val = min_val * scale
-        max_val = max_val * scale
-        assert num > 0
-        return np.linspace(min_val, max_val, num)
+        locator = ticker.MaxNLocator(nbins=20)
+        levels = locator.tick_values(min_val, max_val)
+        return levels
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile.numeric_tile import NumericTile
