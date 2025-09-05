@@ -32,7 +32,7 @@ class LineSegment(AbstractGeometricObject2D):
         The first endpoint.
 
         Returns:
-            Point: $p_1$
+            Point: :math:`p_1`
         """
         return self._p1
 
@@ -42,7 +42,7 @@ class LineSegment(AbstractGeometricObject2D):
         The second endpoint.
 
         Returns:
-            Point: $p_2$
+            Point: :math:`p_2`
         """
         return self._p2
 
@@ -54,7 +54,7 @@ class LineSegment(AbstractGeometricObject2D):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
         p1 = self._p1

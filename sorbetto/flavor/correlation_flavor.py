@@ -19,9 +19,9 @@ from sorbetto.ranking.ranking_score import RankingScore
 class CorrelationFlavor(AbstractNumericFlavor):
     """
     For a given performance, the *Correlation Flavor* is the mathematical function
-    that gives, to any importance $I$  (that is, some application-specific preferences),
+    that gives, to any importance :math:`I`  (that is, some application-specific preferences),
     the correlation, using a defined correlation coefficient (e.g., Pearson's r),
-    between a score $X$ and the Ranking Score $R_I$ corresponding to this
+    between a score :math:`X` and the Ranking Score :math:`R_I` corresponding to this
     importance.
     """
 

@@ -45,7 +45,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors
         The prior of the positive class.
 
         Returns:
-            priorPos: $\\pi_+ = P( \\{ fn, tp \\} )$
+            priorPos: :math:`\\pi_+ = P( \\{ fn, tp \\} )`
         """
         return self._priorPos
 
@@ -55,7 +55,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedClassPriors
         The prior of the negative class.
 
         Returns:
-            priorNeg: $\\pi_- = P( \\{ tn, tp \\} )$
+            priorNeg: :math:`\\pi_- = P( \\{ tn, tp \\} )`
         """
         return 1.0 - self._priorPos
 

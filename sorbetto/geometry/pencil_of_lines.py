@@ -10,7 +10,7 @@ from sorbetto.geometry.point import Point
 class PencilOfLines(AbstractGeometricObject2D):
     """
     This class is used to represent pencils of lines.
-    $\\lambda_1 ( a_1 x + b_1 y + c_1 ) + \\lambda_2 ( a_2 x + b_2 y + c_2 ) = 0$
+    :math:`\\lambda_1 ( a_1 x + b_1 y + c_1 ) + \\lambda_2 ( a_2 x + b_2 y + c_2 ) = 0`
     See https://en.wikipedia.org/wiki/Pencil_(geometry)
     """
 
@@ -19,8 +19,8 @@ class PencilOfLines(AbstractGeometricObject2D):
         Constructs a new pencil of lines on two lines.
 
         Args:
-            line_1 (Line): the line corresponding to $(\\lambda_1, \\lambda_2)=(1, 0)$
-            line_2 (Line): the line corresponding to $(\\lambda_1, \\lambda_2)=(0, 1)$
+            line_1 (Line): the line corresponding to :math:`(\\lambda_1, \\lambda_2)=(1, 0)`
+            line_2 (Line): the line corresponding to :math:`(\\lambda_1, \\lambda_2)=(0, 1)`
             name (str | None, optional): _description_. Defaults to None.
         """
 
@@ -33,20 +33,20 @@ class PencilOfLines(AbstractGeometricObject2D):
     @property
     def line_1(self) -> Line:
         """
-        The line corresponding to $(\\lambda_1, \\lambda_2)=(1, 0)$
+        The line corresponding to :math:`(\\lambda_1, \\lambda_2)=(1, 0)`
 
         Returns:
-            Line: $a_1 x + b_1 y + c_1 = 0$
+            Line: :math:`a_1 x + b_1 y + c_1 = 0`
         """
         return self._line_1
 
     @property
     def line_2(self) -> Line:
         """
-        The line corresponding to $(\\lambda_1, \\lambda_2)=(0, 1)$
+        The line corresponding to :math:`(\\lambda_1, \\lambda_2)=(0, 1)`
 
         Returns:
-            Line: $a_2 x + b_2 y + c_2 = 0$
+            Line: :math:`a_2 x + b_2 y + c_2 = 0`
         """
         return self._line_2
 
@@ -55,8 +55,8 @@ class PencilOfLines(AbstractGeometricObject2D):
         The line corresponding to $(\\lambda_1, \\lambda_2).
 
         Args:
-            lambda_1 (float): the value of $\\lambda_1$
-            lambda_2 (float): the value of $\\lambda_2$
+            lambda_1 (float): the value of :math:`\\lambda_1`
+            lambda_2 (float): the value of :math:`\\lambda_2`
 
         Returns:
             Line: the chosen line of the pixel
@@ -97,7 +97,7 @@ class PencilOfLines(AbstractGeometricObject2D):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
 

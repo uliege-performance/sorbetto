@@ -14,10 +14,10 @@ from sorbetto.ranking.ranking_score import RankingScore
 
 class RankingFlavor(AbstractNumericFlavor):
     """
-    For a given rank $r$, the *Entity Flavor* is the mathematical function that
-    gives, to any Importance $I$  (that is, some application-specific preferences), the
-    entity ranked $r$-th according to the ordering of performances induced by the
-    Ranking Score $R_I$ corresponding to the importance $I$.
+    For a given rank :math:`r`, the *Entity Flavor* is the mathematical function that
+    gives, to any Importance :math:`I`  (that is, some application-specific preferences), the
+    entity ranked :math:`r`-th according to the ordering of performances induced by the
+    Ranking Score :math:`R_I` corresponding to the importance :math:`I`.
     """
 
     def __init__(

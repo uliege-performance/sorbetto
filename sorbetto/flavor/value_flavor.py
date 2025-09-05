@@ -13,8 +13,8 @@ from sorbetto.ranking.ranking_score import RankingScore
 class ValueFlavor(AbstractNumericFlavor):
     """
     For a given performance, the *Value Flavor* is the mathematical function that
-    gives, to any importance $I$  (that is, some application-specific preferences), the
-    value taken by the Ranking Score $R_I$ corresponding to this importance.
+    gives, to any importance :math:`I`  (that is, some application-specific preferences), the
+    value taken by the Ranking Score :math:`R_I` corresponding to this importance.
     """
 
     def __init__(

@@ -12,7 +12,7 @@ from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObje
 class Conic(AbstractGeometricObject2D):
     """
     This class is used to represent conic sections.
-    $a x^2 + b x y + c y^2 + d x + e y + f = 0$
+    :math:`a x^2 + b x y + c y^2 + d x + e y + f = 0`
     See https://en.wikipedia.org/wiki/Conic_section
     """
 
@@ -41,60 +41,60 @@ class Conic(AbstractGeometricObject2D):
     @property
     def a(self) -> float:
         """
-        The coefficient $a$ that multiplies $x^2 y^0$ in the equation of the conic section.
+        The coefficient :math:`a` that multiplies :math:`x^2 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater $a$ of the conic section.
+            float: The paramater :math:`a` of the conic section.
         """
         return self._a
 
     @property
     def b(self) -> float:
         """
-        The coefficient $b$ that multiplies $x^1 y^1$ in the equation of the conic section.
+        The coefficient :math:`b` that multiplies :math:`x^1 y^1` in the equation of the conic section.
 
         Returns:
-            float: The paramater $b$ of the conic section.
+            float: The paramater :math:`b` of the conic section.
         """
         return self._b
 
     @property
     def c(self) -> float:
         """
-        The coefficient $c$ that multiplies $x^0 y^2$ in the equation of the conic section.
+        The coefficient :math:`c` that multiplies :math:`x^0 y^2` in the equation of the conic section.
 
         Returns:
-            float: The paramater $c$ of the conic section.
+            float: The paramater :math:`c` of the conic section.
         """
         return self._c
 
     @property
     def d(self) -> float:
         """
-        The coefficient $d$ that multiplies $x^1 y^0$ in the equation of the conic section.
+        The coefficient :math:`d` that multiplies :math:`x^1 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater $d$ of the conic section.
+            float: The paramater :math:`d` of the conic section.
         """
         return self._d
 
     @property
     def e(self) -> float:
         """
-        The coefficient $e$ that multiplies $x^0 y^1$ in the equation of the conic section.
+        The coefficient :math:`e` that multiplies :math:`x^0 y^1` in the equation of the conic section.
 
         Returns:
-            float: The paramater $e$ of the conic section.
+            float: The paramater :math:`e` of the conic section.
         """
         return self._e
 
     @property
     def f(self) -> float:
         """
-        The coefficient $a$ that multiplies $x^0 y^0$ in the equation of the conic section.
+        The coefficient :math:`a` that multiplies :math:`x^0 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater $f$ of the conic section.
+            float: The paramater :math:`f` of the conic section.
         """
         return self._f
 
@@ -249,12 +249,12 @@ class Conic(AbstractGeometricObject2D):
     def _solve_quadratic_equation_min(a, b, c):
         """
         Computes the lowest solution of the quadratic equation
-        $a x^2 + b x^1 + c x^0 = 0$.
+        :math:`a x^2 + b x^1 + c x^0 = 0`.
 
         Args:
-            a (_type_): paramater $a$
-            b (_type_): paramater $b$
-            c (_type_): paramater $c$
+            a (_type_): paramater :math:`a`
+            b (_type_): paramater :math:`b`
+            c (_type_): paramater :math:`c`
 
         Returns:
             _type_: The lowest solution.
@@ -269,12 +269,12 @@ class Conic(AbstractGeometricObject2D):
     def _solve_quadratic_equation_max(a, b, c):
         """
         Computes the highest solution of the quadratic equation
-        $a x^2 + b x^1 + c x^0 = 0$.
+        :math:`a x^2 + b x^1 + c x^0 = 0`.
 
         Args:
-            a (_type_): paramater $a$
-            b (_type_): paramater $b$
-            c (_type_): paramater $c$
+            a (_type_): paramater :math:`a`
+            b (_type_): paramater :math:`b`
+            c (_type_): paramater :math:`c`
 
         Returns:
             _type_: The highest solution.
@@ -287,13 +287,13 @@ class Conic(AbstractGeometricObject2D):
 
     def getSmallestY(self, x):
         """
-        Computes the smallest value of $y$, for any given $x$.
+        Computes the smallest value of :math:`y`, for any given :math:`x`.
 
         Args:
-            x (_type_): $x$
+            x (_type_): :math:`x`
 
         Returns:
-            _type_: the smallest value of $y$, for the given $x$.
+            _type_: the smallest value of :math:`y`, for the given :math:`x`.
         """
         a = self._a
         b = self._b
@@ -313,13 +313,13 @@ class Conic(AbstractGeometricObject2D):
 
     def getLargestY(self, x):
         """
-        Computes the largest value of $y$, for any given $x$.
+        Computes the largest value of :math:`y`, for any given :math:`x`.
 
         Args:
-            x (_type_): $x$
+            x (_type_): :math:`x`
 
         Returns:
-            _type_: the largest value of $y$, for the given $x$.
+            _type_: the largest value of :math:`y`, for the given :math:`x`.
         """
         a = self._a
         b = self._b
@@ -339,13 +339,13 @@ class Conic(AbstractGeometricObject2D):
 
     def getSmallestX(self, y):
         """
-        Computes the smallest value of $x$, for any given $y$.
+        Computes the smallest value of :math:`x`, for any given :math:`y`.
 
         Args:
-            y (_type_): $y$
+            y (_type_): :math:`y`
 
         Returns:
-            _type_: the smallest value of $x$, for the given $y$.
+            _type_: the smallest value of :math:`x`, for the given :math:`y`.
         """
         a = self._a
         b = self._b
@@ -365,13 +365,13 @@ class Conic(AbstractGeometricObject2D):
 
     def getLargestX(self, y):
         """
-        Computes the largest value of $x$, for any given $y$.
+        Computes the largest value of :math:`x`, for any given :math:`y`.
 
         Args:
-            y (_type_): $y$
+            y (_type_): :math:`y`
 
         Returns:
-            _type_: the largest value of $x$, for the given $y$.
+            _type_: the largest value of :math:`x`, for the given :math:`y`.
         """
         a = self._a
         b = self._b
@@ -396,7 +396,7 @@ class Conic(AbstractGeometricObject2D):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
 
