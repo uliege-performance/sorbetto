@@ -1,6 +1,6 @@
 import io
 import logging
-from typing import Iterator, SupportsIndex
+from typing import Iterator, SupportsIndex, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -172,7 +172,7 @@ class Tile:
             return tmp
         if self._mat_value is None:
             self._mat_value = self._compute_mat_value(self._mat_x, self._mat_y)
-        return self._mat_value
+        return cast(np.ndarray, self._mat_value)
 
     def _compute_mat_value(
         self,
