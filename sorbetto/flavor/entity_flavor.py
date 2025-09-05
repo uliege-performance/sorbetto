@@ -77,3 +77,18 @@ class EntityFlavor(AbstractSymbolicFlavor[Entity]):
         In Entity flavor, the co-domain is the set of all possible ranks.
         """
         return self._entity_set
+
+    def _getSortedCodomain(self) -> list[Entity]:
+        """Returns the codomain of the flavor, sorted in a stable way.
+
+        Uses the Entity name for sorting
+
+        Returns:
+            The codomain of the flavor, sorted in a stable way.
+        """
+        if self._sorted_codomain is None:
+            self._sorted_codomain = sorted(
+                self.getCodomain(),
+                key=lambda e: e.name,
+            )
+        return self._sorted_codomain
