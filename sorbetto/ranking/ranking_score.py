@@ -11,6 +11,7 @@ from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.line import Line
 from sorbetto.geometry.pencil_of_lines import PencilOfLines
+from sorbetto.performance.abstract_score import AbstractScore
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
 )
@@ -24,7 +25,7 @@ from sorbetto.performance.two_class_classification_performance import (
 )
 
 
-class RankingScore:
+class RankingScore(AbstractScore):
     def __init__(
         self,
         importance: Importance,
@@ -57,63 +58,11 @@ class RankingScore:
                 )
         self._constraint = constraint
 
-        self._name = None
-        self._abbreviation = None
-        self._symbol = None
+        default_name = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
+            importance.itn, importance.ifp, importance.ifn, importance.itp
+        )
 
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, name):
-        if name is None:
-            itn = self._importance.itn
-            ifp = self._importance.ifp
-            ifn = self._importance.ifn
-            itp = self._importance.itp
-            name = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
-                itn, ifp, ifn, itp
-            )
-        elif not isinstance(name, str):
-            name = str(name)
-        self._name = name
-        self._abbreviation = None
-        self._symbol = None
-
-    @property
-    def abbreviation(self):
-        return self._abbreviation
-
-    @abbreviation.setter
-    def abbreviation(self, abbreviation):
-        assert abbreviation is None or isinstance(abbreviation, str)
-        if self._abbreviation is not None:
-            raise RuntimeError("The name should be set before the abbreviation")
-        else:
-            self._abbreviation = abbreviation
-
-    @property
-    def symbol(self):
-        return self._symbol
-
-    @symbol.setter
-    def symbol(self, symbol):
-        assert symbol is None or isinstance(symbol, str)
-        if self._symbol is not None:
-            raise RuntimeError("The abbreviation should be set before the symbol")
-        else:
-            self._symbol = symbol
-
-    @property
-    def label(self):
-        if self.symbol is not None:
-            label = self.symbol
-        elif self.abbreviation is not None:
-            label = self.abbreviation
-        else:
-            label = self.name
-        return label
+        AbstractScore.__init__(self, default_name, name, abbreviation, symbol)
 
     @property
     def importance(self) -> Importance:
@@ -768,4 +717,6 @@ class RankingScore:
         return rs
 
     def __str__(self):
-        return f"Ranking Score: {self._name} with importance {str(self._importance)}"
+        return (
+            f"Ranking Score: {self.longLabel} with importance {str(self._importance)}"
+        )
