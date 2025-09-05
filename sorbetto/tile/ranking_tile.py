@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
 from sorbetto.flavor.ranking_flavor import RankingFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -67,3 +69,15 @@ class RankingTile(NumericTile):
 
     def getExplanation(self):
         return "Explanation of the Ranking tile not yet defined"
+
+    def draw(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
+        fig, ax = super().draw(fig, ax)
+
+        im = ax.images[-1]
+        im.set_clim(0.5, self.flavor.nb_entities + 0.5)
+        if im.colorbar is not None:
+            im.colorbar.set_ticks([1, self.flavor.nb_entities])
+            im.colorbar.set_label("Rank from {} to {}".format(self.min, self.max))
+        return fig, ax

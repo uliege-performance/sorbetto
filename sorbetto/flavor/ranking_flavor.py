@@ -1,5 +1,6 @@
 from typing import Any
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from sorbetto.core.entity import Entity
@@ -71,15 +72,14 @@ class RankingFlavor(AbstractNumericFlavor):
         # TODO check behaviour of argsort(argsort()) with multiple identical values
         # and allow user to choose between 'min', 'max', 'mean', ...
         ranks = np.argsort(-values, axis=0)
-        rank_entities = np.argsort(ranks, axis=0)
+        rank_entities = np.argsort(ranks, axis=0) + 1
         return rank_entities[self._id_entity]
 
     def getDefaultColormap(self):
-        # FIXME discrete colormap
-        return "rainbow"
+        return plt.get_cmap("rainbow", self.nb_entities)
 
     def getLowerBound(self):
-        return 0.0
+        return 1.0
 
     def getUpperBound(self):
-        return self._nb_entities - 1
+        return self._nb_entities
