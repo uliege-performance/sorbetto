@@ -18,7 +18,6 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
-    "sphinx_math_dollar",
     "sphinxcontrib.bibtex",
     "nbsphinx",
     "sphinx_gallery.load_style",
@@ -61,13 +60,6 @@ autodoc_default_options = {
     "members": True,
 }
 
-
-mathjax3_config = {
-    "tex": {
-        "inlineMath": [["\\(", "\\)"]],
-        "displayMath": [["\\[", "\\]"]],
-    }
-}
 
 bibtex_bibfiles = ["references.bib"]
 bibtex_default_style = "plain"
