@@ -3,8 +3,8 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sorbetto"
-description = "A Python Library to Produce Classification Tiles With Different Flavors"
+name = "Sorbetto"
+description = "A Python Library for Producing Classification Tiles With Different Flavors"
 readme = "README.md"
 dynamic = ["version"]
 license = "Apache-2.0"
@@ -29,18 +29,39 @@ classifiers = [
     "Operating System :: MacOS",
 ]
 requires-python = ">=3.12"
-dependencies = ["numpy>=1.20.0", "matplotlib>=3.6.0", "scipy>=1.16.0"]
+dependencies = [
+    "numpy>=1.20.0",
+    "matplotlib>=3.6.0",
+    "scipy>=1.16.0",
+    "jax",
+    "tqdm",
+]
+
+[tool.setuptools.packages.find]
+include = ["sorbetto*"]
 
 [tool.setuptools.dynamic]
 version = { attr = "sorbetto.__version__" }
 readme = { file = ["README.md"] }
 
 [project.optional-dependencies]
-dev = ["ruff>=0.12", "pre-commit>=4.3"]
+dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
 
-docs = ["sphinx", "sphinx-rtd-theme"]
+dist = ["build", "twine"]
+
+doc = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinx-math-dollar@git+https://github.com/MarelliF/sphinx-math-dollar.git",
+    "sphinxcontrib-bibtex",
+    "nbsphinx",
+    "sphinx-gallery",
+
+    # TODO remove when nbsphinx supports Sphinx 8.2
+    "sphinxcontrib-apidoc",
+]
 
 [project.urls]
-Documentation = "https://cbi-toolbox.readthedocs.io/en/latest/"
-Source = "https://github.com/pierard/sorbetto"
-Issues = "https://github.com/pierard/sorbetto/issues"
+Documentation = "https://sorbetto.readthedocs.io/en/latest/"
+Source = "https://github.com/uliege-performance/sorbetto"
+Issues = "https://github.com/uliege-performance/sorbetto/issues"

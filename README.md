@@ -1,21 +1,40 @@
-# sorbetto
+![sorbetto banner](doc/images/sorbetto_banner.svg)
 
-Sorbetto: a Python Library to Produce Classification Tiles With Different Flavors
+**Disclaimer: Sorbetto is currently in its early development phase, coming
+updates might introduce some breaking changes.**
 
-# dev instructions
+Sorbetto is a Python Library for producing classification tiles with different
+flavors.
 
-## install ruff pre-commit
+Check out the [documentation](https://sorbetto.readthedocs.io/en/latest/) for user guides and a detailed API reference!
 
+## Installing
+
+We recommend installing Sorbetto from PyPI:
+
+```bash
+pip install sorbetto
 ```
-cd {{path to root of sorbetto}}
 
-pip install -e ".[dev,docs]"
+But you can also clone this repository for a manual installation:
 
-pre-commit install
+```bash
+git clone https://github.com/uliege-performance/sorbetto.git
+cd sorbetto
+pip install .
 ```
 
-When you commit, ruff will automatically verify that your code is properly linted/formatted.
+## Getting started
 
-You can omit the `docs` option if you do not want to build the documentation.
+Check out our interactive demos to learn about the core concepts of Sorbetto
+[here](https://sorbetto.readthedocs.io/en/latest/demos.html)!
 
-If there are any errors, they are corrected, BUT you have to re-add the fixed files (`git status` to see which file are modified, `git add` to add them)
+You can also have a look at our detailed example notebooks
+[here](https://sorbetto.readthedocs.io/en/latest/examples.html).
+
+## Contributing
+
+If you want to bring your contribution to this library, we will be happy to
+welcome it! Please go through our
+[contributor guidelines](https://sorbetto.readthedocs.io/en/latest/contributing.html)
+to get started.
