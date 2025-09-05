@@ -21,10 +21,19 @@ The main contributors of this library are listed here below:
 
 .. [1] ULiège, Liège, Belgium
 .. [2] UMONS, Mons, Belgium
-.. [3] Multitel, Mons, Belgium
+.. [3] Multitel Research Center, Mons, Belgium
 
 
 Acknowledgements
 ----------------
 
-This project has received funding from the European Union's Horizon 2020 research and innovation programme under the Marie Skłodowska Curie grant agreement No 101034383.
+The work of some of the contributors was supported by the SPW EER - Service
+Public de Wallonie. Economie, Emploi, Recherche under grant number 2010235
+(ARIAC by DIGITAL-WALLONIA4.AI).
+
+This work has received funding from the Service Public de Wallonie (SPW)
+Recherche under grant 8573, ReconnAIssance project.
+
+This project has received funding from the European Union's Horizon 2020
+research and innovation programme under the Marie Skłodowska Curie grant
+agreement No 101034383.
