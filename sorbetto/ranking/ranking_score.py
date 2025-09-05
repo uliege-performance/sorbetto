@@ -61,8 +61,18 @@ class RankingScore(AbstractScore):
         default_name = "Ranking Score R_I for I(tn)={:g}, I(fp)={:g}, I(fn)={:g}, I(tp)={:g}".format(
             importance.itn, importance.ifp, importance.ifn, importance.itp
         )
+        default_abbreviation = "RS"
+        default_symbol = "$R_I$"
 
-        AbstractScore.__init__(self, default_name, name, abbreviation, symbol)
+        AbstractScore.__init__(
+            self,
+            default_name,
+            default_abbreviation,
+            default_symbol,
+            name,
+            abbreviation,
+            symbol,
+        )
 
     @property
     def importance(self) -> Importance:

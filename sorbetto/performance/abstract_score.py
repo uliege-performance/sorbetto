@@ -7,6 +7,8 @@ class AbstractScore(ABC):
     def __init__(
         self,
         default_name: str,
+        default_abbreviation: str | None,
+        default_symbol: str | None,
         name: str | None = None,
         abbreviation: str | None = None,
         symbol: str | None = None,
@@ -14,6 +16,8 @@ class AbstractScore(ABC):
         """
         Args:
             default_name (str): The name to use in place of None.
+            default_abbreviation (str | None): The abbreviation to use when the default name is used.
+            default_symbol (str | None): The symbol to use when the default name is used.
             name (str | None, optional): The initial name. Defaults to None.
             abbreviation (str | None, optional): The initial abbreviation. Defaults to None.
             symbol (str | None, optional): The initial symbol. Defaults to None.
@@ -21,6 +25,14 @@ class AbstractScore(ABC):
 
         assert isinstance(default_name, str)
         self._default_name = default_name
+
+        assert default_abbreviation is None or isinstance(default_abbreviation, str)
+        self._default_abbreviation = default_abbreviation
+
+        assert default_symbol is None or isinstance(default_symbol, str)
+        self._default_symbol = default_symbol
+
+        self._no_name = True
 
         # Initialize instance attributes.
         # The value put here are necessary for the property setter to work propertly.
@@ -41,7 +53,10 @@ class AbstractScore(ABC):
 
     @property
     def name(self) -> str:
-        return self._name
+        if self._no_name:
+            return self._default_name
+        else:
+            return self._name
 
     @name.setter
     def name(self, name: str | None) -> None:
@@ -53,20 +68,23 @@ class AbstractScore(ABC):
             name (str | None): the name.
         """
         if name is None:
-            name = self._default_name
-        elif not isinstance(name, str):
-            name = str(name)
-        self._name = name
-        # If we change the score name, the previous abbreviation is most probably no longer relevant.
-        # Note that you can use the abbreviation setter after calling the name setter.
-        self._abbreviation = None
-        # If we change the score name, the previous symbol is most probably no longer relevant.
-        # Note that you can use the symbol setter after calling the name setter.
-        self._symbol = None
+            self._no_name = True
+        else:
+            self._no_name = False
+            self._name = str(name)
+            # If we change the score name, the previous abbreviation is most probably no longer relevant.
+            # Note that you can use the abbreviation setter after calling the name setter.
+            self._abbreviation = None
+            # If we change the score name, the previous symbol is most probably no longer relevant.
+            # Note that you can use the symbol setter after calling the name setter.
+            self._symbol = None
 
     @property
     def abbreviation(self) -> str | None:
-        return self._abbreviation
+        if self._no_name:
+            return self._default_abbreviation
+        else:
+            return self._abbreviation
 
     @abbreviation.setter
     def abbreviation(self, abbreviation: str | None) -> None:
@@ -84,6 +102,7 @@ class AbstractScore(ABC):
         # check argument
         assert abbreviation is None or isinstance(abbreviation, str)
         # check that the abbreviation is unset (the instance attribute should be None)
+        assert not self._no_name
         if self._abbreviation is not None:
             raise RuntimeError("The name should be set before the abbreviation")
         else:
@@ -91,7 +110,10 @@ class AbstractScore(ABC):
 
     @property
     def symbol(self) -> str | None:
-        return self._symbol
+        if self._no_name:
+            return self._default_symbol
+        else:
+            return self._symbol
 
     @symbol.setter
     def symbol(self, symbol: str | None) -> None:
@@ -109,6 +131,7 @@ class AbstractScore(ABC):
         # check argument
         assert symbol is None or isinstance(symbol, str)
         # check that the symbol is unset (the instance attribute should be None)
+        assert not self._no_name
         if self._symbol is not None:
             raise RuntimeError("The name should be set before the symbol")
         else:
