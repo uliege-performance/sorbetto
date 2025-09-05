@@ -199,7 +199,9 @@ class ParameterizationDefault(AbstractParameterization):
         """
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
-        :math:`$ \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\} `$
+
+        .. math:
+             \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
         # See Theorem 3 of future "paper 6".
@@ -239,7 +241,9 @@ class ParameterizationDefault(AbstractParameterization):
         """
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
-        :math:`$ \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\} `$
+
+        .. math:
+            \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         # See Theorem 4 of future "paper 6".

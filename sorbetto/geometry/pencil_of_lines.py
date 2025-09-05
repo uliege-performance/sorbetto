@@ -52,7 +52,7 @@ class PencilOfLines(AbstractGeometricObject2D):
 
     def getLine(self, lambda_1: float, lambda_2: float) -> Line:
         """
-        The line corresponding to $(\\lambda_1, \\lambda_2).
+        The line corresponding to :math:`(\\lambda_1, \\lambda_2)`.
 
         Args:
             lambda_1 (float): the value of :math:`\\lambda_1`

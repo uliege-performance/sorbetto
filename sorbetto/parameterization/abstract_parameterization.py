@@ -341,7 +341,10 @@ class AbstractParameterization(ABC):
         """
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
-        :math:`$ \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\} `$
+
+        .. math::
+            \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
+
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
         # See Theorem 3 of future "paper 6".
@@ -362,7 +365,9 @@ class AbstractParameterization(ABC):
         """
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
-        :math:`$ \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\} `$
+
+        .. math::
+            \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         # See Theorem 4 of future "paper 6".
@@ -377,16 +382,18 @@ class AbstractParameterization(ABC):
 
     def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
         """
-        $$\\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
-        = \\left\\{ R_I : a(I) = b(I) \\right\\}$$
+        .. math::
+            \\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
+            = \\left\\{ R_I : a(I) = b(I) \\right\\}
         """
         # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
         """
-        $$\\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
-        = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}$$
+        .. math::
+            \\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
+            = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}
         """
         # See Theorem 2 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!

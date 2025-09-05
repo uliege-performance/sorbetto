@@ -8,7 +8,7 @@ class ParameterizationAdaptedToClassPriors(AbstractParameterization):
 
 
     Using the parameterization adapted to class priors with performances corresponding to
-    the class priors $(\\pi_-,\\pi_+)$ is equivalent to using the default parameterization
+    the class priors :math:`(\\pi_-,\\pi_+)` is equivalent to using the default parameterization
     after applying a target shift operation :cite:t:`Sipka2022TheHitchhikerGuide` on all
     performances in order to balance the class priors.
 
