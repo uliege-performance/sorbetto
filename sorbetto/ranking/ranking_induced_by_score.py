@@ -51,6 +51,8 @@ class RankingInducedByScore(AbstractRanking):
     def getAllStableRanks(self) -> np.ndarray:
         # In case of equivalence (equal values), the returned rank decreases with the
         # position in the list of entities.
+        # TODO: Change this implementation to mimic what we did in RankingFlavor for consistency (only).
+        # (or vice-versa?)
         sorted_idx = self._sorted_idx
         N = sorted_idx.size
         tmp = np.empty(N, dtype=int)
