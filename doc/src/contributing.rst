@@ -110,7 +110,10 @@ Or have your equations on a separate line (equivalent to double $$):
 
         \\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}
 
-These will be rendered as: $$\tau = \left\{ \frac{\pi}{42} \right\}$$
+These will be rendered as: 
+
+.. math::
+    \tau = \left\{ \frac{\pi}{42} \right\}
 
 In jupyter notebooks, you can use standard $ and $$ in markdown cells.
 
