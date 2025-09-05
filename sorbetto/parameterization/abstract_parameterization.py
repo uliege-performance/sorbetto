@@ -380,7 +380,7 @@ class AbstractParameterization(ABC):
         """
         ...
 
-    def locateOrderingsInveredWithOpChangePredictedClass(self) -> Conic:
+    def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
         """
         .. math::
             \\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
@@ -389,7 +389,7 @@ class AbstractParameterization(ABC):
         # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateOrderingsInveredWithOpChangeGroundtruthClass(self) -> Conic:
+    def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
         """
         .. math::
             \\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
