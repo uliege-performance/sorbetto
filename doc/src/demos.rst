@@ -12,9 +12,8 @@ execute them locally.
 If you are interested in learning the core concepts of Sorbetto, we recommend
 checking out our :ref:`Getting started` guide first.
 
-.. toctree::
-   :caption: Notebooks
-   :maxdepth: 1
+.. nbgallery::
+   :caption: Gallery
    :glob:
 
    demos/**
