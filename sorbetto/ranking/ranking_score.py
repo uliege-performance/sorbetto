@@ -260,7 +260,7 @@ class RankingScore:
             if show_colorbar:
                 divider = make_axes_locatable(ax)
                 cax = divider.append_axes("right", size="5%", pad="5%")
-                fig.colorbar(im, ax=cax, label=self.name)
+                fig.colorbar(im, cax)
 
         if show_iso_value_lines:
             cs = ax.contour(
