@@ -29,7 +29,8 @@ class AnnotationText(AbstractAnnotation):
 
         Args:
             location (Importance | RankingScore | Point): where to write the label
-            label (str | None, optional): _description_. Defaults to None.
+            label (str | None, optional): what text to write (if None, will
+                attempt to use the shortName of the location). Defaults to None.
         """
 
         assert isinstance(location, (Importance, RankingScore, Point))
@@ -38,6 +39,8 @@ class AnnotationText(AbstractAnnotation):
         if label is not None:
             if not isinstance(label, str):
                 label = str(label)
+        elif isinstance(location, RankingScore):
+            label = location.shortLabel
 
         self._plt_kwargs = plt_kwargs
 
