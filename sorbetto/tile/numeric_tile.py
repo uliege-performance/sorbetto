@@ -1,4 +1,7 @@
+from typing import cast
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -25,6 +28,21 @@ class NumericTile(Tile):
             resolution=resolution,
             disable_colorbar=disable_colorbar,
         )
+
+        self._min: float | int | None = None
+        self._max: float | int | None = None
+
+    @property
+    def min(self) -> float | int:
+        if self._min is None:
+            self._min = np.min(self.mat_value)
+        return cast(float, self._min)
+
+    @property
+    def max(self) -> float | int:
+        if self._max is None:
+            self._max = np.max(self.mat_value)
+        return cast(float, self._max)
 
     @property
     def flavor(self) -> AbstractNumericFlavor:
