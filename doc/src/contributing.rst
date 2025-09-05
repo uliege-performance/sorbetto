@@ -93,16 +93,26 @@ everywhere.
 Writing math
 """"""""""""
 
-You can include math in your docstrings, the Latex way! You can use the $
-delimiter to surround your equations ($$ is also available). **All backslashes
-must be doubled to avoid failures** (only in docstrings, not rst files). See an
-example below of a simple fraction:
+You can include math in your docstrings, the Latex way! **All backslashes
+must be doubled to avoid failures** (only in docstrings, not rst files).
 
-.. code-block:: latex
+You can use inline math (equivalent to single $):
 
-    $$\\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}$$
+.. code-block:: rst
 
-Will be rendered as: $$\tau = \left\{ \frac{\pi}{42} \right\}$$
+    :math:`\\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}`
+
+Or have your equations on a separate line (equivalent to double $$):
+
+.. code-block:: rst
+
+    .. math::
+
+        \\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}
+
+These will be rendered as: $$\tau = \left\{ \frac{\pi}{42} \right\}$$
+
+In jupyter notebooks, you can use standard $ and $$ in markdown cells.
 
 
 Citing references

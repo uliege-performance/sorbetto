@@ -159,7 +159,7 @@ class RankingScore(AbstractScore):
         Args:
             fig (_type_): _description_
             ax (_type_): _description_
-            priorPos (float): prior of the positive class $\\pi_+ \\in (0,1)$
+            priorPos (float): prior of the positive class :math:`\\pi_+ \\in (0,1)`
             show_values_map (bool, optional): _description_. Defaults to True.
             show_iso_value_lines (bool, optional): _description_. Defaults to True.
             show_colorbar (bool, optional): _description_. Defaults to True.
@@ -621,7 +621,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSkewInsensitiveVersionOfF(priorPos: float) -> "RankingScore":
         """
-        The skew-insensitive version of $\\scoreFOne$.
+        The skew-insensitive version of :math:`\\scoreFOne`.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
         # The argument `priorPos` is checked in the constructor of the constraint.

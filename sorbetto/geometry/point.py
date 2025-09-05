@@ -12,7 +12,7 @@ class Point(AbstractGeometricObject2D):
 
     def __init__(self, x: float, y: float, name: str | None = None):
         """
-        Constructs a new point $(x,y)$ based on its coordinates and an optional name.
+        Constructs a new point :math:`(x,y)` based on its coordinates and an optional name.
 
         Args:
             x (float): the first coordinate of the point
@@ -28,20 +28,20 @@ class Point(AbstractGeometricObject2D):
     @property
     def x(self) -> float:
         """
-        The first coordinate, $x$, of the point $(x,y)$.
+        The first coordinate, :math:`x`, of the point :math:`(x,y)`.
 
         Returns:
-            float: $x$
+            float: :math:`x`
         """
         return self._x
 
     @property
     def y(self) -> float:
         """
-        The second coordinate, $y$, of the point $(x,y)$.
+        The second coordinate, :math:`y`, of the point :math:`(x,y)`.
 
         Returns:
-            float: $y$
+            float: :math:`y`
         """
         return self._y
 
@@ -52,7 +52,7 @@ class Point(AbstractGeometricObject2D):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
         x_min = extent[0]

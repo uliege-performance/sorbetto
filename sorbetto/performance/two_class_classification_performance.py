@@ -10,9 +10,9 @@ from sorbetto.performance.roc import _setupROC
 
 
 class TwoClassClassificationPerformance(AbstractPerformance):
-    """A two-class (crisp) classification performance $P$ is a probability measure over the measurable space $(\\Omega,\\Sigma)$ where the sample (a.k.a. universe) is $\\Omega=\\{tn,fp,fn,tp\\}$ and the event space is $\\Sigma=2^\\Omega$.
-    By convention, $tn$, $fp$, $fn$, and $tp$ represent the four cases that can arise: a true negative, a false positive, a false negative, and a true positive, respectively.
-    The four elementary probability measures $P(\\{tn\\})$, $P(\\{fp\\})$, $P(\\{fn\\})$, and $P(\\{tp\\})$ are the elements of the normalized confusion matrix.
+    """A two-class (crisp) classification performance :math:`P` is a probability measure over the measurable space :math:`(\\Omega,\\Sigma)` where the sample (a.k.a. universe) is :math:`\\Omega=\\{tn,fp,fn,tp\\}` and the event space is :math:`\\Sigma=2^\\Omega`.
+    By convention, :math:`tn`, :math:`fp`, :math:`fn`, and :math:`tp` represent the four cases that can arise: a true negative, a false positive, a false negative, and a true positive, respectively.
+    The four elementary probability measures :math:`P(\\{tn\\})`, :math:`P(\\{fp\\})`, :math:`P(\\{fn\\})`, and :math:`P(\\{tp\\})` are the elements of the normalized confusion matrix.
 
     See :cite:t:`Pierard2025Foundations` for more information on this topic."""
 
@@ -52,40 +52,40 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     @property
     def ptn(self) -> float:
         """
-        The probability of a true negative, $P( \\{ tn \\} )$.
+        The probability of a true negative, :math:`P( \\{ tn \\} )`.
 
         Returns:
-            float: The probability of a true negative, $P( \\{ tn \\} )$.
+            float: The probability of a true negative, :math:`P( \\{ tn \\} )`.
         """
         return self._ptn
 
     @property
     def pfp(self) -> float:
         """
-        The probability of a false positive, $P( \\{ fp \\} )$.
+        The probability of a false positive, :math:`P( \\{ fp \\} )`.
 
         Returns:
-            float: The probability of a false positive, $P( \\{ fp \\} )$.
+            float: The probability of a false positive, :math:`P( \\{ fp \\} )`.
         """
         return self._pfp
 
     @property
     def pfn(self) -> float:
         """
-        The probability of a false negative, $P( \\{ fn \\} )$.
+        The probability of a false negative, :math:`P( \\{ fn \\} )`.
 
         Returns:
-            float: The probability of a false negative, $P( \\{ fn \\} )$.
+            float: The probability of a false negative, :math:`P( \\{ fn \\} )`.
         """
         return self._pfn
 
     @property
     def ptp(self) -> float:
         """
-        The probability of a true positive, $P( \\{ tp \\} )$.
+        The probability of a true positive, :math:`P( \\{ tp \\} )`.
 
         Returns:
-            float: The probability of a true positive, $P( \\{ tp \\} )$.
+            float: The probability of a true positive, :math:`P( \\{ tp \\} )`.
         """
         return self._ptp
 

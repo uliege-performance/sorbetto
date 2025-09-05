@@ -4,7 +4,7 @@ from typing import Self
 class LinearFractionalTransformation:
     """
     This class is used to represent linear fractional transformations.
-    $x \\mapsto \\frac{ a x + b }{ c x + d }$
+    :math:`x \\mapsto \\frac{ a x + b }{ c x + d }`
     https://en.wikipedia.org/wiki/Linear_fractional_transformation
     """
 
@@ -13,10 +13,10 @@ class LinearFractionalTransformation:
         Initializes a new LinearFractionalTransformation object.
 
         Args:
-            a (float): the paramater $a$ of the linear fractional transformation
-            b (float): the paramater $b$ of the linear fractional transformation
-            c (float): the paramater $c$ of the linear fractional transformation
-            d (float): the paramater $d$ of the linear fractional transformation
+            a (float): the paramater :math:`a` of the linear fractional transformation
+            b (float): the paramater :math:`b` of the linear fractional transformation
+            c (float): the paramater :math:`c` of the linear fractional transformation
+            d (float): the paramater :math:`d` of the linear fractional transformation
         """
         assert isinstance(a, float)
         assert isinstance(b, float)
@@ -30,40 +30,40 @@ class LinearFractionalTransformation:
     @property
     def a(self) -> float:
         """
-        The coefficient $a$.
+        The coefficient :math:`a`.
 
         Returns:
-            float: The paramater $a$ of the linear fractional transformation.
+            float: The paramater :math:`a` of the linear fractional transformation.
         """
         return self._a
 
     @property
     def b(self) -> float:
         """
-        The coefficient $b$.
+        The coefficient :math:`b`.
 
         Returns:
-            float: The paramater $b$ of the linear fractional transformation.
+            float: The paramater :math:`b` of the linear fractional transformation.
         """
         return self._b
 
     @property
     def c(self) -> float:
         """
-        The coefficient $c$.
+        The coefficient :math:`c`.
 
         Returns:
-            float: The paramater $c$ of the linear fractional transformation.
+            float: The paramater :math:`c` of the linear fractional transformation.
         """
         return self._c
 
     @property
     def d(self) -> float:
         """
-        The coefficient $d$.
+        The coefficient :math:`d`.
 
         Returns:
-            float: The paramater $d$ of the linear fractional transformation.
+            float: The paramater :math:`d` of the linear fractional transformation.
         """
         return self._d
 

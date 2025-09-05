@@ -93,18 +93,18 @@ class ParameterizationDefault(AbstractParameterization):
         param1: float, param2: float
     ) -> float:
         """
-        Returns the prior of the negative class $\\pi_-$ such that the performance ordering
+        Returns the prior of the negative class :math:`\\pi_-` such that the performance ordering
         located at (param1, param2) puts all the performances corresponding to the priors
-        $(P(Y=c_-), P(Y=c_+))=(\\pi_-, 1-\\pi_-)$ on an equal footing.
+        :math:`(P(Y=c_-), P(Y=c_+))=(\\pi_-, 1-\\pi_-)` on an equal footing.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, left.
 
         Args:
-            param1 (float): the value of the first parameter, $a$
-            param2 (float): the value of the second parameter, $b$
+            param1 (float): the value of the first parameter, :math:`a`
+            param2 (float): the value of the second parameter, :math:`b`
 
         Returns:
-            float: $\\pi_-$
+            float: :math:`\\pi_-`
         """
         a = param1
         b = param2
@@ -135,18 +135,18 @@ class ParameterizationDefault(AbstractParameterization):
         param1: float, param2: float
     ) -> float:
         """
-        Returns the prior of the positive class $\\pi_+$ such that the performance ordering
+        Returns the prior of the positive class :math:`\\pi_+` such that the performance ordering
         located at (param1, param2) puts all the performances corresponding to the priors
-        $(P(Y=c_-), P(Y=c_+))=(1-\\pi_+, \\pi_+)$ on an equal footing.
+        :math:`(P(Y=c_-), P(Y=c_+))=(1-\\pi_+, \\pi_+)` on an equal footing.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, left.
 
         Args:
-            param1 (float): the value of the first parameter, $a$
-            param2 (float): the value of the second parameter, $b$
+            param1 (float): the value of the first parameter, :math:`a`
+            param2 (float): the value of the second parameter, :math:`b`
 
         Returns:
-            float: $\\pi_+$
+            float: :math:`\\pi_+`
         """
         f = ParameterizationDefault.getPriorNegForIsoValuedNoSkillPerformances
         return 1.0 - f(param1, param2)
@@ -156,18 +156,18 @@ class ParameterizationDefault(AbstractParameterization):
         param1: float, param2: float
     ) -> float:
         """
-        Returns the rate of predictions for the negative class $\\tau_-$ such that the performance ordering
+        Returns the rate of predictions for the negative class :math:`\\tau_-` such that the performance ordering
         located at (param1, param2) puts all the performances corresponding to the prediction rates
-        $(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(\\tau_-, 1-\\tau_-)$ on an equal footing.
+        :math:`(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(\\tau_-, 1-\\tau_-)` on an equal footing.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, right.
 
         Args:
-            param1 (float): the value of the first parameter, $a$
-            param2 (float): the value of the second parameter, $b$
+            param1 (float): the value of the first parameter, :math:`a`
+            param2 (float): the value of the second parameter, :math:`b`
 
         Returns:
-            float: $\\tau_-$
+            float: :math:`\\tau_-`
         """
         f = ParameterizationDefault.getPriorNegForIsoValuedNoSkillPerformances
         return f(param1, 1 - param2)
@@ -177,18 +177,18 @@ class ParameterizationDefault(AbstractParameterization):
         param1: float, param2: float
     ) -> float:
         """
-        Returns the rate of predictions for the positive class $\\tau_+$ such that the performance ordering
+        Returns the rate of predictions for the positive class :math:`\\tau_+` such that the performance ordering
         located at (param1, param2) puts all the performances corresponding to the prediction rates
-        $(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(1-\\tau_+, \\tau_+)$ on an equal footing.
+        :math:`(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(1-\\tau_+, \\tau_+)` on an equal footing.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, right.
 
         Args:
-            param1 (float): the value of the first parameter, $a$
-            param2 (float): the value of the second parameter, $b$
+            param1 (float): the value of the first parameter, :math:`a`
+            param2 (float): the value of the second parameter, :math:`b`
 
         Returns:
-            float: $\\tau_+$
+            float: :math:`\\tau_+`
         """
         f = ParameterizationDefault.getRateNegPredictionsForIsoValuedNoSkillPerformances
         return 1.0 - f(param1, param2)
@@ -198,15 +198,17 @@ class ParameterizationDefault(AbstractParameterization):
     ) -> BilinearCurve:
         """
         The set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given class priors $(\\pi_-, \\pi_+)$, on an equal footing is given by
-        $$ \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\} $$
+        performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
+
+        .. math:
+             \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
         # See Theorem 3 of future "paper 6".
         # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
 
         Args:
-            priorPos (float): the prior of the positive class, $\\pi_+$
+            priorPos (float): the prior of the positive class, :math:`\\pi_+`
 
         Returns:
             BilinearCurve: The locus (a curve).
@@ -238,14 +240,16 @@ class ParameterizationDefault(AbstractParameterization):
     ) -> BilinearCurve:
         """
         The set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given prediction rates $(\\tau_-, \\tau_+)$, on an equal footing is given by
-        $$ \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\} $$
+        performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
+
+        .. math:
+            \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         # See Theorem 4 of future "paper 6".
 
         Args:
-            ratePos (float): the prediction rate for the positive class, $\\tau_+$
+            ratePos (float): the prediction rate for the positive class, :math:`\\tau_+`
 
         Returns:
             AbstractGeometricObject2D: The locus (a curve).

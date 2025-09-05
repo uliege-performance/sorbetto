@@ -12,18 +12,18 @@ from sorbetto.geometry.point import Point
 class Line(AbstractGeometricObject2D):
     """
     This class is used to represent a line.
-    $a x + b y + c = 0$
+    :math:`a x + b y + c = 0`
     See https://en.wikipedia.org/wiki/Line_(geometry)
     """
 
     def __init__(self, a: float, b: float, c: float, name: str | None = None):
         """
-        Constructs a new line $a x + b y + c = 0$.
+        Constructs a new line :math:`a x + b y + c = 0`.
 
         Args:
-            a (float): the parameter $a$
-            b (float): the parameter $b$
-            c (float): the parameter $c$
+            a (float): the parameter :math:`a`
+            b (float): the parameter :math:`b`
+            c (float): the parameter :math:`c`
             name (str | None, optional): the name
         """
         assert isinstance(a, float)
@@ -42,30 +42,30 @@ class Line(AbstractGeometricObject2D):
     @property
     def a(self) -> float:
         """
-        The parameter $a$ of the line $a x + b y + c = 0$
+        The parameter :math:`a` of the line :math:`a x + b y + c = 0`
 
         Returns:
-            float: $a$
+            float: :math:`a`
         """
         return self._a
 
     @property
     def b(self) -> float:
         """
-        The parameter $b$ of the line $a x + b y + c = 0$
+        The parameter :math:`b` of the line :math:`a x + b y + c = 0`
 
         Returns:
-            float: $b$
+            float: :math:`b`
         """
         return self._b
 
     @property
     def c(self) -> float:
         """
-        The parameter $c$ of the line $a x + b y + c = 0$
+        The parameter :math:`c` of the line :math:`a x + b y + c = 0`
 
         Returns:
-            float: $c$
+            float: :math:`c`
         """
         return self._c
 
@@ -87,11 +87,11 @@ class Line(AbstractGeometricObject2D):
 
     def getNormalized(self) -> Self:
         """
-        Computes the normalized form of the line, that is $a' x + b' y + c' = 0$
-        such that $a'^2 + b'^2 = 1$ and $(a',b',c') \\propto (a,b,c)$.
+        Computes the normalized form of the line, that is :math:`a' x + b' y + c' = 0`
+        such that :math:`a'^2 + b'^2 = 1` and :math:`(a',b',c') \\propto (a,b,c)`.
 
         Returns:
-            Line: the line $a' x + b' y + c' = 0$
+            Line: the line :math:`a' x + b' y + c' = 0`
         """
 
         a = self._a
@@ -146,7 +146,7 @@ class Line(AbstractGeometricObject2D):
         Computes the intersection of the line with any given axis-aligned box.
 
         Args:
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
 
         Returns:
             LineSegment | Point | None: the intersection, or None if there is no intersection.
@@ -231,7 +231,7 @@ class Line(AbstractGeometricObject2D):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
 

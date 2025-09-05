@@ -8,10 +8,10 @@ from sorbetto.geometry.conic import Conic
 class BilinearCurve(Conic):
     """
     This class is used to represent bilinear curves:
-    $K_{xy} x y + K_x x + K_y y + K = 0$.
+    :math:`K_{xy} x y + K_x x + K_y y + K = 0`.
     These are particular cases of conic sections.
-    $a x^2 + b x y + c y^2 + d x + e y + f = 0$
-    where $a=0$, $b=K_{xy}$, $c=0$, $d=K_x$, $e=K_y$, and $f=K$.
+    :math:`a x^2 + b x y + c y^2 + d x + e y + f = 0`
+    where :math:`a=0`, :math:`b=K_{xy}`, :math:`c=0`, :math:`d=K_x`, :math:`e=K_y`, and :math:`f=K`.
     """
 
     def __init__(self, Kxy, Kx, Ky, K, name: str | None = None):
@@ -25,13 +25,13 @@ class BilinearCurve(Conic):
 
     def getY(self, x):
         """
-        Computes the value of $y$, for any given $x$.
+        Computes the value of :math:`y`, for any given :math:`x`.
 
         Args:
-            x (_type_): $x$
+            x (_type_): :math:`x`
 
         Returns:
-            _type_: the value of $y$, for the given $x$.
+            _type_: the value of :math:`y`, for the given :math:`x`.
         """
         assert self._a == 0.0
         Kxy = self._b
@@ -50,13 +50,13 @@ class BilinearCurve(Conic):
 
     def getX(self, y):
         """
-        Computes the value of $x$, for any given $y$.
+        Computes the value of :math:`x`, for any given :math:`y`.
 
         Args:
-            y (_type_): $y$
+            y (_type_): :math:`y`
 
         Returns:
-            _type_: the value of $x$, for the given $y$.
+            _type_: the value of :math:`x`, for the given :math:`y`.
         """
         assert self._a == 0.0
         Kxy = self._b
@@ -80,7 +80,7 @@ class BilinearCurve(Conic):
         Args:
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
-            extent (_type_): the axis-aligned box $(x_{min}, x_{max}, y_{min}, y_{max})$
+            extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
             plt_kwargs: options for Pyplot's plot command.
         """
 

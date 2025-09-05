@@ -52,7 +52,6 @@ dist = ["build", "twine"]
 doc = [
     "sphinx",
     "sphinx-rtd-theme",
-    "sphinx-math-dollar@git+https://github.com/MarelliF/sphinx-math-dollar.git",
     "sphinxcontrib-bibtex",
     "nbsphinx",
     "sphinx-gallery",

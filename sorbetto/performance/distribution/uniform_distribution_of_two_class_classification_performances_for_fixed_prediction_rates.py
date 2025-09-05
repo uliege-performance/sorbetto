@@ -45,7 +45,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
         The rate of predictions for the positive class.
 
         Returns:
-            ratePos: $\\tau_+ = P( \\{ fp, tp \\} )$
+            ratePos: :math:`\\tau_+ = P( \\{ fp, tp \\} )`
         """
         return self._ratePos
 
@@ -55,7 +55,7 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
         The rate of predictions for the negative class.
 
         Returns:
-            rateNeg: $\\tau_- = P( \\{ tn, fn \\} )$
+            rateNeg: :math:`\\tau_- = P( \\{ tn, fn \\} )`
         """
         return 1.0 - self._ratePos
 
