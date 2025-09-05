@@ -35,9 +35,9 @@ class AbstractScore(ABC):
         # Initialize instance attributes.
         # The value put here are necessary for the property setter to work propertly.
         # Do not change them, unless you change the logic coded in the setters.
-        self._name: str | None = None
-        self._abbreviation: str | None = None
-        self._symbol: str | None = None
+        self._name: str | None = name
+        self._abbreviation: str | None = abbreviation
+        self._symbol: str | None = symbol
 
         ABC.__init__(self)
 
