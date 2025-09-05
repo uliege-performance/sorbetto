@@ -440,20 +440,19 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSpecificity() -> "RankingScore":
         rs = RankingScore.getTrueNegativeRate()
-        rs.name = "Specificity"
-        rs.abbreviation = "Sp"
+        rs.rename("Specificity", "Sp")
         return rs
 
     @staticmethod
     def getSelectivity() -> "RankingScore":
         rs = RankingScore.getTrueNegativeRate()
-        rs.name = "Selectivity"
+        rs.rename("Selectivity")
         return rs
 
     @staticmethod
     def getSensitivity() -> "RankingScore":
         rs = RankingScore.getTruePositiveRate()
-        rs.name = "Sensitivity"
+        rs.rename("Sensitivity")
         return rs
 
     @staticmethod
@@ -483,29 +482,25 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getPrecision() -> "RankingScore":
         rs = RankingScore.getPositivePredictiveValue()
-        rs.name = "Precision"
-        rs.abbreviation = "Pr"
+        rs.rename("Precision", "Pr")
         return rs
 
     @staticmethod
     def getInversePrecision() -> "RankingScore":
         rs = RankingScore.getNegativePredictiveValue()
-        rs.name = "Inverse Precision"
-        rs.abbreviation = "Pr-Inv"
+        rs.rename("Inverse Precision", "Pr-Inv")
         return rs
 
     @staticmethod
     def getRecall() -> "RankingScore":
         rs = RankingScore.getTruePositiveRate()
-        rs.name = "Recall"
-        rs.abbreviation = "Re"
+        rs.rename("Recall", "Re")
         return rs
 
     @staticmethod
     def getInverseRecall() -> "RankingScore":
         rs = RankingScore.getTrueNegativeRate()
-        rs.name = "Inverse Recall"
-        rs.abbreviation = "Re-Inv"
+        rs.rename("Inverse Recall", "Re-Inv")
         return rs
 
     @staticmethod
@@ -529,35 +524,31 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getJaccard() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "Jaccard"
-        rs.abbreviation = "J"
+        rs.rename("Jaccard", "J")
         return rs
 
     @staticmethod
     def getInverseJaccard() -> "RankingScore":
         rs = RankingScore.getInverseIntersectionOverUnion()
-        rs.name = "Inverse Jaccard"
-        rs.abbreviation = "J-Inv"
+        rs.rename("Inverse Jaccard", "J-Inv")
         return rs
 
     @staticmethod
     def getTanimotoCoefficient() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "Tanimoto Coefficient"
-        rs.abbreviation = "TC"
+        rs.rename("Tanimoto Coefficient", "TC")
         return rs
 
     @staticmethod
     def getSimilarity() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "Similarity"
+        rs.rename("Similarity")
         return rs
 
     @staticmethod
     def getCriticalSuccessIndex() -> "RankingScore":
         rs = RankingScore.getIntersectionOverUnion()
-        rs.name = "Critical Success Index"
-        rs.abbreviation = "CSI"
+        rs.rename("Critical Success Index", "CSI")
         return rs
 
     @staticmethod
@@ -597,22 +588,19 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getDiceSorensenCoefficient() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "Dice-Sørensen coefficient"
-        rs.abbreviation = "DSC"
+        rs.rename("Dice-Sørensen coefficient", "DSC")
         return rs
 
     @staticmethod
     def getZijdenbosSimilarityIndex() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "Zijdenbos Similarity Index"
-        rs.abbreviation = "ZSI"
+        rs.rename("Zijdenbos Similarity Index", "ZSI")
         return rs
 
     @staticmethod
     def getCzekanowskiBinaryIndex() -> "RankingScore":
         rs = RankingScore.getF(beta=1.0)
-        rs.name = "Czekanowski Binary Index"
-        rs.abbreviation = "CBI"
+        rs.rename("Czekanowski Binary Index", "CBI")
         return rs
 
     @staticmethod
@@ -627,7 +615,7 @@ class RankingScore(AbstractScore):
     # def getMatchingCoefficient() -> "RankingScore":
     #     # SimpleMatchingCoefficient ??? Same as Jaccard ???
     #     rs = RankingScore.getAccuracy()
-    #     rs.name = "MC"
+    #     rs.rename("MC")
     #     return rs
 
     @staticmethod
@@ -715,15 +703,13 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getDetectionRate(priorPos: float) -> "RankingScore":
         rs = RankingScore.getProbabilityTruePositive(priorPos)
-        rs.name = "Detection Rate"
-        rs.abbreviation = "DR"
+        rs.rename("Detection Rate", "DR")
         return rs
 
     @staticmethod
     def getRejectionRate(priorPos: float) -> "RankingScore":
         rs = RankingScore.getProbabilityTrueNegative(priorPos)
-        rs.name = "Rejection Rate"
-        rs.abbreviation = "RR"
+        rs.rename("Rejection Rate", "RR")
         return rs
 
     def __str__(self):

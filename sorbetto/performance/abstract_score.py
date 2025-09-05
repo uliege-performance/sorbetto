@@ -32,8 +32,6 @@ class AbstractScore(ABC):
         assert default_symbol is None or isinstance(default_symbol, str)
         self._default_symbol = default_symbol
 
-        self._no_name = True
-
         # Initialize instance attributes.
         # The value put here are necessary for the property setter to work propertly.
         # Do not change them, unless you change the logic coded in the setters.
@@ -41,101 +39,67 @@ class AbstractScore(ABC):
         self._abbreviation: str | None = None
         self._symbol: str | None = None
 
-        # Noww, use the property setters to check the arguments, choose the default
-        # value if the provided value is None, and to store the right value in the
-        # instance attribute. Do not change the order in which these calls are made,
-        # unless you change the logic coded in the setters.
-        self.name = name
-        self.abbreviation = abbreviation
-        self.symbol = symbol
-
         ABC.__init__(self)
+
+    def rename(
+        self,
+        name: str | None = None,
+        abbreviation: str | None = None,
+        symbol: str | None = None,
+    ) -> None:
+        """
+        Set the name, abbreviation, and symbol of the score. It is not allowed
+        to set the abbreviation or symbol without giving a name too.
+
+        Args:
+            name (str | None, optional): the new name. Defaults to None.
+            abbreviation (str | None, optional): the new abbreviation. Defaults to None.
+            symbol (str | None, optional): the new symbol. Defaults to None.
+
+        Raises:
+            ValueError: if name is None and abbreviation or symbol are not None.
+        """
+        if name is None:
+            self._name = name
+
+            if abbreviation is not None or symbol is not None:
+                raise ValueError(
+                    "Cannot set abbreviation and symbol when name is None. Abbreviation and symbol must be None too."
+                )
+            self._abbreviation = None
+            self._symbol = None
+
+        else:
+            self._name = str(name)
+            if abbreviation is None:
+                self._abbreviation = None
+            else:
+                self._abbreviation = str(abbreviation)
+            if symbol is None:
+                self._symbol = None
+            else:
+                self._symbol = str(symbol)
 
     @property
     def name(self) -> str:
-        if self._no_name:
+        if self._name is None:
             return self._default_name
         else:
             return self._name
 
-    @name.setter
-    def name(self, name: str | None) -> None:
-        """
-        Set the name of the ranking score, and erases the abbreviation and symbol.
-        If the provided name is None, it is replaced by a default string.
-
-        Args:
-            name (str | None): the name.
-        """
-        if name is None:
-            self._no_name = True
-        else:
-            self._no_name = False
-            self._name = str(name)
-            # If we change the score name, the previous abbreviation is most probably no longer relevant.
-            # Note that you can use the abbreviation setter after calling the name setter.
-            self._abbreviation = None
-            # If we change the score name, the previous symbol is most probably no longer relevant.
-            # Note that you can use the symbol setter after calling the name setter.
-            self._symbol = None
-
     @property
     def abbreviation(self) -> str | None:
-        if self._no_name:
+        if self._name is None:
             return self._default_abbreviation
         else:
             return self._abbreviation
 
-    @abbreviation.setter
-    def abbreviation(self, abbreviation: str | None) -> None:
-        """
-        Set the abbreviation of the ranking score. The abbreviation can be set to a
-        string only once after setting the name. If you need to change the abbreviation a
-        second time, call the name setter first.
-
-        Args:
-            abbreviation (str | None): the abbreviation.
-
-        Raises:
-            RuntimeError: when trying to change the abbreviation twice.
-        """
-        # check argument
-        assert abbreviation is None or isinstance(abbreviation, str)
-        # check that the abbreviation is unset (the instance attribute should be None)
-        assert not self._no_name
-        if self._abbreviation is not None:
-            raise RuntimeError("The name should be set before the abbreviation")
-        else:
-            self._abbreviation = abbreviation
-
     @property
     def symbol(self) -> str | None:
-        if self._no_name:
+        if self._name is None:
             return self._default_symbol
         else:
             return self._symbol
-
-    @symbol.setter
-    def symbol(self, symbol: str | None) -> None:
-        """
-        Set the (mathematical) symbol of the ranking score. The symbol can be set to a
-        string only once after setting the name. If you need to change the symbol a
-        second time, call the name setter first.
-
-        Args:
-            symbol (str | None): the symbol.
-
-        Raises:
-            RuntimeError: when trying to change the symbol twice.
-        """
-        # check argument
-        assert symbol is None or isinstance(symbol, str)
-        # check that the symbol is unset (the instance attribute should be None)
-        assert not self._no_name
-        if self._symbol is not None:
-            raise RuntimeError("The name should be set before the symbol")
-        else:
-            self._symbol = symbol
 
     @property
     def shortLabel(self) -> str:
