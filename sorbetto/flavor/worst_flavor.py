@@ -24,21 +24,23 @@ class WorstFlavor(AbstractNumericFlavor):
     def __init__(
         self,
         performances: FiniteSetOfTwoClassClassificationPerformances,
-        entity_list: list[Entity],
-        name: str = "Unnamed Baseline Flavor",
+        entity_list: list[Entity],  # TODO: why is there this argument?
+        name: str = "Unnamed Worst Flavor",
         colormap: Any = None,
     ):
         super().__init__(name=name, colormap=colormap)
+
+        assert isinstance(performances, FiniteSetOfTwoClassClassificationPerformances)
 
         self._entity_list = entity_list
         self._nb_entities = len(entity_list)
         self._performances = performances
 
-    @property
+    @property  # TODO: why is there this property in this class?
     def entity_list(self) -> list[Entity]:
         return self._entity_list
 
-    @property
+    @property  # TODO: why is there this property in this class?
     def nb_entities(self) -> int:
         return self._nb_entities
 
