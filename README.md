@@ -40,6 +40,11 @@ welcome it! Please go through our
 [contributor guidelines](https://sorbetto.readthedocs.io/en/stable/src/contributing.html)
 to get started.
 
+## Citing us
+
+If you use this code in your work, please cite us accordingly as described in
+our documentation [here](https://sorbetto.readthedocs.io/en/stable/src/citing.html).
+
 ## License
 
 Copyright 2025 Sebastien Pierard, Anais Halin, Francois Marelli, Simon Pernas, Jerome Pierre
