@@ -1,6 +1,7 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 import math
 from typing import Self
 
@@ -227,9 +228,26 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             ax (Axes): _description_
         """
 
+        priorNeg = self._prior_neg()
+        if priorNeg < 1e-8:
+            message = "The prior of the negative class is {:g}".format(priorNeg)
+            message += "It is too low to produce a ROC plot."
+            logging.warning(message)
+            return
+        priorPos = self._prior_pos()
+        if priorNeg < 1e-8:
+            message = "The prior of the positive class is {:g}".format(priorPos)
+            message += "It is too low to produce a ROC plot."
+            logging.warning(message)
+            return
+
         fpr = self._fpr()
         tpr = self._tpr()
-        priorPos = self._prior_pos()
+
+        ax.fill(
+            [0.0, fpr, 1.0, 1.0 - fpr], [0.0, tpr, 1.0, 1 - tpr], facecolor="lightgray"
+        )
+        ax.plot(fpr, tpr, marker="o", label=self._name)
 
         _setupROC(
             fig,
@@ -239,11 +257,6 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             show_priors=True,
             show_unbiased=True,
         )
-
-        ax.fill(
-            [0.0, fpr, 1.0, 1.0 - fpr], [0.0, tpr, 1.0, 1 - tpr], facecolor="lightgray"
-        )
-        ax.plot(fpr, tpr, marker="o", label=self._name)
 
     def __str__(self):
         return f"TwoClassClassificationPerformance(name={self._name}, ptn={self._ptn}, pfp={self._pfp}, pfn={self._pfn}, ptp={self._ptp})"
