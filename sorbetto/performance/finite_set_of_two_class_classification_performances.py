@@ -168,7 +168,7 @@ def _parse_performance(
         pfp_: float | np.ndarray = performance.pfp
         pfn_: float | np.ndarray = performance.pfn
         ptp_: float | np.ndarray = performance.ptp
-    elif isinstance(performance, (FiniteSetOfTwoClassClassificationPerformances)):
+    elif isinstance(performance, FiniteSetOfTwoClassClassificationPerformances):
         ptn_ = performance.ptn[:, np.newaxis, np.newaxis]
         pfp_ = performance.pfp[:, np.newaxis, np.newaxis]
         pfn_ = performance.pfn[:, np.newaxis, np.newaxis]
