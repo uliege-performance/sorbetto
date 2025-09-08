@@ -566,7 +566,7 @@ class RankingScore(AbstractScore):
         )
         name = "F-score for β={:g}".format(beta)
         abbreviation = "F{:g}".format(beta)
-        symbol = "$F_{}$".format("{:g}".format(beta))
+        symbol = "$F_{" + "{:g}".format(beta) + "}$"
         return RankingScore(
             importance, name=name, abbreviation=abbreviation, symbol=symbol
         )
