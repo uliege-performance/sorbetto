@@ -26,17 +26,18 @@ pip install .
 
 ## Getting started
 
-Check out our interactive demos to learn about the core concepts of Sorbetto
-[here](https://sorbetto.readthedocs.io/en/latest/demos.html)!
+Check out our tutorials to learn about the core concepts of Sorbetto
+[here](https://sorbetto.readthedocs.io/en/stable/src/tutorial.html)!
 
-You can also have a look at our detailed example notebooks
-[here](https://sorbetto.readthedocs.io/en/latest/examples.html).
+You can also have a look at our detailed
+[example notebooks](https://sorbetto.readthedocs.io/en/stable/src/examples.html)
+and [interactive demos](https://sorbetto.readthedocs.io/en/stable/src/demos.html).
 
 ## Contributing
 
 If you want to bring your contribution to this library, we will be happy to
 welcome it! Please go through our
-[contributor guidelines](https://sorbetto.readthedocs.io/en/latest/contributing.html)
+[contributor guidelines](https://sorbetto.readthedocs.io/en/stable/src/contributing.html)
 to get started.
 
 ## License
