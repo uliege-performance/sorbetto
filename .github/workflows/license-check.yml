@@ -1,5 +1,19 @@
 name: Check license headers
-uses: viperproject/check-license-header@v2
-with:
-  path: .
-  config: .github/license-check/config.json
+on:
+  push:
+    paths:
+      - '**.py'
+      - .github/workflows/license-check.yml
+
+jobs:
+  check-license:
+    runs-on: ubuntu-latest
+    name: Check license headers
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check license headers
+        uses: viperproject/check-license-header@v2
+        with:
+          path: .
+          config: .github/license-check/config.json
