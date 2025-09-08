@@ -1,0 +1,8 @@
+[
+    {
+        "include": [
+            "**/*.py"
+        ],
+        "license": ".github/license-check/header.txt"
+    }
+]

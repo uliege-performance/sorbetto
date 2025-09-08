@@ -1,0 +1,2 @@
+# Copyright (c) %regexp:\d{4}%-%regexp:\d{4}%, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
