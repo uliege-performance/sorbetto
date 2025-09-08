@@ -95,6 +95,39 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     def getMassFunction(self) -> np.ndarray:
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
+    def _accuracy(self):
+        return self.ptn + self.ptp
+
+    def _tnr(self):
+        return self.ptn / (self.ptn + self.pfp)
+
+    def _fpr(self):
+        return self.pfp / (self.ptn + self.pfp)
+
+    def _fnr(self):
+        return self.pfn / (self.pfn + self.pfp)
+
+    def _tpr(self):
+        return self.ptp / (self.pfn + self.ptp)
+
+    def _npv(self):
+        return self.ptn / (self.ptn + self.pfn)
+
+    def _ppv(self):
+        return self.ptp / (self.pfp + self.ptp)
+
+    def _prior_neg(self):
+        return self.ptn + self.pfp
+
+    def _prior_pos(self):
+        return self.pfn + self.ptp
+
+    def _rate_neg(self):
+        return self.ptn + self.pfn
+
+    def _rate_pos(self):
+        return self.pfp + self.ptp
+
     @staticmethod
     def getNoSkill(
         *,
@@ -194,14 +227,9 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             ax (Axes): _description_
         """
 
-        ptn = self._ptn
-        pfp = self._pfp
-        pfn = self._pfn
-        ptp = self._ptp
-
-        fpr = pfp / (ptn + pfp)
-        tpr = ptp / (pfn + ptp)
-        priorPos = self._pfn + self._ptp
+        fpr = self._fpr()
+        tpr = self._tpr()
+        priorPos = self._prior_pos()
 
         _setupROC(
             fig,
@@ -212,6 +240,9 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             show_unbiased=True,
         )
 
+        ax.fill(
+            [0.0, fpr, 1.0, 1.0 - fpr], [0.0, tpr, 1.0, 1 - tpr], facecolor="lightgray"
+        )
         ax.plot(fpr, tpr, marker="o", label=self._name)
 
     def __str__(self):
