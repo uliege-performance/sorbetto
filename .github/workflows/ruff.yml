@@ -12,5 +12,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Ruff check
+      - name: Ruff check lint
         uses: astral-sh/ruff-action@v3
+      - name: Ruff check format
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check"
+      - name: Ruff check imports
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "check --select I"
