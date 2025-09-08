@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from .abstract_annotation import AbstractAnnotation
 from .annotation_curve_fixed_class_priors import AnnotationCurveFixedClassPriors
 from .annotation_curve_fixed_prediction_rates import AnnotationCurveFixedPredictionRates

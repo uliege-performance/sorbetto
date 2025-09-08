@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from .abstract_geometric_object_2d import AbstractGeometricObject2D
 from .bilinear_curve import BilinearCurve
 from .conic import Conic

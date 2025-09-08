@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from .abstract_performance import AbstractPerformance
 from .abstract_score import AbstractScore
 from .constraint_fixed_class_priors import ConstraintFixedClassPriors
