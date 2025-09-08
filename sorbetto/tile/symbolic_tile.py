@@ -19,7 +19,12 @@ class SymbolicTile(Tile):
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, AbstractSymbolicFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         Tile.__init__(
             self,
             parameterization=parameterization,
@@ -31,7 +36,10 @@ class SymbolicTile(Tile):
 
     @property
     def flavor(self) -> AbstractSymbolicFlavor:
-        return super().flavor  # type: ignore
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, AbstractSymbolicFlavor)
+        return flavor
 
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None

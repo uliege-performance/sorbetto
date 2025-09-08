@@ -1,10 +1,12 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -22,7 +24,12 @@ class NumericTile(Tile):
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, AbstractNumericFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         Tile.__init__(
             self,
             parameterization=parameterization,
@@ -36,20 +43,91 @@ class NumericTile(Tile):
         self._max: float | int | None = None
 
     @property
+    def flavor(self) -> AbstractNumericFlavor:
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, AbstractNumericFlavor)
+        return flavor
+
+    @property
     def min(self) -> float | int:
+        """
+        Returns:
+            float | int: the minimal value on the grid of precomputed values
+        """
         if self._min is None:
             self._min = np.min(self.mat_value)
         return cast(float, self._min)
 
     @property
     def max(self) -> float | int:
+        """
+        Returns:
+            float | int: the maximal value on the grid of precomputed values
+        """
         if self._max is None:
             self._max = np.max(self.mat_value)
         return cast(float, self._max)
 
-    @property
-    def flavor(self) -> AbstractNumericFlavor:
-        return super().flavor  # type: ignore
+    def _optimize(
+        self, scale: float, precision: float = 1e-6
+    ) -> tuple[float, float, float]:
+        assert isinstance(precision, float)
+        assert precision > 0.0
+
+        parameterization = self._parameterization
+
+        def objective(x: np.ndarray):
+            assert x.size() == 2
+            importance = parameterization.getCanonicalImportance(x[0], x[1])
+            return scale * self._flavor(importance)
+
+        x_min, x_max, y_min, y_max = parameterization.getExtent()
+        center_x = 0.5 * (x_min + x_max)
+        center_y = 0.5 * (y_min + y_max)
+        start = np.asarray([center_x, center_y])
+
+        bounds = [[x_min, x_max], [y_min, y_max]]
+
+        output = scipy.optimize.minimize(
+            objective, start, method="SLSQP", bounds=bounds, tol=precision
+        )
+        if not output.success:
+            message = "scipy.optimize.minimize did not succeed: " + output.message
+            logging.warning(message)
+        return output.x
+
+    def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
+        """
+        Minimization of the flavor over the Tile. The default implementation
+        does it by gradient descent.
+
+        Args:
+            precision (float, optional): tolerance for termination. Defaults to 1e-6.
+
+        Returns:
+            tuple[float, float, float]:
+            - float: the first coordinate of the point on the Tile where the smallest value has been found.
+            - float: the second coordinate of the point on the Tile where the smallest value has been found.
+            ) float: the smallest value that has been found.
+        """
+        return self._optimize(1.0, precision)
+
+    def maximize(self, precision: float = 1e-6) -> tuple[float, float, float]:
+        """
+        Minimization of the flavor over the Tile. The default implementation
+        does it by gradient descent.
+
+        Args:
+            precision (float, optional): tolerance for termination. Defaults to 1e-6.
+
+        Returns:
+            tuple[float, float, float]:
+            - float: the first coordinate of the point on the Tile where the smallest value has been found.
+            - float: the second coordinate of the point on the Tile where the smallest value has been found.
+            ) float: the smallest value that has been found.
+        """
+        return self._optimize(-1.0, precision)
 
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None

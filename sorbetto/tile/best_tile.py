@@ -21,6 +21,12 @@ class BestTile(NumericTile):
         name: str = "Best Tile",
         resolution: int = 1001,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
+        assert isinstance(flavor, BestFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
@@ -30,7 +36,10 @@ class BestTile(NumericTile):
 
     @property
     def flavor(self) -> BestFlavor:
-        return super().flavor  # type: ignore
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, BestFlavor)
+        return flavor
 
     @property
     def performances(self) -> FiniteSetOfTwoClassClassificationPerformances:

@@ -23,6 +23,12 @@ class RankingTile(NumericTile):
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
+        assert isinstance(flavor, RankingFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
@@ -40,7 +46,10 @@ class RankingTile(NumericTile):
 
     @property
     def flavor(self) -> RankingFlavor:
-        return super().flavor  # type: ignore
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, RankingFlavor)
+        return flavor
 
     @property
     def entities(self):
@@ -48,27 +57,17 @@ class RankingTile(NumericTile):
 
     @property
     def colormap(self) -> np.ndarray:
+        # TODO: Why is it in this class? Should'nt it be is class Tile?
         return self._colormap
 
     @colormap.setter
     def colormap(self, value: np.ndarray):
+        # TODO: Why is it in this class? Should'nt it be is class Tile?
         self._colormap = value
-
-    @property
-    def rank(self) -> int:
-        return self._rank
-
-    @rank.setter
-    def rank(self, value: int):
-        self._rank = value
 
     @property
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
-
-    @performance.setter
-    def performance(self, value: FiniteSetOfTwoClassClassificationPerformances):
-        self._performance = value
 
     def getExplanation(self):
         return "Explanation of the Ranking tile not yet defined"

@@ -19,6 +19,12 @@ class CorrelationTile(NumericTile):
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
+        assert isinstance(flavor, CorrelationFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
@@ -33,9 +39,12 @@ class CorrelationTile(NumericTile):
 
     @property
     def flavor(self) -> CorrelationFlavor:
-        return super().flavor  # type: ignore
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, CorrelationFlavor)
+        return flavor
 
-    def minimize(self, precision: float = 1e-8):
+    def minimize(self, precision: float = 1e-8) -> tuple[float, float, float]:
         """
         Tries to minimize the value. There is no guarantee to find the minimum with the implemented algorithm.
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,
@@ -87,7 +96,7 @@ class CorrelationTile(NumericTile):
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min
 
-    def maximize(self, precision: float = 1e-8):
+    def maximize(self, precision: float = 1e-8) -> tuple[float, float, float]:
         """
         Tries to maximize the value. There is no guarantee to find the maximum with the implemented algorithm.
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,

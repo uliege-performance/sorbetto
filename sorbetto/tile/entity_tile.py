@@ -22,6 +22,12 @@ class EntityTile(SymbolicTile):
         resolution: int = 1001,
         disable_colorbar: bool = False,
     ):
+        assert isinstance(parameterization, AbstractParameterization)
+        assert isinstance(flavor, EntityFlavor)
+        assert isinstance(name, str)
+        assert isinstance(resolution, int)
+        assert resolution > 0
+
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
@@ -36,7 +42,10 @@ class EntityTile(SymbolicTile):
 
     @property
     def flavor(self) -> EntityFlavor:
-        return super().flavor  # type: ignore
+        # We override the property's getter to ensure the right type of flavor.
+        flavor = super().flavor
+        assert isinstance(flavor, EntityFlavor)
+        return flavor
 
     @property
     def entities(self):
@@ -44,10 +53,12 @@ class EntityTile(SymbolicTile):
 
     @property
     def colormap(self) -> np.ndarray:
+        # TODO: Why is it in this class? Should'nt it be is class Tile?
         return self._colormap
 
     @colormap.setter
     def colormap(self, value: np.ndarray):
+        # TODO: Why is it in this class? Should'nt it be is class Tile?
         self._colormap = value
 
     @property
