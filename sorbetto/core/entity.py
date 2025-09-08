@@ -8,9 +8,6 @@ from sorbetto.performance.two_class_classification_performance import (
 
 
 class Entity:
-
-
-    
     def __init__(
         self,
         performance: TwoClassClassificationPerformance,
