@@ -50,13 +50,13 @@ def _setupROC(
             ax.plot([0, 1], [1, 1 - priorNeg / priorPos], "--", c="palevioletred")
         x = 0.5 * priorPos
         y = 0.5 + 0.5 * priorPos
-        a = math.atan2(priorNeg, -priorPos) * 180.0 / math.pi
+        a = math.atan2(-priorNeg, priorPos) * 180.0 / math.pi
         ax.text(
             x,
             y,
             "unbiased",
             ha="center",
-            va="baseline",
+            va="top" if priorPos >= 0.5 else "baseline",
             rotation=a,
             c="palevioletred",
         )
