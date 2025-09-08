@@ -1,4 +1,4 @@
-![sorbetto banner](doc/images/sorbetto_banner.svg)
+![sorbetto banner](https://raw.githubusercontent.com/uliege-performance/sorbetto/ff6c10fb1e89097dfb6d75090702023bc5393459/doc/images/sorbetto_banner.svg)
 
 **Disclaimer: Sorbetto is currently in its early development phase, coming
 updates might introduce some breaking changes.**
