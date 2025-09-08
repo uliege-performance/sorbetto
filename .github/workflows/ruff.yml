@@ -1,0 +1,16 @@
+name: Check formatting with ruff
+on:
+  push:
+    paths:
+      - '**.py'
+      - .github/workflows/ruff.yml
+
+jobs:
+  check-ruff:
+    runs-on: ubuntu-latest
+    name: Check format
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Ruff check
+        uses: astral-sh/ruff-action@v3
