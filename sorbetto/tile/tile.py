@@ -238,16 +238,16 @@ class Tile:
         """Draws the Tile in the given figure and axes.
 
         Args:
-            fig (Figure | None, optional): The figure to draw in. If None, a new
-                figure is created. Defaults to None.
-            ax (Axes | None, optional): The axes to draw in. If None, a new axis is
-                created. Defaults to None. Note that this argument is ignored if fig
-                is None.
-
+            fig (Figure | None, optional): The matplotlib.pyplot Figure to use for drawing. Defaults to None in which case a new Figure is created.
+            ax (Axes | None, optional): The matplotlib.pyplot Axes to use for drawing. Defaults to None in which case the current Axes are used.
 
         Returns:
-            The figure and axes used for drawing.
+            tuple[Figure, Axes]: The matplotlib.pyplot Figure and Axes used for drawing.
         """
+
+        assert fig is None or isinstance(fig, Figure)
+        assert ax is None or isinstance(ax, Axes)
+
         if fig is None:
             fig = plt.figure()
             ax = fig.gca()
