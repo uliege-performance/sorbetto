@@ -270,6 +270,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             show_no_skills=True,
             show_priors=True,
             show_unbiased=True,
+            show_opposite_unbiased=True,
         )
 
         def drawPointAndLabel(x, y, label, color="blue"):

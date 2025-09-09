@@ -17,7 +17,6 @@ from sorbetto.performance.two_class_classification_performance import (
 
 
 class FiniteSetOfTwoClassClassificationPerformances:
-    # TODO: list or dict ?
     # TODO: FiniteSet or Multiset ?
 
     def __init__(
@@ -267,6 +266,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
                 show_no_skills=True,
                 show_priors=True,
                 show_unbiased=True,
+                show_opposite_unbiased=True,
             )
 
             best_entities_idx = self._plotBestPerformancesInROC(all_fpr, all_tpr, "k:")
@@ -351,7 +351,7 @@ if __name__ == "__main__":
     import numpy as np
 
     # Example usage
-    list_tn_fp_fn_tp = np.array(
+    list_ptn_pfp_pfn_ptp = np.array(
         [
             (0.70, 0.05, 0.10, 0.15),
             (0.60, 0.10, 0.15, 0.15),
@@ -359,7 +359,7 @@ if __name__ == "__main__":
         ]
     )
 
-    print(f"Used dim {list_tn_fp_fn_tp.shape}")
+    print(f"Used dim {list_ptn_pfp_pfn_ptp.shape}")
 
-    finite_set = FiniteSetOfTwoClassClassificationPerformances(list_tn_fp_fn_tp)
+    finite_set = FiniteSetOfTwoClassClassificationPerformances(list_ptn_pfp_pfn_ptp)
     print(finite_set)

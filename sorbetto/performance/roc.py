@@ -14,7 +14,8 @@ def _setupROC(
     priorPos: float | None = None,
     show_no_skills: bool = True,
     show_priors: bool = True,
-    show_unbiased=True,
+    show_unbiased: bool = True,
+    show_opposite_unbiased: bool = True,
 ):
     assert isinstance(fig, Figure)
     assert isinstance(ax, Axes)
@@ -26,11 +27,13 @@ def _setupROC(
     else:
         show_priors = False
         show_unbiased = False
+        show_opposite_unbiased = False
         priorNeg = None
 
     assert isinstance(show_no_skills, bool)
     assert isinstance(show_priors, bool)
     assert isinstance(show_unbiased, bool)
+    assert isinstance(show_opposite_unbiased, bool)
 
     if priorNeg < 1e-8:
         message = "The prior of the negative class is {:g}".format(priorNeg)
@@ -46,11 +49,12 @@ def _setupROC(
         ax.text(
             0.5,
             0.5,
-            "no-skill",
+            "no-skill: $P(Y,\\hat{Y}) = P(Y) P(\\hat{Y})$",
             ha="center",
             va="baseline",
             rotation=45,
             c="palevioletred",
+            rotation_mode="anchor",
         )
 
     if show_priors:
@@ -70,11 +74,31 @@ def _setupROC(
         ax.text(
             x,
             y,
-            "unbiased",
+            "unbiased: $P(\\{fp\\}) = P(\\{fn\\})$",
             ha="center",
             va="top" if priorPos >= 0.5 else "baseline",
             rotation=a,
             c="palevioletred",
+            rotation_mode="anchor",
+        )
+
+    if show_opposite_unbiased:
+        if priorPos <= 0.5:
+            ax.plot([1, 1 - priorPos / priorNeg], [0, 1], "--", c="palevioletred")
+        else:
+            ax.plot([1, 0], [0, priorNeg / priorPos], "--", c="palevioletred")
+        x = 1.0 - 0.5 * priorPos
+        y = 0.5 - 0.5 * priorPos
+        a = math.atan2(-priorNeg, priorPos) * 180.0 / math.pi
+        ax.text(
+            x,
+            y,
+            "opposite unbiased: $P(\\{tn\\}) = P(\\{tp\\})$",
+            ha="center",
+            va="top" if priorPos >= 0.5 else "baseline",
+            rotation=a,
+            c="palevioletred",
+            rotation_mode="anchor",
         )
 
     ax.set_xlim([0, 1])
