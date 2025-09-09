@@ -5,6 +5,7 @@ import logging
 import math
 from typing import Self
 
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -219,27 +220,41 @@ class TwoClassClassificationPerformance(AbstractPerformance):
     ) -> "TwoClassClassificationPerformance":
         raise NotImplementedError()
 
-    def drawInROC(self, fig: Figure, ax: Axes) -> None:
+    def drawInROC(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
         """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
-            fig (Figure): _description_
-            ax (Axes): _description_
+            fig (Figure | None, optional): The matplotlib.pyplot Figure to use for drawing. Defaults to None in which case a new Figure is created.
+            ax (Axes | None, optional): The matplotlib.pyplot Axes to use for drawing. Defaults to None in which case the current Axes are used.
+
+        Returns:
+            tuple[Figure, Axes]: The matplotlib.pyplot Figure and Axes used for drawing.
         """
+
+        assert fig is None or isinstance(fig, Figure)
+        assert ax is None or isinstance(ax, Axes)
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.gca()
+        elif ax is None:
+            ax = fig.gca()
 
         priorNeg = self._prior_neg()
         if priorNeg < 1e-8:
             message = "The prior of the negative class is {:g}".format(priorNeg)
             message += "It is too low to produce a ROC plot."
             logging.warning(message)
-            return
+            return fig, ax
         priorPos = self._prior_pos()
-        if priorNeg < 1e-8:
+        if priorPos < 1e-8:
             message = "The prior of the positive class is {:g}".format(priorPos)
             message += "It is too low to produce a ROC plot."
             logging.warning(message)
-            return
+            return fig, ax
 
         fpr = self._fpr()
         tpr = self._tpr()
@@ -247,7 +262,6 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         ax.fill(
             [0.0, fpr, 1.0, 1.0 - fpr], [0.0, tpr, 1.0, 1 - tpr], facecolor="lightgray"
         )
-        ax.plot(fpr, tpr, marker="o", label=self._name)
 
         _setupROC(
             fig,
@@ -257,6 +271,28 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             show_priors=True,
             show_unbiased=True,
         )
+
+        def drawPointAndLabel(x, y, label, color="blue"):
+            ax.plot(x, y, marker="o", label=label, color=color)
+            center_x = 0.5
+            center_y = 0.5
+            if x < center_x:
+                if y < center_y:
+                    ax.text(x, y, label, ha="left", va="bottom", color=color)
+                else:
+                    ax.text(x, y, label, ha="left", va="top", color=color)
+            else:
+                if y < center_y:
+                    ax.text(x, y, label, ha="right", va="bottom", color=color)
+                else:
+                    ax.text(x, y, label, ha="right", va="top", color=color)
+
+        drawPointAndLabel(fpr, tpr, "$\\mathcal{C}$", "blue")
+        drawPointAndLabel(1.0 - fpr, 1.0 - tpr, "$\\overline{\\mathcal{C}}$", "black")
+        drawPointAndLabel(0.0, 0.0, "$\\mathcal{C}_-$", "black")
+        drawPointAndLabel(1.0, 1.0, "$\\mathcal{C}_+$", "black")
+
+        return fig, ax
 
     def __str__(self):
         return f"TwoClassClassificationPerformance(name={self._name}, ptn={self._ptn}, pfp={self._pfp}, pfn={self._pfn}, ptp={self._ptp})"
