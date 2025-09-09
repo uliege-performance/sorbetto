@@ -51,6 +51,7 @@ class AnnotationText(AbstractAnnotation):
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile.tile import Tile
+        from sorbetto.tile.value_tile import ValueTile
 
         assert isinstance(tile, Tile)
         parameterization = tile.parameterization
@@ -62,6 +63,12 @@ class AnnotationText(AbstractAnnotation):
             y = parameterization.getValueParameter2(rankingScore)
         elif isinstance(location, RankingScore):
             rankingScore = location
+            constraint = rankingScore.constraint
+            if constraint is not None and isinstance(tile, ValueTile):
+                if not constraint(tile.performance):
+                    raise RuntimeError(
+                        f"Trying to place a marker for the Ranking Score {rankingScore} with the constraint {constraint} on a Value Tile corresponding to the Performance {tile.performance} incompatible with the constraint."
+                    )
             x = parameterization.getValueParameter1(rankingScore)
             y = parameterization.getValueParameter2(rankingScore)
         elif isinstance(location, Point):
@@ -72,10 +79,13 @@ class AnnotationText(AbstractAnnotation):
             assert False  # This should never happen
         min_x, max_x = parameterization.getBoundsParameter1()
         min_y, max_y = parameterization.getBoundsParameter2()
-        if x < min_x or x > max_x:
-            return
-        if y < min_y or y > max_y:
-            return
+        try:
+            assert x >= min_x and x <= max_x
+            assert y >= min_y and y <= max_y
+        except AssertionError:
+            raise RuntimeError(
+                "Trying to place a marker on the Tile outside the parameterization limits."
+            )
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
         ax.plot(x, y, "o", **self._plt_kwargs)
