@@ -139,8 +139,10 @@ class Line(AbstractGeometricObject2D):
             else:  # parallel and not confounded lines
                 return None
         else:
-            x = (c1 * b2 - b1 * c2) / den
+            x = (b1 * c2 - c1 * b2) / den
             y = (c1 * a2 - a1 * c2) / den
+            assert math.isclose(a1 * x + b1 * y + c1, 0.0, abs_tol=1e-6)
+            assert math.isclose(a2 * x + b2 * y + c2, 0.0, abs_tol=1e-6)
             name = "intersection between {} and {}".format(self, other)
             return Point(x, y, name)
 
