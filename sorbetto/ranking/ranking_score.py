@@ -3,6 +3,7 @@
 
 import logging
 import math
+from collections.abc import Callable
 from typing import cast, overload
 
 import matplotlib.pyplot as plt
@@ -18,6 +19,9 @@ from sorbetto.performance.abstract_score import AbstractScore
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
 )
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
     _parse_performance,
@@ -32,7 +36,7 @@ class RankingScore(AbstractScore):
     def __init__(
         self,
         importance: Importance,
-        constraint=None,
+        constraint: Callable[[TwoClassClassificationPerformance], bool] | None = None,
         name: str | None = None,
         abbreviation: str | None = None,
         symbol: str | None = None,
@@ -80,6 +84,10 @@ class RankingScore(AbstractScore):
     @property
     def importance(self) -> Importance:
         return self._importance
+
+    @property
+    def constraint(self) -> Callable[[TwoClassClassificationPerformance], bool] | None:
+        return self._constraint
 
     # TODO: this method might not be in the right class. Should we move it in ParameterizationDefault ?
     @staticmethod
@@ -628,7 +636,7 @@ class RankingScore(AbstractScore):
         Defined in cite:t:`Flach2003TheGeometry`.
         """
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         importance = NotImplemented  # TODO
         name = "Skew Insensitive Version of F"
         abbreviation = "SIVF"
@@ -639,7 +647,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getWeightedAccuracy(priorPos: float, weightPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         assert isinstance(weightPos, float)
         assert weightPos >= 0
         assert weightPos <= 1
@@ -652,21 +660,33 @@ class RankingScore(AbstractScore):
         )
 
     @staticmethod
-    def getBalancedAccuracy(priorPos: float) -> "RankingScore":
+    def getMacroAveragedRecall(priorPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-        importance = NotImplemented  # TODO
-        name = "Balanced Accuracy"
-        abbreviation = "BA"
+        priorNeg = 1.0 - priorPos
+        itn = priorPos
+        ifp = priorPos
+        ifn = priorNeg
+        itp = priorNeg
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+        name = "Macro-Averaged Recall"
+        abbreviation = "MAR"
         return RankingScore(
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
 
     @staticmethod
+    def getBalancedAccuracy(priorPos: float) -> "RankingScore":
+        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
+        rs = RankingScore.getMacroAveragedRecall(priorPos=priorPos)
+        rs.rename("Balanced Accuracy", "BA")
+        return rs
+
+    @staticmethod
     def getProbabilityTrueNegative(priorPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
         importance = NotImplemented  # TODO
         name = "Probability of True Negative"
@@ -678,7 +698,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getProbabilityFalsePositiveComplenent(priorPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         importance = NotImplemented  # TODO
         name = "Complement of the Probability of False Positive"
         return RankingScore(importance, constraint=constraint, name=name)
@@ -686,7 +706,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getProbabilityFalseNegativeComplenent(priorPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         importance = NotImplemented  # TODO
         name = "Complement of the Probability of False Negative"
         return RankingScore(importance, constraint=constraint, name=name)
@@ -694,7 +714,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getProbabilityTruePositive(priorPos: float) -> "RankingScore":
         # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
         importance = NotImplemented  # TODO
         name = "Probability of True Positive"
@@ -714,6 +734,22 @@ class RankingScore(AbstractScore):
         rs = RankingScore.getProbabilityTrueNegative(priorPos)
         rs.rename("Rejection Rate", "RR")
         return rs
+
+    @staticmethod
+    def getMacroAveragedPrecision(ratePos: float) -> "RankingScore":
+        # The argument `ratePos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+        rateNeg = 1.0 - ratePos
+        itn = ratePos
+        ifp = rateNeg
+        ifn = ratePos
+        itp = rateNeg
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+        name = "Macro-Averaged Precision"
+        abbreviation = "MAP"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     def __str__(self):
         return (
