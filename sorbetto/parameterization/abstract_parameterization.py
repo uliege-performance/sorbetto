@@ -256,15 +256,18 @@ class AbstractParameterization(ABC):
         """
         return self.locateRankingScore(RankingScore.getSkewInsensitiveVersionOfF())
 
-    def locateWeightedAccuracy(self, priorPos, weightPos) -> Point:
+    def locateWeightedAccuracy(self, priorPos: float, weightPos: float) -> Point:
         return self.locateRankingScore(
             RankingScore.getWeightedAccuracy(priorPos, weightPos)
         )
 
-    def locateBalancedAccuracy(self, priorPos) -> Point:
+    def locateMacroAveragedRecall(self, priorPos: float) -> Point:
+        return self.locateRankingScore(RankingScore.getMacroAveragedRecall(priorPos))
+
+    def locateBalancedAccuracy(self, priorPos: float) -> Point:
         return self.locateRankingScore(RankingScore.getBalancedAccuracy(priorPos))
 
-    def locateYoudenJ(self, priorPos) -> Point:
+    def locateYoudenJ(self, priorPos: float) -> Point:
         """
         Youden's index or Youden's :math:`\\scoreYoudenJ` statistic.
         Defined in :cite:t:`Youden1950Index`
@@ -275,16 +278,16 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locatePeirceSkillScore(self, priorPos) -> Point:
+    def locatePeirceSkillScore(self, priorPos: float) -> Point:
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateInformedness(self, priorPos) -> Point:
+    def locateInformedness(self, priorPos: float) -> Point:
         """
         See :cite:t:`Pierard2025Foundations`, Section A.7.4
         """
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateCohenKappa(self, priorPos) -> Point:
+    def locateCohenKappa(self, priorPos: float) -> Point:
         """
         Cohen's :math:`\\scoreCohenKappa` statistic.
         Defined in :cite:t:`Cohen1960ACoefficient`
@@ -294,48 +297,51 @@ class AbstractParameterization(ABC):
         """
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateHeidkeSkillScore(self, priorPos) -> Point:
+    def locateHeidkeSkillScore(self, priorPos: float) -> Point:
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateProbabilityTrueNegative(self, priorPos) -> Point:
+    def locateProbabilityTrueNegative(self, priorPos: float) -> Point:
         return self.locateRankingScore(RankingScore.getProbabilityTrueNegative())
 
-    def locateProbabilityFalsePositiveComplenent(self, priorPos) -> Point:
+    def locateProbabilityFalsePositiveComplenent(self, priorPos: float) -> Point:
         return self.locateRankingScore(
             RankingScore.getProbabilityFalsePositiveComplenent()
         )
 
-    def locateProbabilityFalseNegativeComplenent(self, priorPos) -> Point:
+    def locateProbabilityFalseNegativeComplenent(self, priorPos: float) -> Point:
         return self.locateRankingScore(
             RankingScore.getProbabilityFalseNegativeComplenent()
         )
 
-    def locateProbabilityTruePositive(self, priorPos) -> Point:
+    def locateProbabilityTruePositive(self, priorPos: float) -> Point:
         return self.locateRankingScore(RankingScore.getProbabilityTruePositive())
 
-    def locateDetectionRate(self, priorPos) -> Point:
+    def locateDetectionRate(self, priorPos: float) -> Point:
         return self.locateRankingScore(RankingScore.getDetectionRate())
 
-    def locateRejectionRate(self, priorPos) -> Point:
+    def locateRejectionRate(self, priorPos: float) -> Point:
         return self.locateRankingScore(RankingScore.getRejectionRate())
 
-    def locateNormalizedConfusionMatrixDeterminent(self, priorPos) -> Point:
+    def locateNormalizedConfusionMatrixDeterminent(self, priorPos: float) -> Point:
         """
         The determinant of the normalized confusion matrix is :math:`\\scoreConfusionMatrixDeterminant=\\priorneg\\priorpos\\scoreYoudenJ`.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
         """
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateMarkedness(self, ratePos) -> Point:
+    def locateMacroAveragedPrecision(self, ratePos: float) -> Point:
+        return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
+
+    def locateMarkedness(self, ratePos: float) -> Point:
         """
         Markedness.
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as :math:`\\scoreNPV+\\scorePPV-1`.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
 
-    def locateClaytonSkillScore(self, ratePos) -> Point:
-        raise NotImplementedError()  # TODO: Implement this!
+    def locateClaytonSkillScore(self, ratePos: float) -> Point:
+        return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
 
     @abstractmethod
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
