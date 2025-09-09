@@ -99,7 +99,14 @@ class FiniteSetOfTwoClassClassificationPerformances:
         The mean is know as the summarized performance :cite:t:`Pierard2020Summarizing`
         as well as Fawcett's interpolated performance :cite:t:`Fawcett2006AnIntroduction`.
         """
-        ...  # TODO
+        if len(self._performance_list) == 0:
+            raise RuntimeError("The mean of an empty set of performances is undefines.")
+        ptn = np.mean(self._ptn)
+        pfp = np.mean(self._pfp)
+        pfn = np.mean(self._pfn)
+        ptp = np.mean(self._ptp)
+        name = 'mean of the performances "{}"'.format(self._name)
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
 
     def getRange(self, score) -> tuple[float, float]:
         try:
