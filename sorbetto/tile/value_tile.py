@@ -110,7 +110,7 @@ class ValueTile(NumericTile):
     def getLineForValue(self, value) -> Line:
         if not isinstance(self.parameterization, ParameterizationDefault):
             raise NotImplementedError(
-                "VUT is not implemented for other parameterization for now."
+                "`getLineForValue` requires a default parameterization."
             )
 
         ptn = self._performance.ptn
@@ -122,6 +122,8 @@ class ValueTile(NumericTile):
         #     ( itn ptn + itp ptp ) / ( itn ptn + ifp pfp + ifn pfn + itp ptp ) = v
         # <=> ( itn ptn + itp ptp ) - v ( itn ptn + ifp pfp + ifn pfn + itp ptp ) = 0
         # <=> itn ptn(1-v) + ifp pfp(0-v) + ifn pfn(0-v) + itp ptp(1-v) = 0
+
+        # For the default parameterization, we have thus
         # <=> (1-a) ptn(1-v) + (1-b) pfp(0-v) + b pfn(0-v) + a ptp(1-v) = 0
         # <=> a [ (ptp-ptn) (1-v) ] + b [ (pfp-pfn) v ] + [ ptn(1-v) + pfp(0-v) ] = 0
 
@@ -137,7 +139,7 @@ class ValueTile(NumericTile):
     def getPencil(self) -> PencilOfLines:
         if not isinstance(self.parameterization, ParameterizationDefault):
             raise NotImplementedError(
-                "VUT is not implemented for other parameterization for now."
+                "`getPencil` requires a default parameterization."
             )
 
         line_1 = self.getLineForValue(0.0)
@@ -241,48 +243,42 @@ class ValueTile(NumericTile):
         if performance._prior_pos() < 1e-8:
             # TODO: handle this case properly
             message = (
-                "The implementation is not yet fully compatible with this particular case: "
-                + " the prior of the positive class is close to zero."
+                "The implementation is not yet fully compatible with"
+                " this particular case: the prior of the positive class"
+                " is close to zero."
             )
             logging.warning(message)
 
         if performance._prior_neg() < 1e-8:
             # TODO: handle this case properly
             message = (
-                "The implementation is not yet fully compatible with this particular case: "
-                + " the prior of the negative class is close to zero."
+                "The implementation is not yet fully compatible with "
+                "this particular case: the prior of the negative class"
+                " is close to zero."
             )
             logging.warning(message)
 
         if performance._rate_pos() < 1e-8:
             # TODO: handle this case properly
             message = (
-                "The implementation is not yet fully compatible with this particular case: "
-                + " the prediction rate for the positive class is close to zero."
+                "The implementation is not yet fully compatible with"
+                " this particular case: the prediction rate for the positive class"
+                " is close to zero."
             )
             logging.warning(message)
 
         if performance._rate_neg() < 1e-8:
             # TODO: handle this case properly
             message = (
-                "The implementation is not yet fully compatible with this particular case: "
-                + " the prediction rate for the negative class is close to zero."
+                "The implementation is not yet fully compatible with"
+                " this particular case: the prediction rate for the negative class"
+                " is close to zero."
             )
             logging.warning(message)
 
         parameterization = self.parameterization
-        explanation = (
-            f"This Tile displays the flavor '{flavor_name}' for the performance"
-        )
-        explanation += (
-            f" '{performance_name}' (probabilities of a true negtive, false positive,"
-        )
-        explanation += (
-            f" false negative, and true positive of, respectively, {ptn}, {pfp},"
-        )
-        explanation += (
-            f" {pfn}, {ptp}), with the parameterization '{parameterization.getName()}'."
-        )
+        min_x, max_x, min_y, max_y = parameterization.getExtent()
+        explanation = f"This Tile displays the flavor '{flavor_name}' for the performance '{performance_name}' (probabilities of a true negtive, false positive, false negative, and true positive of, respectively, {ptn}, {pfp}, {pfn}, {ptp}), with the parameterization '{parameterization.getName()}'."
 
         no_horizontal_gradient = math.isclose(ptn, ptp, abs_tol=1e-6)
         no_vertical_gradient = math.isclose(pfp, pfn, abs_tol=1e-6)
@@ -305,38 +301,20 @@ class ValueTile(NumericTile):
 
             minimized_x, minimized_y, minimized_val = self.minimize()
             maximized_x, maximized_y, maximized_val = self.maximize()
-            explanation += f" The value taken by canonical ranking scores is between {minimized_val}"
-            explanation += f" and {maximized_val}."
+            explanation += f" The value taken by canonical ranking scores is between {minimized_val} and {maximized_val}."
 
             if isinstance(parameterization, ParameterizationDefault):
                 volume_under_tile = _vut_default_param(ptn, pfp, pfn, ptp)
-                explanation += " The mean value over the Tile, called 'Volume Under Tile (VUT) with"
-                explanation += f" the default parameterization, is equal to {volume_under_tile} (be"
-                explanation += " careful as the score VUT cannot be used to rank)."
+                explanation += f" The mean value over the Tile, called 'Volume Under Tile' (VUT) with the default parameterization, is equal to {volume_under_tile} (be careful as the score VUT cannot be used to rank)."
 
         # TODO: quels scores minimisent ? Quels sont leurs positions et noms ?
         # TODO: quels scores maximisent ? Quels sont leurs positions et noms ?
-        # TODO: y a-t-il un gradient horizontal ? Pourquoi ?
-        # TODO: y a-t-il un gradient vertical ? Pourquoi ?
         # TODO: demander aux annotations les explanations de ce qu'elles ont dessiné.
-        # TODO: expliquer le pencil.
-        # TODO: cas où ptp=ptn et pfp=pfn: tuile constante
-        # TODO: cas où pfp=pfn: lignes verticales
-        # TODO: cas où ptp=ptn: lignes horizontales
         # TODO: quid du biais ?
-        # TODO: quid du classificateur obtenu en inversant les décisions ?
+        # TODO: quid du classificateur opposé (inverse?) obtenu en inversant les décisions ?
 
         if no_horizontal_gradient and no_vertical_gradient:
-            explanation += (
-                " This Tile is constant. This is because it is a very particular case"
-            )
-            explanation += (
-                " in which the probabilities of a true negative and of a true positive"
-            )
-            explanation += " are equal and the probabilities of a false positive and of a false negative"
-            explanation += " are also equal."
-            explanation += " In other words, both class priors are equal to 0.5 and the classifier is"
-            explanation += " unbiased (the opposite classifier is also unbiased)."
+            explanation += "\nThis Tile is constant. This is because it is a very particular case in which the probabilities of a true negative and of a true positive are equal and the probabilities of a false positive and of a false negative are also equal. In other words, both class priors are equal to 0.5, the classifier is unbiased, and the opposite classifier is also unbiased."
             assert math.isclose(performance._prior_neg(), 0.5, abs_tol=1e-5)
             assert math.isclose(performance._prior_pos(), 0.5, abs_tol=1e-5)
             assert math.isclose(
@@ -345,109 +323,71 @@ class ValueTile(NumericTile):
             assert math.isclose(
                 performance._prior_pos(), performance._rate_pos(), abs_tol=1e-5
             )
-            explanation += (
-                f" The value taken by all canonical ranking scores is {value_a}."
-            )
+            sentence = f" The value taken by all canonical ranking scores is {value_a}."
+            explanation += sentence
             assert math.isclose(value_tnr, value_a, abs_tol=1e-5)
             assert math.isclose(value_tpr, value_a, abs_tol=1e-5)
             assert math.isclose(value_npv, value_a, abs_tol=1e-5)
             assert math.isclose(value_ppv, value_a, abs_tol=1e-5)
         elif no_horizontal_gradient:
-            explanation += (
-                " This Tile does not show any horizontal variation. This is because"
-            )
-            explanation += (
-                " it is a very particular case in which the probabilities of a "
-            )
-            explanation += " true negative and of a true positive are equal."
+            explanation += "\nThis Tile does not show any horizontal variation. This is because it is a very particular case in which the probabilities of a true negative and of a true positive are equal. The opposite classifier is unbiased. However, the classifier is biased."
             if pfn > pfp:
-                explanation += (
-                    " As the probability of a false negative is higher than the"
-                )
-                explanation += (
-                    " probability of a false positive, the value taken by the"
-                )
-                explanation += " canonical ranking scores"
+                explanation += "\nAs the probability of a false negative is higher than the probability of a false positive, the value taken by the canonical ranking scores"
                 assert minimized_y > maximized_y
-                explanation += (
-                    " is minimized at the top of the Tile, where no importance is"
-                )
-                explanation += " given to the false positives and"
-                explanation += (
-                    " is maximized at the bottom of the Tile, where no importance is"
-                )
-                explanation += " given to the false negatives."
+                explanation += " is minimized at the top of the Tile, where no importance is given to the false positives and is maximized at the bottom of the Tile, where no importance is given to the false negatives."
             if pfn < pfp:
-                explanation += (
-                    " As the probability of a false negative is lower than the"
-                )
-                explanation += (
-                    " probability of a false positive, the value taken by the"
-                )
-                explanation += " canonical ranking scores"
+                explanation += "\nAs the probability of a false negative is lower than the probability of a false positive, the value taken by the canonical ranking scores"
                 assert minimized_y < maximized_y
-                explanation += (
-                    " is minimized at the bottom of the Tile, where no importance is"
-                )
-                explanation += " given to the false negatives and"
-                explanation += (
-                    " is maximized at the top of the Tile, where no importance is"
-                )
-                explanation += " given to the false positives."
+                explanation += " is minimized at the bottom of the Tile, where no importance is given to the false negatives and is maximized at the top of the Tile, where no importance is given to the false positives."
         elif no_vertical_gradient:
-            explanation += (
-                " This Tile does not show any vertical variation. This is because"
-            )
-            explanation += (
-                " it is a very particular case in which the probabilities of a "
-            )
-            explanation += " false positive and of a false negative are equal."
+            explanation += "\nThis Tile does not show any vertical variation. This is because it is a very particular case in which the probabilities of a false positive and of a false negative are equal. The classifier is unbiased. However, the opposite classifier is biased."
             if ptn > ptp:
-                explanation += (
-                    " As the probability of a true negative is higher than the"
-                )
-                explanation += " probability of a true positive, the value taken by the"
-                explanation += " canonical ranking scores"
+                explanation += "\nAs the probability of a true negative is higher than the probability of a true positive, the value taken by the canonical ranking scores"
                 assert minimized_x > maximized_x
-                explanation += (
-                    " is minimized at the right of the Tile, where no importance is"
-                )
-                explanation += " given to the true negatives and"
-                explanation += (
-                    " is maximized at the left of the Tile, where no importance is"
-                )
-                explanation += " given to the true positives."
+                explanation += " is minimized at the right of the Tile, where no importance is given to the true negatives and is maximized at the left of the Tile, where no importance is given to the true positives."
             if ptn < ptp:
-                explanation += (
-                    " As the probability of a true negative is lower than the"
-                )
-                explanation += " probability of a true positive, the value taken by the"
-                explanation += " canonical ranking scores"
+                explanation += "\nAs the probability of a true negative is lower than the probability of a true positive, the value taken by the canonical ranking scores"
                 assert minimized_x < maximized_x
-                explanation += (
-                    " is minimized at the left of the Tile, where no importance is"
-                )
-                explanation += " given to the true positives and"
-                explanation += (
-                    " is maximized at the right of the Tile, where no importance is"
-                )
-                explanation += " given to the true negatives."
-
+                explanation += " is minimized at the left of the Tile, where no importance is given to the true positives and is maximized at the right of the Tile, where no importance is given to the true negatives."
         else:
+            explanation += "\nThere are some horizontal and some vertical variations. This means that both the classifier and its opposite are biased."
+            if ptn < ptp:
+                assert value_tpr > value_npv
+                assert value_ppv > value_tnr
+                explanation += " Values of canonical ranking scores increase towards the right of the Tile, which means that the probability of a true negative is lower that the probability of a true positive."
+            if ptn > ptp:
+                assert value_tpr < value_npv
+                assert value_ppv < value_tnr
+                explanation += " Values of canonical ranking scores increase towards the left of the Tile, which means that the probability of a true negative is higher that the probability of a true positive."
+            if pfp < pfn:
+                assert value_tnr > value_npv
+                assert value_ppv > value_tpr
+                explanation += " Values of canonical ranking scores increase towards the bottom of the Tile, which means that the probability of a false positive is lower that the probability of a false negative."
+            if pfp > pfn:
+                assert value_tnr < value_npv
+                assert value_ppv < value_tpr
+                explanation += " Values of canonical ranking scores increase towards the top of the Tile, which means that the probability of a false positive is higher that the probability of a false negative."
+
             if isinstance(parameterization, ParameterizationDefault):
                 pencil = self.getPencil()
                 vertex = pencil.getVertex()
                 vertex_x = vertex.x
                 vertex_y = vertex.y
-                explanation += (
-                    f" With the parameterization '{parameterization}', the canonical"
-                )
-                explanation += (
-                    " ranking scores that take any given value are aligned, and these"
-                )
-                explanation += (
-                    f" lines form a pencil whose vertex is located at ({vertex_x},"
-                )
-                explanation += f" {vertex_y})."
+                explanation += f"\nWith the parameterization '{parameterization}', the canonical ranking scores that take any given value are aligned, and these lines form a pencil whose vertex is located at ({vertex_x}, {vertex_y})."
+                if ptn < ptp:
+                    assert vertex_x <= min_x
+                    explanation += " The fact that the vertex is on the left of the Tile means that the probability of a true negative is lower than the probability of a true positive."
+                if ptn > ptp:
+                    assert vertex_x >= max_x
+                    explanation += " The fact that the vertex is on the right of the Tile means that the probability of a true negative is higher than the probability of a true positive."
+                if pfp < pfn:
+                    assert vertex_y <= min_y
+                    explanation += " The fact that the vertex is below the Tile means that the probability of a false positive is lower than the probability of a false negative."
+                if pfp > pfn:
+                    assert vertex_y >= max_y
+                    explanation += " The fact that the vertex is above the Tile means that the probability of a false positive is higher than the probability of a false negative."
+            else:
+                # TODO: how can we have an explanation for another parameterization?
+                pass
 
         return explanation
