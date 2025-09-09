@@ -2,22 +2,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from scipy.spatial import ConvexHull
 
+from sorbetto.performance.roc import _setupROC
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
-
-
-def _getTpr(tp, fn):  # TODO: remove this
-    return tp / (tp + fn)
-
-
-def _getFpr(fp, tn):  # TODO: remove this
-    return fp / (fp + tn)
 
 
 class FiniteSetOfTwoClassClassificationPerformances:
@@ -31,7 +27,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
     ):
         if isinstance(performance_list, np.ndarray):
             self._performance_list = (
-                FiniteSetOfTwoClassClassificationPerformances.from_array(
+                FiniteSetOfTwoClassClassificationPerformances._from_array(
                     performance_list
                 ).performance_list
             )
@@ -58,7 +54,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
         self._ptp = np.array([perf.ptp for perf in self._performance_list])
 
     @staticmethod
-    def from_array(array_tn_fp_fn_tp):
+    def _from_array(array_tn_fp_fn_tp):
         performance_list = []
         for tn, fp, fn, tp in array_tn_fp_fn_tp:
             performance = TwoClassClassificationPerformance(
@@ -84,7 +80,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
         return self._ptp
 
     # NOTE: if we add or remove a performance, we must call this method
-    def update_probabilities(self):
+    def _update_probabilities(self):
         self._ptn = np.array([perf.ptn for perf in self._performance_list])
         self._pfp = np.array([perf.pfp for perf in self._performance_list])
         self._pfn = np.array([perf.pfn for perf in self._performance_list])
@@ -124,9 +120,165 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
         return (min_val, max_val)
 
-    def drawInROC(self, fig: Figure, ax: Axes):  # and options ?
-        for perf in self._performance_list:
-            perf.drawInROC(fig, ax)
+    def _plotBestPerformancesInROC(fpr: np.ndarray, tpr: np.ndarray, style: str) -> set:
+        """
+        This method assumes that all performances are for fixed priors.
+        This function draws a broken line corresponding to the supremum of
+        all achievable performances and returns the list of indices of all
+        the entities that are on this broken line, called the supremum line.
+        An entity will be part of the Entity Tile "Who's first?" if its
+        performance is in this list.
+
+        Args:
+            fpr (np.ndarray): the values of false positive rate
+            tpr (np.ndarray): the values of true positive rate
+            style (str): the line style for matplotlib.pyplot.plot
+
+        Returns:
+            set: the set of indices of the entities on the supremum.
+        """
+        assert isinstance(fpr, np.ndarray)
+        assert isinstance(tpr, np.ndarray)
+        assert isinstance(style, str)
+
+        n = (fpr + tpr).size
+        min_fpr = np.min(fpr)
+        max_tpr = np.max(tpr)
+        fprs_ = np.append(fpr, [1, 1, min_fpr])
+        tprs_ = np.append(tpr, [max_tpr, 0, 0])
+        points = np.empty((n + 3, 2))
+        points[:, 0] = fprs_
+        points[:, 1] = tprs_
+        hull = ConvexHull(points)
+        best_entities_idx = set()
+        for simplex in hull.simplices:
+            for entity_idx in simplex:
+                if entity_idx < n:
+                    best_entities_idx.add(entity_idx)
+            xs = points[simplex, 0]
+            ys = points[simplex, 1]
+            if np.any(xs < 1) and np.any(ys > 0):
+                plt.plot(xs, ys, style)
+        return best_entities_idx
+
+    def _plotWorstPerformancesInROC(
+        fpr: np.ndarray, tpr: np.ndarray, style: str
+    ) -> set:
+        """
+        This method assumes that all performances are for fixed priors.
+        This function draws a broken line corresponding to the infimum of
+        all achievable performances and returns the list of indices of all
+        the entities that are on this broken line, called the infimum line.
+        An entity will be part of the Entity Tile "Who's last?" if its
+        performance is in this list.
+
+        Args:
+            fpr (np.ndarray): the values of false positive rate
+            tpr (np.ndarray): the values of true positive rate
+            style (str): the line style for matplotlib.pyplot.plot
+
+        Returns:
+            set: the set of indices of the entities on the infimum.
+        """
+        assert isinstance(fpr, np.ndarray)
+        assert isinstance(tpr, np.ndarray)
+        assert isinstance(style, str)
+
+        n = (fpr + tpr).size
+        max_fpr = np.max(fpr)
+        min_tpr = np.min(tpr)
+        fprs_ = np.append(fpr, [max_fpr, 0, 0])
+        tprs_ = np.append(tpr, [1, 1, min_tpr])
+        points = np.empty((n + 3, 2))
+        points[:, 0] = fprs_
+        points[:, 1] = tprs_
+        hull = ConvexHull(points)
+        worst_entities_idx = set()
+        for simplex in hull.simplices:
+            for entity_idx in simplex:
+                if entity_idx < n:
+                    worst_entities_idx.add(entity_idx)
+            xs = points[simplex, 0]
+            ys = points[simplex, 1]
+            if np.any(xs > 0) and np.any(ys < 1):
+                plt.plot(xs, ys, style)
+        return worst_entities_idx
+
+    def drawInROC(
+        self, fig: Figure | None = None, ax: Axes | None = None
+    ) -> tuple[Figure, Axes]:
+        """
+        See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
+
+        Args:
+            fig (Figure | None, optional): The matplotlib.pyplot Figure to use for drawing. Defaults to None in which case a new Figure is created.
+            ax (Axes | None, optional): The matplotlib.pyplot Axes to use for drawing. Defaults to None in which case the current Axes are used.
+
+        Returns:
+            tuple[Figure, Axes]: The matplotlib.pyplot Figure and Axes used for drawing.
+        """
+
+        assert fig is None or isinstance(fig, Figure)
+        assert ax is None or isinstance(ax, Axes)
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.gca()
+        elif ax is None:
+            ax = fig.gca()
+
+        all_prior_pos = self._pfn + self._ptp
+        min_prior_pos = np.min(all_prior_pos)
+        max_prior_pos = np.max(all_prior_pos)
+        if math.isclose(min_prior_pos, max_prior_pos, abs_tol=1e-6):
+            fixed_priors = True
+            prior_pos = np.mean(all_prior_pos)
+            prior_neg = 1.0 - prior_pos
+        else:
+            fixed_priors = False
+
+        all_fpr = self._pfp / (self._ptn + self._pfp)
+        all_tpr = self._ptp / (self._pfn + self._ptp)
+
+        if fixed_priors:
+            if prior_neg < 1e-8:
+                message = "The prior of the negative class is {:g}".format(prior_neg)
+                message += "It is too low to produce a ROC plot."
+                logging.warning(message)
+                return fig, ax
+            priorPos = self._prior_pos()
+            if prior_pos < 1e-8:
+                message = "The prior of the positive class is {:g}".format(prior_pos)
+                message += "It is too low to produce a ROC plot."
+                logging.warning(message)
+                return fig, ax
+
+            _setupROC(
+                fig,
+                ax,
+                priorPos=priorPos,
+                show_no_skills=True,
+                show_priors=True,
+                show_unbiased=True,
+            )
+
+            best_entities_idx = self._plotBestPerformancesInROC(all_fpr, all_tpr, "k:")
+            worst_entities_idx = self._plotWorstPerformancesInROC(
+                all_fpr, all_tpr, "k:"
+            )
+            for e in range(len(self._performance_list)):
+                if e in worst_entities_idx:
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="d", s=10)
+                elif e in best_entities_idx:
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="*", s=10)
+                else:
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1)
+
+        else:
+            _setupROC(fig, ax, priorPos=None, show_no_skills=True)
+            ax.plot(all_fpr, all_tpr, "o", color="blue")
+
+        return fig, ax
 
     def __str__(self):
         txt = (
