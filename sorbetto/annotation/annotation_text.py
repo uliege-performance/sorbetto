@@ -49,11 +49,9 @@ class AnnotationText(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, label)
 
-    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
-        from sorbetto.tile.tile import Tile
+    def _whatShouldWeDraw(self, tile: "Tile") -> tuple[float, float, str]:
         from sorbetto.tile.value_tile import ValueTile
 
-        assert isinstance(tile, Tile)
         parameterization = tile.parameterization
         location = self._location
         if isinstance(location, Importance):
@@ -77,6 +75,19 @@ class AnnotationText(AbstractAnnotation):
             y = point.y
         else:
             assert False  # This should never happen
+
+        return x, y, self.name
+
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile.tile import Tile
+
+        assert isinstance(tile, Tile)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
+
+        x, y, label = self._whatShouldWeDraw(tile)
+
+        parameterization = tile.parameterization
         min_x, max_x = parameterization.getBoundsParameter1()
         min_y, max_y = parameterization.getBoundsParameter2()
         try:
@@ -91,11 +102,11 @@ class AnnotationText(AbstractAnnotation):
         ax.plot(x, y, "o", **self._plt_kwargs)
         if x < center_x:
             if y < center_y:
-                ax.text(x, y, self.name, ha="left", va="bottom")
+                ax.text(x, y, label, ha="left", va="bottom", **self._plt_kwargs)
             else:
-                ax.text(x, y, self.name, ha="left", va="top")
+                ax.text(x, y, label, ha="left", va="top", **self._plt_kwargs)
         else:
             if y < center_y:
-                ax.text(x, y, self.name, ha="right", va="bottom")
+                ax.text(x, y, label, ha="right", va="bottom", **self._plt_kwargs)
             else:
-                ax.text(x, y, self.name, ha="right", va="top")
+                ax.text(x, y, label, ha="right", va="top", **self._plt_kwargs)
