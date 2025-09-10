@@ -91,11 +91,15 @@ class NumericTile(Tile):
 
         output = scipy.optimize.minimize(
             objective, start, method="SLSQP", bounds=bounds, tol=precision
-        )
+        )  # TODO: specify the gradient when it is possible to know it.
         if not output.success:
             message = "scipy.optimize.minimize did not succeed: " + output.message
             logging.warning(message)
-        return output.x
+        x = output.x[0]
+        y = output.x[1]
+        i = parameterization.getCanonicalImportance(x, y)
+        v = self._flavor(i)
+        return x, y, v
 
     def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
         """
@@ -115,7 +119,7 @@ class NumericTile(Tile):
 
     def maximize(self, precision: float = 1e-6) -> tuple[float, float, float]:
         """
-        Minimization of the flavor over the Tile. The default implementation
+        Maximization of the flavor over the Tile. The default implementation
         does it by gradient descent.
 
         Args:
@@ -123,9 +127,9 @@ class NumericTile(Tile):
 
         Returns:
             tuple[float, float, float]:
-            - float: the first coordinate of the point on the Tile where the smallest value has been found.
-            - float: the second coordinate of the point on the Tile where the smallest value has been found.
-            ) float: the smallest value that has been found.
+            - float: the first coordinate of the point on the Tile where the largest value has been found.
+            - float: the second coordinate of the point on the Tile where the largest value has been found.
+            ) float: the largest value that has been found.
         """
         return self._optimize(-1.0, precision)
 

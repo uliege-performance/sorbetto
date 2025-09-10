@@ -7,6 +7,8 @@ from .annotation_curve_fixed_prediction_rates import AnnotationCurveFixedPredict
 from .annotation_frontiers_between_rankings import AnnotationFrontiersBetweenRankings
 from .annotation_geometric import AnnotationGeometric
 from .annotation_isovalue_curves import AnnotationIsovalueCurves
+from .annotation_max import AnnotationMax
+from .annotation_min import AnnotationMin
 from .annotation_text import AnnotationText
 
 __all__ = [
@@ -16,5 +18,7 @@ __all__ = [
     "AnnotationFrontiersBetweenRankings",
     "AnnotationGeometric",
     "AnnotationIsovalueCurves",
+    "AnnotationMin",
+    "AnnotationMax",
     "AnnotationText",
 ]
