@@ -13,6 +13,9 @@ the main concepts used in this library through interactive, as well as
 <Demos>`. You will also find a complete API reference with detailed
 descriptions.
 
+Feel free to check out the source code on `GitHub
+<https://github.com/uliege-performance/sorbetto>`__!
+
 
 Contact and support
 -------------------

@@ -1,0 +1,26 @@
+# Third-Party Licenses
+
+## Numpy
+
+Licensed under a modified BSD license
+[https://github.com/numpy/numpy]
+
+## Matplotlib
+
+Licensed under a modified PSF license
+[https://github.com/matplotlib/matplotlib]
+
+## Scipy
+
+Licensed under the BSD license
+[https://github.com/scipy/scipy]
+
+## Jax
+
+Licensed under the Apache-2.0 license
+[https://github.com/jax-ml/jax]
+
+## TQDM
+
+Licensed under the MPL-2.0 and MIT licenses
+[https://github.com/tqdm/tqdm]
