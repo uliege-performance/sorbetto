@@ -2,12 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import math
 from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+from matplotlib import cm
 from matplotlib.axes import Axes
+from matplotlib.colors import Colormap, ListedColormap
 from matplotlib.figure import Figure
 
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
@@ -56,7 +59,7 @@ class NumericTile(Tile):
             float | int: the minimal value on the grid of precomputed values
         """
         if self._min is None:
-            self._min = np.min(self.mat_value)
+            self._min = np.nanmin(self.mat_value)
         return cast(float, self._min)
 
     @property
@@ -66,23 +69,29 @@ class NumericTile(Tile):
             float | int: the maximal value on the grid of precomputed values
         """
         if self._max is None:
-            self._max = np.max(self.mat_value)
+            self._max = np.nanmax(self.mat_value)
         return cast(float, self._max)
 
     def _optimize(
         self, scale: float, precision: float = 1e-6
     ) -> tuple[float, float, float]:
+        assert isinstance(scale, float)
+        assert math.isfinite(scale)
         assert isinstance(precision, float)
         assert precision > 0.0
 
         parameterization = self._parameterization
 
         def objective(x: np.ndarray):
-            assert x.size() == 2
+            assert x.size == 2
             importance = parameterization.getCanonicalImportance(x[0], x[1])
             return scale * self._flavor(importance)
 
         x_min, x_max, y_min, y_max = parameterization.getExtent()
+
+        # TODO: try several times, starting from randomly chosen points,
+        # and keep the best result at the end.
+
         center_x = 0.5 * (x_min + x_max)
         center_y = 0.5 * (y_min + y_max)
         start = np.asarray([center_x, center_y])
@@ -99,6 +108,11 @@ class NumericTile(Tile):
         y = output.x[1]
         i = parameterization.getCanonicalImportance(x, y)
         v = self._flavor(i)
+
+        assert isinstance(x, float)
+        assert isinstance(y, float)
+        assert isinstance(v, float)
+
         return x, y, v
 
     def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
@@ -133,6 +147,73 @@ class NumericTile(Tile):
         """
         return self._optimize(-1.0, precision)
 
+    @staticmethod
+    def _clampColormap(
+        *,
+        colormap: Colormap | str,
+        min_val: float,
+        max_val: float,
+        clamped_min_val: float,
+        clamped_max_val: float,
+    ) -> ListedColormap:
+        assert isinstance(colormap, (Colormap, str))
+        assert isinstance(min_val, float)
+        assert isinstance(max_val, float)
+        assert isinstance(clamped_min_val, float)
+        assert isinstance(clamped_max_val, float)
+        assert math.isfinite(min_val)
+        assert math.isfinite(max_val)
+        assert math.isfinite(clamped_min_val)
+        assert math.isfinite(clamped_max_val)
+        assert min_val < max_val
+        assert clamped_min_val <= clamped_max_val
+
+        clamped_min_val = min(max(clamped_min_val, min_val), max_val)
+        clamped_max_val = min(max(clamped_max_val, min_val), max_val)
+
+        # Be sure that the clamped interval is large enough to be visible in the colormap.
+        clamped_delta = clamped_max_val - clamped_min_val
+        min_clamped_delta = (max_val - min_val) / 100.0
+        if clamped_delta < min_clamped_delta:
+            clamped_center = 0.5 * (clamped_min_val + clamped_max_val)
+            min_clamped_center = min_val + 0.5 * min_clamped_delta
+            max_clamped_center = max_val - 0.5 * min_clamped_delta
+            clamped_center = min(
+                max(clamped_center, min_clamped_center),
+                max_clamped_center,
+            )
+            clamped_min_val = clamped_center - 0.5 * min_clamped_delta
+            clamped_max_val = clamped_center + 0.5 * min_clamped_delta
+
+        if isinstance(colormap, str):
+            # Let's assume it is the name of a standard colormap in matplotlib
+            colormap = cm.get_cmap(colormap, 2048)
+            # 2048 is an arbitrary number but hugh to have a smooth colormap
+            colormap.set_bad("black")
+            colormap.set_over("black")
+            colormap.set_under("black")
+        else:
+            assert isinstance(colormap, Colormap)
+        N = colormap.N
+        colors = colormap(np.linspace(0, 1, N))
+        background_color = np.array([256 / 256, 256 / 256, 256 / 256, 1])  # RGBA
+
+        relative_value = (clamped_min_val - min_val) / (max_val - min_val)
+        idx = math.floor(relative_value * (N - 1))
+        if idx != 0:
+            colors[: idx - 1, :] = background_color
+
+        relative_value = (clamped_max_val - min_val) / (max_val - min_val)
+        idx = math.ceil(relative_value * (N - 1))
+        if idx != N - 1:
+            colors[idx + 1 :, :] = background_color
+
+        clamped_colormap = ListedColormap(colors)
+        clamped_colormap.set_bad(colormap.get_bad())
+        clamped_colormap.set_over(colormap.get_over())
+        clamped_colormap.set_under(colormap.get_under())
+        return clamped_colormap
+
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:
@@ -142,15 +223,41 @@ class NumericTile(Tile):
         elif ax is None:
             ax = fig.gca()
 
-        # im =
+        min_val = self.flavor.getLowerBound()
+        max_val = self.flavor.getUpperBound()
+
+        try:
+            # Compute bounds for the value:
+            # [self.min, self.max] is obtained on a grid
+            # [self.minimize(), self.maximize()] is obtained by optimization
+            _, _, minimized_value = self.minimize()
+            _, _, maximized_value = self.maximize()
+            clamped_min_val = min(self.min, minimized_value)
+            clamped_max_val = max(self.max, maximized_value)
+        except Exception as e:
+            logging.warning(
+                f"Impossible to determine the range of values to clamp the colormap: {e}"
+            )
+            # Do not clamp.
+            clamped_min_val = min_val
+            clamped_max_val = max_val
+
+        colormap = self._clampColormap(
+            colormap=self.flavor.colormap,
+            min_val=min_val,
+            max_val=max_val,
+            clamped_min_val=clamped_min_val,
+            clamped_max_val=clamped_max_val,
+        )
+
         ax.imshow(
             self.mat_value,
             origin="lower",
-            interpolation="bilinear",
-            cmap=self.flavor.colormap,
             extent=self._zoom,  # extent is (left, right, bottom, top)
-            vmin=self.flavor.getLowerBound(),
-            vmax=self.flavor.getUpperBound(),
+            interpolation="bilinear",
+            cmap=colormap,
+            vmin=min_val,
+            vmax=max_val,
         )
         Tile.draw(self, fig, ax)
         return fig, ax
