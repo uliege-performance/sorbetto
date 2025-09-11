@@ -210,6 +210,9 @@ class FiniteSetOfTwoClassClassificationPerformances:
                 plt.plot(xs, ys, style)
         return worst_entities_idx
 
+    # TODO: A very nice idea would be to depict differently all the performances
+    # that are at a given rank for some ranking score. The rank woulld be an
+    # argument of the method.
     def drawInROC(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:

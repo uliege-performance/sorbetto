@@ -69,9 +69,6 @@ class EntityTile(SymbolicTile):
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
 
-    def getExplanation(self):
-        return "Explanation of the entity tile not yet defined"
-
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:
@@ -82,3 +79,6 @@ class EntityTile(SymbolicTile):
         im.colorbar.set_ticks([self.flavor.mapper(e) for e in self.flavor.entity_set])  # type: ignore
 
         return fig, ax
+
+    def getExplanation(self):
+        return "Explanation of the entity tile not yet defined"

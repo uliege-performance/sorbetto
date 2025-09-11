@@ -164,9 +164,6 @@ class Tile:
         self._mat_x, self._mat_y = np.meshgrid(vec_x, vec_y, indexing="xy")
         self._mat_value = None
 
-    def getExplanation(self) -> str:
-        return self.__str__()
-
     @property
     def mat_value(self) -> np.ndarray:
         if self._flavor is None:
@@ -261,11 +258,10 @@ class Tile:
             tile = self
             try:
                 annotation.draw(tile, fig, ax)
-            except Exception as e:
-                message = (
-                    "Something went wrong while drawing annotation {!r}, got {}".format(
-                        annotation.name, e
-                    )
+            except BaseException as e:
+                # print(traceback.format_exc())
+                message = "Something went wrong while drawing annotation {!r}, got {} ({})".format(
+                    annotation.name, type(e), e
                 )
                 logging.warning(message)
 
@@ -287,7 +283,9 @@ class Tile:
             # Create a subdivision of the axis to add a colorbar of same height
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="5%", pad="5%")
-            fig.colorbar(ax.images[0], cax)
+            fig.colorbar(
+                ax.images[0], cax, label=self.flavor.name
+            )  # TODO: make sure this works with a base (empty) Tile?
 
         return fig, ax
 
@@ -303,3 +301,6 @@ class Tile:
             for annotation in self._annotations:
                 buffer.write("- {}\n".format(annotation.name))
         return buffer.getvalue()
+
+    def getExplanation(self) -> str:
+        return self.__str__()

@@ -15,6 +15,12 @@ class AbstractFlavor(ABC):
     importance values.
     """
 
+    # TODO: I guess that a colormap should be:
+    #           - either None
+    #           - or a np.ndarray of dimension 2 with 3 or 4 columns
+    #           - or a matplotlib.colors.Colormap object
+    #           - or a name
+
     def __init__(self, name: str = "Unnamed Flavor", colormap: Any = None):
         assert isinstance(name, str)
         self._name = name

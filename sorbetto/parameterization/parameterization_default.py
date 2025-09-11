@@ -43,8 +43,8 @@ class ParameterizationDefault(AbstractParameterization):
         a = param1
         b = param2
 
-        itn = 1 - a
-        ifp = 1 - b
+        itn = 1.0 - a
+        ifp = 1.0 - b
         ifn = b
         itp = a
 
@@ -64,8 +64,8 @@ class ParameterizationDefault(AbstractParameterization):
         a = param1
         b = param2
 
-        itn = 1 - a
-        ifp = 1 - b
+        itn = 1.0 - a
+        ifp = 1.0 - b
         ifn = b
         itp = a
 

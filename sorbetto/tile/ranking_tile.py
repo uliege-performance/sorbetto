@@ -69,9 +69,6 @@ class RankingTile(NumericTile):
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
 
-    def getExplanation(self):
-        return "Explanation of the Ranking tile not yet defined"
-
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
     ) -> tuple[Figure, Axes]:
@@ -83,3 +80,6 @@ class RankingTile(NumericTile):
             im.colorbar.set_ticks([1, self.flavor.nb_entities])
             im.colorbar.set_label("Rank from {} to {}".format(self.min, self.max))
         return fig, ax
+
+    def getExplanation(self):
+        return "Explanation of the Ranking tile not yet defined"

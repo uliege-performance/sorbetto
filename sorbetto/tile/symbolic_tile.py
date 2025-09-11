@@ -56,8 +56,9 @@ class SymbolicTile(Tile):
             interpolation="bilinear",
             cmap=self.flavor.colormap,
             extent=self._zoom,  # extent is (left, right, bottom, top)
-            vmin=0,
-            vmax=len(self.flavor.getCodomain()) - 1,
+            vmin=0,  # TODO: 0.5 as the values are integers between 1 and codomain_size
+            vmax=len(self.flavor.getCodomain())
+            - 1,  # TODO: codomain_size + 0.5 as the values are integers between 1 and codomain_size
         )
         Tile.draw(self, fig, ax)
         return fig, ax

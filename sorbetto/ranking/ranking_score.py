@@ -402,7 +402,15 @@ class RankingScore(AbstractScore):
         )
         satisfying = ptn * itn + ptp * itp
         unsatisfying = pfp * ifp + pfn * ifn
-        return satisfying / (satisfying + unsatisfying)
+        if (
+            isinstance(satisfying, float)
+            and satisfying == 0.0
+            and isinstance(unsatisfying, float)
+            and unsatisfying == 0.0
+        ):
+            return math.nan
+        else:
+            return satisfying / (satisfying + unsatisfying)
 
     def __call__(self, performance: TwoClassClassificationPerformance) -> float:
         if self._constraint and not self._constraint(performance):
@@ -591,7 +599,7 @@ class RankingScore(AbstractScore):
         )
         name = "Inverse F-score for β={:g}".format(beta)
         abbreviation = "F{:g}-Inv".format(beta)
-        symbol = "$F_{}{}$".format("{:g}".format(beta), "\\textrm{-}Inv")
+        symbol = "$F_{" + "{:g}".format(beta) + "}$-Inv"
         return RankingScore(
             importance, name=name, abbreviation=abbreviation, symbol=symbol
         )
@@ -670,8 +678,8 @@ class RankingScore(AbstractScore):
         ifn = priorNeg
         itp = priorNeg
         importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        name = "Macro-Averaged Recall"
-        abbreviation = "MAR"
+        name = "(Arithmetcially) Macro-Averaged Recall"
+        abbreviation = "m-Re"
         return RankingScore(
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
@@ -745,8 +753,8 @@ class RankingScore(AbstractScore):
         ifn = ratePos
         itp = rateNeg
         importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        name = "Macro-Averaged Precision"
-        abbreviation = "MAP"
+        name = "(Arithmetcially) Macro-Averaged Precision"
+        abbreviation = "m-Pr"
         return RankingScore(
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
