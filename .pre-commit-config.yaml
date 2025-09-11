@@ -4,7 +4,7 @@ repos:
     hooks:
     # Run the linter.
     - id: ruff-check
-      types_or: [ python, pyi ]
+      types_or: [ python, pyi, jupyter ]
       args: [ --fix ]
     # Run isort.
     - id: ruff-check
