@@ -28,11 +28,11 @@ class AnnotationMin(AbstractAnnotation):
         AbstractAnnotation.__init__(self, "minimum")
 
     def _whatShouldWeDraw(self, tile: "Tile") -> tuple[float, float, str]:
-        from sorbetto.tile.value_tile import ValueTile
+        from sorbetto.tile.numeric_tile import NumericTile
 
-        if not isinstance(tile, ValueTile):
+        if not isinstance(tile, NumericTile):
             raise RuntimeError(
-                "Trying to draw an annotation of type AnnotationMin on a Tile that is not a ValueTile. This makes no sense."
+                "Trying to draw an annotation of type AnnotationMin on a Tile that is not a NumericTile. This makes no sense."
             )
 
         x, y, v = tile.minimize()

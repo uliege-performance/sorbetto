@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class AnnotationMax(AbstractAnnotation):
     """
     This type of annotation can be used to place a text on the Tile, next to the point
-    corresponding to the minimum value, the text giving information about this minimum.
+    corresponding to the maximum value, the text giving information about this maximum.
     """
 
     def __init__(
@@ -25,14 +25,14 @@ class AnnotationMax(AbstractAnnotation):
 
         self._plt_kwargs = plt_kwargs
 
-        AbstractAnnotation.__init__(self, "minimum")
+        AbstractAnnotation.__init__(self, "maximum")
 
     def _whatShouldWeDraw(self, tile: "Tile") -> tuple[float, float, str]:
-        from sorbetto.tile.value_tile import ValueTile
+        from sorbetto.tile.numeric_tile import NumericTile
 
-        if not isinstance(tile, ValueTile):
+        if not isinstance(tile, NumericTile):
             raise RuntimeError(
-                "Trying to draw an annotation of type AnnotationMax on a Tile that is not a ValueTile. This makes no sense."
+                "Trying to draw an annotation of type AnnotationMax on a Tile that is not a NumericTile. This makes no sense."
             )
 
         x, y, v = tile.maximize()
