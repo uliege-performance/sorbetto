@@ -114,8 +114,8 @@ class CorrelationFlavor(AbstractNumericFlavor):
     def getDefaultColormap(self):
         return "gist_rainbow"
 
-    def getLowerBound(self):
+    def getLowerBound(self) -> float:
         return -1.0
 
-    def getUpperBound(self):
+    def getUpperBound(self) -> float:
         return 1.0

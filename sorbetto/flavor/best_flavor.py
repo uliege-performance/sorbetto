@@ -56,13 +56,17 @@ class BestFlavor(AbstractNumericFlavor):
             importance=importance, performance=self._performances
         )
 
-        return np.max(values, axis=0)
+        ans = np.max(values, axis=0, keepdims=False)
+        if isinstance(ans, np.ndarray) and ans.size == 1:
+            return ans.item()
+        else:
+            return ans
 
     def getDefaultColormap(self):
         return "gray"
 
-    def getLowerBound(self):
+    def getLowerBound(self) -> float:
         return 0.0
 
-    def getUpperBound(self):
+    def getUpperBound(self) -> float:
         return 1.0

@@ -17,15 +17,15 @@ class AbstractNumericFlavor(AbstractFlavor):
         super().__init__(name=name, colormap=colormap)
 
     @abstractmethod
-    def getLowerBound(self) -> Any: ...
+    def getLowerBound(self) -> float: ...
 
     @abstractmethod
-    def getUpperBound(self) -> Any: ...
+    def getUpperBound(self) -> float: ...
 
     @property
-    def lowerBound(self):
+    def lowerBound(self) -> float:
         return self.getLowerBound()
 
     @property
-    def upperBound(self):
+    def upperBound(self) -> float:
         return self.getUpperBound()

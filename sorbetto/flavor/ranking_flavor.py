@@ -81,8 +81,8 @@ class RankingFlavor(AbstractNumericFlavor):
     def getDefaultColormap(self):
         return plt.get_cmap("rainbow", self.nb_entities)
 
-    def getLowerBound(self):
+    def getLowerBound(self) -> float:
         return 1.0
 
-    def getUpperBound(self):
-        return self._nb_entities
+    def getUpperBound(self) -> float:
+        return float(self._nb_entities)
