@@ -150,86 +150,90 @@ class ValueTile(NumericTile):
         return pencil
 
     def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
+        assert isinstance(precision, float)
+        assert precision >= 0.0
+
         parameterization = self.parameterization
-        if isinstance(parameterization, ParameterizationDefault):
-            # With the default parameterization, it has been demonstrated in
-            # :cite:t:`Pierard2024TheTile-arxiv` that the values taken by the
-            # canonical ranking scores on horizontal and vertical lines
-            # correspond to some f-means. So, at the extremities, on has the
-            # minimal and maximal values. As a consequence, to find a point
-            # of the Tile at which the value is minimal or maximal, it suffices
-            # to look at the four corners. This can be generalized to all
-            # parameterizations: the value taken by any canonical ranking score
-            # is bounded by TNR, TPR, NPV, and PPV.
 
-            best_x = math.nan
-            best_y = math.nan
-            best_val = math.inf
+        # With the default parameterization, it has been demonstrated in
+        # :cite:t:`Pierard2024TheTile-arxiv` that the values taken by the
+        # canonical ranking scores on horizontal and vertical lines
+        # correspond to some f-means. So, at the extremities, on has the
+        # minimal and maximal values. As a consequence, to find a point
+        # of the Tile at which the value is minimal or maximal, it suffices
+        # to look at the four corners. This can be generalized to all
+        # parameterizations: the value taken by any canonical ranking score
+        # is bounded by TNR, TPR, NPV, and PPV.
 
-            def update_for_min(ranking_score):
-                x = parameterization.getValueParameter1(ranking_score)
-                y = parameterization.getValueParameter2(ranking_score)
-                val = ranking_score(self._performance)
+        # TODO: be sure that this is correct when the value is undefined at some corners!
 
-                nonlocal best_x
-                nonlocal best_y
-                nonlocal best_val
+        best_x = math.nan
+        best_y = math.nan
+        best_val = math.inf
 
-                if val < best_val:
-                    best_x = x
-                    best_y = y
-                    best_val = val
+        def update_for_min(ranking_score):
+            x = parameterization.getValueParameter1(ranking_score)
+            y = parameterization.getValueParameter2(ranking_score)
+            val = ranking_score(self._performance)
 
-            update_for_min(RankingScore.getTrueNegativeRate())
-            update_for_min(RankingScore.getTruePositiveRate())
-            update_for_min(RankingScore.getNegativePredictiveValue())
-            update_for_min(RankingScore.getPositivePredictiveValue())
+            nonlocal best_x
+            nonlocal best_y
+            nonlocal best_val
 
-            return best_x, best_y, best_val
+            if val < best_val:
+                best_x = x
+                best_y = y
+                best_val = val
 
-        else:
-            return super().minimize(precision)
+        update_for_min(RankingScore.getTrueNegativeRate())
+        update_for_min(RankingScore.getTruePositiveRate())
+        update_for_min(RankingScore.getNegativePredictiveValue())
+        update_for_min(RankingScore.getPositivePredictiveValue())
+
+        return best_x, best_y, best_val
 
     def maximize(self, precision: float = 1e-6) -> tuple[float, float, float]:
+        assert isinstance(precision, float)
+        assert precision >= 0.0
+
         parameterization = self.parameterization
-        if isinstance(parameterization, ParameterizationDefault):
-            # With the default parameterization, it has been demonstrated in
-            # :cite:t:`Pierard2024TheTile-arxiv` that the values taken by the
-            # canonical ranking scores on horizontal and vertical lines
-            # correspond to some f-means. So, at the extremities, on has the
-            # minimal and maximal values. As a consequence, to find a point
-            # of the Tile at which the value is minimal or maximal, it suffices
-            # to look at the four corners. This can be generalized to all
-            # parameterizations: the value taken by any canonical ranking score
-            # is bounded by TNR, TPR, NPV, and PPV.
 
-            best_x = math.nan
-            best_y = math.nan
-            best_val = -math.inf
+        # With the default parameterization, it has been demonstrated in
+        # :cite:t:`Pierard2024TheTile-arxiv` that the values taken by the
+        # canonical ranking scores on horizontal and vertical lines
+        # correspond to some f-means. So, at the extremities, on has the
+        # minimal and maximal values. As a consequence, to find a point
+        # of the Tile at which the value is minimal or maximal, it suffices
+        # to look at the four corners. This can be generalized to all
+        # parameterizations: the value taken by any canonical ranking score
+        # is bounded by TNR, TPR, NPV, and PPV.
 
-            def update_for_max(ranking_score):
-                x = parameterization.getValueParameter1(ranking_score)
-                y = parameterization.getValueParameter2(ranking_score)
-                val = ranking_score(self._performance)
+        # TODO: be sure that this is correct when the value is undefined at some corners!
 
-                nonlocal best_x
-                nonlocal best_y
-                nonlocal best_val
+        best_x = math.nan
+        best_y = math.nan
+        best_val = -math.inf
 
-                if val > best_val:
-                    best_x = x
-                    best_y = y
-                    best_val = val
+        def update_for_max(ranking_score):
+            x = parameterization.getValueParameter1(ranking_score)
+            y = parameterization.getValueParameter2(ranking_score)
+            val = ranking_score(self._performance)
 
-            update_for_max(RankingScore.getTrueNegativeRate())
-            update_for_max(RankingScore.getTruePositiveRate())
-            update_for_max(RankingScore.getNegativePredictiveValue())
-            update_for_max(RankingScore.getPositivePredictiveValue())
+            nonlocal best_x
+            nonlocal best_y
+            nonlocal best_val
 
-            return best_x, best_y, best_val
+            if val > best_val:
+                best_x = x
+                best_y = y
+                best_val = val
 
-        else:
-            return super().maximize(precision)
+        update_for_max(RankingScore.getTrueNegativeRate())
+        update_for_max(RankingScore.getTruePositiveRate())
+        update_for_max(RankingScore.getNegativePredictiveValue())
+        update_for_max(RankingScore.getPositivePredictiveValue())
+
+        return best_x, best_y, best_val
 
     def getExplanation(self) -> str:
         flavor_name = self.flavor.name
