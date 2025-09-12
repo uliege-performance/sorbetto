@@ -74,7 +74,7 @@ class Point(AbstractGeometricObject2D):
         if y < y_min or y > y_max:
             return
 
-        ax.plot(x, y, plt_kwargs)
+        ax.plot(x, y, **plt_kwargs)
 
     def __str__(self) -> str:
         return "point ({:g}, {:g})".format(self.x, self.y)

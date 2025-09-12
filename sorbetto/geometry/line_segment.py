@@ -63,7 +63,7 @@ class LineSegment(AbstractGeometricObject2D):
         p1 = self._p1
         p2 = self._p2
 
-        ax.plot([p1.x, p2.x], [p1.y, p2.y], "-", plt_kwargs)
+        ax.plot([p1.x, p2.x], [p1.y, p2.y], "-", **plt_kwargs)
 
     def __str__(self) -> str:
         p1 = self._p1

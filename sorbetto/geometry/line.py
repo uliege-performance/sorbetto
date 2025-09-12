@@ -157,12 +157,8 @@ class Line(AbstractGeometricObject2D):
             LineSegment | Point | None: the intersection, or None if there is no intersection.
         """
 
-        x_min = extent[0]
-        x_max = extent[1]
+        x_min, x_max, y_min, y_max = extent
         assert x_max > x_min
-
-        y_min = extent[2]
-        y_max = extent[3]
         assert y_max > y_min
 
         a = self._a
@@ -199,12 +195,12 @@ class Line(AbstractGeometricObject2D):
             return None
         elif len(points) == 1:
             p = points[0]
-            p = Point(p.x, p.y, self.name)
+            p = Point(p[0], p[1], self.name)
         elif len(points) == 2:
             p1 = points[0]
-            p1 = Point(p1.x, p1.y, "endpoint 1")
+            p1 = Point(p1[0], p1[1], "endpoint 1")
             p2 = points[-1]
-            p2 = Point(p2.x, p2.y, "endpoint 2")
+            p2 = Point(p2[0], p2[1], "endpoint 2")
             return LineSegment(p1, p2, self.name)
         else:
             # Find the two furthest points
@@ -224,9 +220,9 @@ class Line(AbstractGeometricObject2D):
                 if d02_sq > d12_sq:
                     p1 = p0
             p1 = points[0]
-            p1 = Point(p1.x, p1.y, "endpoint 1")
+            p1 = Point(p1[0], p1[1], "endpoint 1")
             p2 = points[-1]
-            p2 = Point(p2.x, p2.y, "endpoint 2")
+            p2 = Point(p2[0], p2[1], "endpoint 2")
             return LineSegment(p1, p2, self.name)
 
     def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):

@@ -113,8 +113,8 @@ class PencilOfLines(AbstractGeometricObject2D):
                 plt_kwargs_bis = dict()
             else:
                 plt_kwargs_bis = plt_kwargs.copy()
-            plt_kwargs_bis["linestyle", ":"]  # dashed line
-            line.draw(fig, ax, extent, plt_kwargs_bis)
+            plt_kwargs_bis["linestyle"] = ":"  # dashed line
+            line.draw(fig, ax, extent, **plt_kwargs_bis)
         for theta in np.linspace(0.0 * np.pi, 0.5 * np.pi, n):
             sin = np.sin(theta)
             cos = np.cos(theta)
@@ -123,10 +123,10 @@ class PencilOfLines(AbstractGeometricObject2D):
                 plt_kwargs_bis = dict()
             else:
                 plt_kwargs_bis = plt_kwargs.copy()
-            plt_kwargs_bis["linestyle", "-"]  # solid line
-            line.draw(fig, ax, extent, plt_kwargs_bis)
+            plt_kwargs_bis["linestyle"] = "-"  # solid line
+            line.draw(fig, ax, extent, **plt_kwargs_bis)
         vertex = self.getVertex()
-        vertex.draw(fig, ax, extent, plt_kwargs)
+        vertex.draw(fig, ax, extent, **plt_kwargs)
 
     def __str__(self) -> str:
         line_1 = self._line_1
