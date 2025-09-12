@@ -10,6 +10,7 @@ from .annotation_importance_compass import AnnotationImportanceCompass
 from .annotation_isovalue_curves import AnnotationIsovalueCurves
 from .annotation_max import AnnotationMax
 from .annotation_min import AnnotationMin
+from .annotation_symbols import AnnotationSymbols
 from .annotation_text import AnnotationText
 
 __all__ = [
@@ -22,5 +23,6 @@ __all__ = [
     "AnnotationIsovalueCurves",
     "AnnotationMin",
     "AnnotationMax",
+    "AnnotationSymbols",
     "AnnotationText",
 ]
