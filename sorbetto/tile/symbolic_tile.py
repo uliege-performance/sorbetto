@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -63,5 +64,29 @@ class SymbolicTile(Tile):
         Tile.draw(self, fig, ax)
         return fig, ax
 
+    def listSymbols(self) -> list:
+        mat_value = self._mat_value
+        values = np.unique(mat_value)
+        ans = list()
+        for value in values:
+            symbol = self.flavor.reverse_mapper(value)
+            ans.append(symbol)
+        return ans
+
+    def getCoverage(self, symbol) -> float:
+        flavor = self.flavor
+        assert symbol in flavor.getCodomain()
+        value = flavor.mapper(symbol)
+        return np.mean(self.mat_value == value)
+
     def getExplanation(self) -> str:
-        return "Sorry, we cannont provide yet an explanation for this Tile."
+        flavor_name = self.flavor.name
+        parameterization = self.parameterization
+        explanation = f"This Tile displays the flavor '{flavor_name}', with the parameterization '{parameterization.getName()}'."
+
+        listing = [(symbol, self.getCoverage(symbol)) for symbol in self.listSymbols()]
+        for symbol, coverage in sorted(listing, key=lambda element: element[1]):
+            explanation += "\n - [{:6.3f} %] {}".format(100.0 * coverage, symbol)
+        explanation += "\nBe aware that the coverage percentages given here-above are specific for the chosen parameterization."
+
+        return explanation

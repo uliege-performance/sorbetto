@@ -81,4 +81,4 @@ class EntityTile(SymbolicTile):
         return fig, ax
 
     def getExplanation(self):
-        return "Explanation of the entity tile not yet defined"
+        return super().getExplanation()
