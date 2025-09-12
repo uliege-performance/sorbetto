@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.types import Extent
@@ -34,7 +33,6 @@ class Tile:
         flavor: AbstractFlavor | None = None,
         name: str = "Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = True,
     ):
         """
         Args:
@@ -74,8 +72,6 @@ class Tile:
         self._update_grid()
 
         self._annotations: list[AbstractAnnotation] = list()
-
-        self._disable_colorbar = disable_colorbar
 
     @property
     def resolution(self) -> int:
@@ -142,16 +138,6 @@ class Tile:
     @property
     def flavor(self) -> AbstractFlavor | None:
         return self._flavor
-
-    @property
-    def disable_colorbar(self) -> bool:
-        return self._disable_colorbar
-
-    @disable_colorbar.setter
-    def disable_colorbar(self, value: bool):
-        if not isinstance(value, bool):
-            raise TypeError(f"disable_colorbar must be a bool, got {type(value)}")
-        self._disable_colorbar = value
 
     def _update_grid(self):
         x_min, x_max, y_min, y_max = self._zoom
@@ -278,14 +264,6 @@ class Tile:
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
         ax.set_title(self.name)
-
-        if not self.disable_colorbar:
-            # Create a subdivision of the axis to add a colorbar of same height
-            divider = make_axes_locatable(ax)
-            cax = divider.append_axes("right", size="5%", pad="5%")
-            fig.colorbar(
-                ax.images[0], cax, label=self.flavor.name
-            )  # TODO: make sure this works with a base (empty) Tile?
 
         return fig, ax
 

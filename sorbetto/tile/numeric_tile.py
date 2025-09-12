@@ -12,6 +12,7 @@ from matplotlib import cm
 from matplotlib.axes import Axes
 from matplotlib.colors import Colormap, ListedColormap
 from matplotlib.figure import Figure
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -19,6 +20,10 @@ from sorbetto.tile.tile import Tile
 
 
 class NumericTile(Tile):
+    """
+    By default, Numeric Tiles are displayed with a colorbar.
+    """
+
     def __init__(
         self,
         parameterization: AbstractParameterization,
@@ -32,6 +37,7 @@ class NumericTile(Tile):
         assert isinstance(name, str)
         assert isinstance(resolution, int)
         assert resolution > 0
+        assert isinstance(disable_colorbar, bool)
 
         Tile.__init__(
             self,
@@ -39,8 +45,9 @@ class NumericTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
         )
+
+        self._disable_colorbar = disable_colorbar
 
         self._min: float | int | None = None
         self._max: float | int | None = None
@@ -71,6 +78,16 @@ class NumericTile(Tile):
         if self._max is None:
             self._max = np.nanmax(self.mat_value)
         return cast(float, self._max)
+
+    @property
+    def disable_colorbar(self) -> bool:
+        return self._disable_colorbar
+
+    @disable_colorbar.setter
+    def disable_colorbar(self, value: bool):
+        if not isinstance(value, bool):
+            raise TypeError(f"disable_colorbar must be a bool, got {type(value)}")
+        self._disable_colorbar = value
 
     def _optimize(
         self, scale: float, precision: float = 1e-6
@@ -260,6 +277,15 @@ class NumericTile(Tile):
             vmax=max_val,
         )
         Tile.draw(self, fig, ax)
+
+        if not self.disable_colorbar:
+            # Create a subdivision of the axis to add a colorbar of same height
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes("right", size="5%", pad="5%")
+            fig.colorbar(
+                ax.images[0], cax, label=self.flavor.name
+            )  # TODO: make sure this works with a base (empty) Tile?
+
         return fig, ax
 
     def getExplanation(self) -> str:

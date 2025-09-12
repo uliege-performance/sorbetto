@@ -20,7 +20,7 @@ class EntityTile(SymbolicTile):
         flavor: EntityFlavor,
         name: str = "Entity Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        disable_legend: bool = False,
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, EntityFlavor)
@@ -33,7 +33,7 @@ class EntityTile(SymbolicTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
+            disable_legend=disable_legend,
         )
         self._rank = self.flavor.rank
         self._entities = self.flavor.entity_set

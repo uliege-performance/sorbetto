@@ -13,19 +13,24 @@ from sorbetto.tile.tile import Tile
 
 
 class SymbolicTile(Tile):
+    """
+    By default, Symbolic Tiles are displayed with a legend.
+    """
+
     def __init__(
         self,
         parameterization: AbstractParameterization,
         flavor: AbstractSymbolicFlavor,
         name: str = "Symbolic Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        disable_legend: bool = False,
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, AbstractSymbolicFlavor)
         assert isinstance(name, str)
         assert isinstance(resolution, int)
         assert resolution > 0
+        assert isinstance(disable_legend, bool)
 
         Tile.__init__(
             self,
@@ -33,8 +38,9 @@ class SymbolicTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
         )
+
+        self._disable_legend = disable_legend
 
     @property
     def flavor(self) -> AbstractSymbolicFlavor:
@@ -42,6 +48,16 @@ class SymbolicTile(Tile):
         flavor = super().flavor
         assert isinstance(flavor, AbstractSymbolicFlavor)
         return flavor
+
+    @property
+    def disable_legend(self) -> bool:
+        return self._disable_legend
+
+    @disable_legend.setter
+    def disable_legend(self, value: bool):
+        if not isinstance(value, bool):
+            raise TypeError(f"disable_legend must be a bool, got {type(value)}")
+        self._disable_legend = value
 
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
@@ -56,7 +72,8 @@ class SymbolicTile(Tile):
         min_value = 1  # this has been chosen in the mapper in SymbolicFlavor
         max_value = num_symbols  # this has been chosen in the mapper in SymbolicFlavor
 
-        im = ax.imshow(
+        # im =
+        ax.imshow(
             self.mat_value,
             origin="lower",
             interpolation="none",
@@ -68,34 +85,38 @@ class SymbolicTile(Tile):
         Tile.draw(self, fig, ax)
 
         # im = ax.images[-1]
-        im.colorbar.set_ticks(range(min_value, max_value + 1))  # type: ignore
+        # im.colorbar.set_ticks(range(min_value, max_value + 1))  # type: ignore
 
-        def getLegendElement(symbol):
-            max_label_size = 30  # >= 4
-            label = str(symbol)
-            if len(label) > max_label_size:
-                label = label[: max_label_size - 4] + " ..."
-            value = self.flavor.mapper(symbol)
-            color = self.flavor.colormap(value - 1)  # TODO: why -1 ?
-            return Line2D(
-                [0],
-                [0],
-                marker="o",
-                color="w",
-                label=label,
-                markerfacecolor=color,
-                markersize=10,
+        if not self.disable_legend:
+
+            def getLegendElement(symbol):
+                max_label_size = 30  # >= 4
+                label = str(symbol)
+                if len(label) > max_label_size:
+                    label = label[: max_label_size - 4] + " ..."
+                value = self.flavor.mapper(symbol)
+                color = self.flavor.colormap(value - 1)  # TODO: why -1 ?
+                return Line2D(
+                    [0],
+                    [0],
+                    marker="o",
+                    color="w",
+                    label=label,
+                    markerfacecolor=color,
+                    markersize=10,
+                )
+
+            legend_elements = [
+                getLegendElement(symbol) for symbol in self.listSymbols()
+            ]
+
+            ax.legend(
+                handles=legend_elements,
+                bbox_to_anchor=(1.05, 0.5),
+                loc="center left",
+                borderaxespad=0,
+                ncols=1 + (len(legend_elements) - 1) / 18,
             )
-
-        legend_elements = [getLegendElement(symbol) for symbol in self.listSymbols()]
-
-        ax.legend(
-            handles=legend_elements,
-            bbox_to_anchor=(1.05, 0.5),
-            loc="center left",
-            borderaxespad=0,
-            ncols=1 + (len(legend_elements) - 1) / 18,
-        )
 
         return fig, ax
 
