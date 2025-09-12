@@ -27,12 +27,14 @@ class Conic(AbstractGeometricObject2D):
         assert isinstance(e, float)
         assert isinstance(f, float)
         if a == 0.0 and b == 0:
-            # FIXME: what happens if we initialize a BilinearCurve object, which in its __init__ calls
-            # the __init__ of its parent class Conic? In this case, I think that we will print the
-            # warning while we should not.
-            logging.warning(
-                "Using conic sections where the more efficient bilinear curves could be used."
-            )
+            # What happens if we initialize a BilinearCurve object, which in its __init__ calls
+            # the __init__ of its parent class Conic? In this case, we should not emit a warning!
+            from sorbetto.geometry.bilinear_curve import BilinearCurve
+
+            if not isinstance(self, BilinearCurve):
+                logging.warning(
+                    "Using conic sections where the more efficient bilinear curves could be used."
+                )
         self._a = a
         self._b = b
         self._c = c
