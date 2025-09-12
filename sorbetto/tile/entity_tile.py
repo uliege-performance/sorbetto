@@ -74,10 +74,6 @@ class EntityTile(SymbolicTile):
     ) -> tuple[Figure, Axes]:
         fig, ax = super().draw(fig, ax)
 
-        im = ax.images[-1]
-        im.set_clim(0.5, self.flavor.nb_entities + 0.5)
-        im.colorbar.set_ticks([self.flavor.mapper(e) for e in self.flavor.entity_set])  # type: ignore
-
         return fig, ax
 
     def getExplanation(self):

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -50,18 +51,52 @@ class SymbolicTile(Tile):
             ax = fig.gca()
         elif ax is None:
             ax = fig.gca()
-        # im =
-        ax.imshow(
+
+        num_symbols = len(self.flavor.getCodomain())
+        min_value = 1  # this has been chosen in the mapper in SymbolicFlavor
+        max_value = num_symbols  # this has been chosen in the mapper in SymbolicFlavor
+
+        im = ax.imshow(
             self.mat_value,
             origin="lower",
-            interpolation="bilinear",
+            interpolation="none",
             cmap=self.flavor.colormap,
             extent=self._zoom,  # extent is (left, right, bottom, top)
-            vmin=0,  # TODO: 0.5 as the values are integers between 1 and codomain_size
-            vmax=len(self.flavor.getCodomain())
-            - 1,  # TODO: codomain_size + 0.5 as the values are integers between 1 and codomain_size
+            vmin=min_value - 0.5,
+            vmax=max_value + 0.5,
         )
         Tile.draw(self, fig, ax)
+
+        # im = ax.images[-1]
+        im.colorbar.set_ticks(range(min_value, max_value + 1))  # type: ignore
+
+        def getLegendElement(symbol):
+            max_label_size = 30  # >= 4
+            label = str(symbol)
+            if len(label) > max_label_size:
+                label = label[: max_label_size - 4] + " ..."
+            value = self.flavor.mapper(symbol)
+            color = self.flavor.colormap(value - 1)  # TODO: why -1 ?
+            return Line2D(
+                [0],
+                [0],
+                marker="o",
+                color="w",
+                label=label,
+                markerfacecolor=color,
+                markersize=10,
+            )
+
+        legend_elements = [getLegendElement(symbol) for symbol in self.listSymbols()]
+
+        ax.legend(
+            handles=legend_elements,
+            bbox_to_anchor=(1.05, 0.5),
+            loc="center left",
+            borderaxespad=0,
+            ncols=1 + (len(legend_elements) - 1) / 18,
+        )
+
         return fig, ax
 
     def listSymbols(self) -> list:

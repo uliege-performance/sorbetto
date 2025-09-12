@@ -249,6 +249,8 @@ class FiniteSetOfTwoClassClassificationPerformances:
         all_fpr = self._pfp / (self._ptn + self._pfp)
         all_tpr = self._ptp / (self._pfn + self._ptp)
 
+        num_performances = len(self._performance_list)
+
         if fixed_priors:
             if prior_neg < 1e-8:
                 message = "The prior of the negative class is {:g}".format(prior_neg)
@@ -276,17 +278,29 @@ class FiniteSetOfTwoClassClassificationPerformances:
             worst_entities_idx = self._plotWorstPerformancesInROC(
                 all_fpr, all_tpr, "k:"
             )
-            for e in range(len(self._performance_list)):
+            for e in range(num_performances):
+                label = self._performance_list[e].name
                 if e in worst_entities_idx:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="d", s=10)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="d", s=10, label=label)
                 elif e in best_entities_idx:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="*", s=10)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="*", s=10, label=label)
                 else:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1, label=label)
 
         else:
             _setupROC(fig, ax, priorPos=None, show_no_skills=True)
-            ax.plot(all_fpr, all_tpr, "o", color="blue")
+            # ax.plot(all_fpr, all_tpr, "o", color="blue")
+            for e in range(num_performances):
+                label = self._performance_list[e].name
+                plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1, label=label)
+
+        max_elements_per_colums = 18
+        ax.legend(
+            bbox_to_anchor=(1.05, 0.5),
+            loc="center left",
+            borderaxespad=0,
+            ncols=1 + (num_performances - 1) / max_elements_per_colums,
+        )
 
         return fig, ax
 
