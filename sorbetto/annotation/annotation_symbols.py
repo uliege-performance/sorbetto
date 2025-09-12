@@ -1,4 +1,3 @@
-import logging
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -68,29 +67,32 @@ class AnnotationSymbols(AbstractAnnotation):
                 # compute the relative size of the zone in the Tile
                 coverage = all_i.size / mat_value.size
                 if coverage >= 0.025:  # large enough
-                    # compute the gravity_center in matrix coordinates
+                    # compute the gravity center in matrix coordinates
                     mean_i = all_i.mean()
                     mean_j = all_j.mean()
                     i = int(np.round(mean_i))
                     j = int(np.round(mean_j))
-                    if mat_value[i, j] == value:
-                        x = np.interp(mean_j, vec_j, vec_x)
-                        y = np.interp(mean_i, vec_i, vec_y)
-                        tiny = 6
-                        ax.text(
-                            x,
-                            y,
-                            symbol,
-                            ha="center",
-                            va="center",
-                            color="black",
-                            fontsize=tiny,
-                            **self._plt_kwargs,
-                        )
-                    else:
-                        message = (
-                            "Where should we place {}? The zone is not convex.".format(
-                                symbol
-                            )
-                        )
-                        logging.warning(message)
+                    if mat_value[i, j] != value:
+                        # the gravity center does not belong to the zone :-(
+                        # let's find the point of the zone that is the closest to the gravity center.
+                        di = all_i - i
+                        dj = all_j - j
+                        d2 = di * di + dj * dj
+                        k = np.where(d2 == np.min(d2))
+                        j = all_j[k][0]
+                        i = all_i[k][0]
+                        # TODO: now, (i, j) is on the border of the the zone. We can still improve it
+                        # by "pushing" the point inside the zone.
+                    x = np.interp(mean_j, vec_j, vec_x)
+                    y = np.interp(mean_i, vec_i, vec_y)
+                    tiny = 6
+                    ax.text(
+                        x,
+                        y,
+                        symbol,
+                        ha="center",
+                        va="center",
+                        color="black",
+                        fontsize=tiny,
+                        **self._plt_kwargs,
+                    )
