@@ -221,7 +221,13 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         raise NotImplementedError()
 
     def drawInROC(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        color_classifier: str | np.ndarray | None = "blue",
+        color_classifier_opp: str | np.ndarray | None = "black",
+        color_classifier_neg: str | np.ndarray | None = "black",
+        color_classifier_pos: str | np.ndarray | None = "black",
     ) -> tuple[Figure, Axes]:
         """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
@@ -229,6 +235,10 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         Args:
             fig (Figure | None, optional): The matplotlib.pyplot Figure to use for drawing. Defaults to None in which case a new Figure is created.
             ax (Axes | None, optional): The matplotlib.pyplot Axes to use for drawing. Defaults to None in which case the current Axes are used.
+            color_classifier (_type_, optional): The color of the point that represents the classifier. Defaults to "blue".
+            color_classifier_opp (_type_, optional): The color of the point that represents the opposite classifier. Defaults to "black".
+            color_classifier_neg (_type_, optional): The color of the point that represents the no-skill classifier predicting the negative class with a probability of 1. Defaults to "black".
+            color_classifier_pos (_type_, optional):The color of the point that represents the no-skill classifier predicting the positive class with a probability of 1. Defaults to "black".
 
         Returns:
             tuple[Figure, Axes]: The matplotlib.pyplot Figure and Axes used for drawing.
@@ -273,7 +283,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             show_opposite_unbiased=True,
         )
 
-        def drawPointAndLabel(x, y, label, color="blue"):
+        def drawPointAndLabel(x, y, label, color):
             ax.plot(x, y, marker="o", label=label, color=color)
             center_x = 0.5
             center_y = 0.5
@@ -288,10 +298,12 @@ class TwoClassClassificationPerformance(AbstractPerformance):
                 else:
                     ax.text(x, y, label, ha="right", va="top", color=color)
 
-        drawPointAndLabel(fpr, tpr, "$\\mathcal{C}$", "blue")
-        drawPointAndLabel(1.0 - fpr, 1.0 - tpr, "$\\overline{\\mathcal{C}}$", "black")
-        drawPointAndLabel(0.0, 0.0, "$\\mathcal{C}_-$", "black")
-        drawPointAndLabel(1.0, 1.0, "$\\mathcal{C}_+$", "black")
+        drawPointAndLabel(fpr, tpr, "$\\mathcal{C}$", color_classifier)
+        drawPointAndLabel(
+            1.0 - fpr, 1.0 - tpr, "$\\overline{\\mathcal{C}}$", color_classifier_opp
+        )
+        drawPointAndLabel(0.0, 0.0, "$\\mathcal{C}_-$", color_classifier_neg)
+        drawPointAndLabel(1.0, 1.0, "$\\mathcal{C}_+$", color_classifier_pos)
 
         return fig, ax
 
