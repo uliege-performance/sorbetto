@@ -33,6 +33,18 @@ from sorbetto.performance.two_class_classification_performance import (
 
 
 class RankingScore(AbstractScore):
+    """
+    Implementation of the family of scores named *ranking scores* (:math:`R_I`)
+    in the particular case of problems assimilated to two-class crip classification.
+    More precisely, this is when the sample space contains four elements
+    (:math:`\\Omega=\\{tn,fp,fn,tp\\}) and the random variabale satisfaction is
+    0.0 for two of them and 1.0 for the other two (:math:`S(tn)=1`,
+    :math:`S(fp)=0`, :math:`S(fn)=0`, :math:`S(tp)=1`).
+
+    .. math::
+        R_I(P = \\frac{E_P[SI]}{E_P[I]} = \\frac{ I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) }{ I(tn) P(\\{tn\\}) + I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) + I(tp) P(\\{tp\\}) }
+    """
+
     def __init__(
         self,
         importance: Importance,
@@ -83,6 +95,13 @@ class RankingScore(AbstractScore):
 
     @property
     def importance(self) -> Importance:
+        """
+        A random variable Importance corresponding to this ranking score. The
+        importance is defined up to a positive scaling.
+
+        Returns:
+            Importance: A random variable Importance corresponding to this ranking score.
+        """
         return self._importance
 
     @property
@@ -142,12 +161,18 @@ class RankingScore(AbstractScore):
 
     def isCanonical(self, tol=1e-8) -> bool:
         """
+
+
+
         See :cite:t:`Pierard2024TheTile-arxiv`, Definition 1.
         """
         itn = self._importance.itn
         ifp = self._importance.ifp
         ifn = self._importance.ifn
         itp = self._importance.itp
+
+        return math.isclose(itn + itp, ifp + ifn, abs_tol=tol)  # TODO: explain !
+
         canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
         canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
         return canonical_for_satisfying and canonical_for_unsatisfying
@@ -165,6 +190,7 @@ class RankingScore(AbstractScore):
         show_unbiased: bool = True,
     ) -> None:
         """
+        Displays the ranking score in the ROC space.
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
@@ -252,6 +278,17 @@ class RankingScore(AbstractScore):
         )
 
     def getPencilInROC(self, priorPos) -> PencilOfLines:
+        """
+        For given class priors :math:`(\\pi_-,\\pi_+)`, the locus of points in
+        ROC where the ranking score takes a given value is a line, and all these
+        lines form a pencil.
+
+        Args:
+            priorPos (_type_): the prior of the positive class, :math:`pi_+\\in[0.0,1.0]`
+
+        Returns:
+            PencilOfLines: The pencil of lines.
+        """
         assert isinstance(priorPos, float)
         assert priorPos > 0
         assert priorPos < 1
@@ -436,7 +473,23 @@ class RankingScore(AbstractScore):
     def getTrueNegativeRate() -> "RankingScore":
         """
         True Negative Rate (TNR).
+        .. math::
+            TNR = P(\\{tn\\} | \\{tn, fp\\}) = P(S=1 | Y=c_-)
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=1`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=0`,
+        and :math:`I(tp)=0` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/TrueNegativeRate_in_ROC.svg
+
         Synonyms: specificity, selectivity, inverse recall.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
         """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=1, ifn=0, itp=0)
@@ -445,10 +498,53 @@ class RankingScore(AbstractScore):
         return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
+    def getSpecificity() -> "RankingScore":
+        """
+        See `getTrueNegativeRate()`.
+        """
+        rs = RankingScore.getTrueNegativeRate()
+        rs.rename("Specificity", "Sp")
+        return rs
+
+    @staticmethod
+    def getSelectivity() -> "RankingScore":
+        """
+        See `getTrueNegativeRate()`.
+        """
+        rs = RankingScore.getTrueNegativeRate()
+        rs.rename("Selectivity")
+        return rs
+
+    @staticmethod
+    def getInverseRecall() -> "RankingScore":
+        """
+        See `getTrueNegativeRate()`.
+        """
+        rs = RankingScore.getTrueNegativeRate()
+        rs.rename("Inverse Recall", "Re-Inv")
+        return rs
+
+    @staticmethod
     def getTruePositiveRate() -> "RankingScore":
         """
         True Positive Rate (TPR).
+        .. math::
+            TPR = P(\\{tp\\} | \\{fn, tp\\}) = P(S=1 | Y=c_+)
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=0`,
+        :math:`I(fp)=0`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/TruePositiveRate_in_ROC.svg
+
         Synonyms: sensitivity, recall.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
         """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=0, ifp=0, ifn=1, itp=1)
@@ -457,28 +553,44 @@ class RankingScore(AbstractScore):
         return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
-    def getSpecificity() -> "RankingScore":
-        rs = RankingScore.getTrueNegativeRate()
-        rs.rename("Specificity", "Sp")
-        return rs
-
-    @staticmethod
-    def getSelectivity() -> "RankingScore":
-        rs = RankingScore.getTrueNegativeRate()
-        rs.rename("Selectivity")
-        return rs
-
-    @staticmethod
     def getSensitivity() -> "RankingScore":
+        """
+        See `getTruePositiveRate()`.
+        """
         rs = RankingScore.getTruePositiveRate()
         rs.rename("Sensitivity")
+        return rs
+
+    @staticmethod
+    def getRecall() -> "RankingScore":
+        """
+        See `getTruePositiveRate()`.
+        """
+        rs = RankingScore.getTruePositiveRate()
+        rs.rename("Recall", "Re")
         return rs
 
     @staticmethod
     def getNegativePredictiveValue() -> "RankingScore":
         """
         Negative Predictive Value (NPV).
+        .. math::
+            NPV = P(\\{tn\\} | \\{tn, fn\\}) = P(S=1 | \\hat{Y}=c_-)
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=1`,
+        :math:`I(fp)=0`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=0` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/NegativePredictiveValue_in_ROC.svg
+
         Synonym: inverse precision
+
+        Returns:
+            RankingScore: the score as a RankingScore object
         """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=0, ifn=1, itp=0)
@@ -487,10 +599,35 @@ class RankingScore(AbstractScore):
         return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
+    def getInversePrecision() -> "RankingScore":
+        """
+        See `getNegativePredictiveValue()`.
+        """
+        rs = RankingScore.getNegativePredictiveValue()
+        rs.rename("Inverse Precision", "Pr-Inv")
+        return rs
+
+    @staticmethod
     def getPositivePredictiveValue() -> "RankingScore":
         """
         Positive Predictive Value (PPV).
+        .. math::
+            PPV = P(\\{tp\\} | \\{fp, tp\\}) = P(S=1 | \\hat{Y}=c_+)
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=0`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=0`,
+        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/PositivePredictiveValue_in_ROC.svg
+
         Synonym: precision
+
+        Returns:
+            RankingScore: the score as a RankingScore object
         """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=0, ifp=1, ifn=0, itp=1)
@@ -500,33 +637,34 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getPrecision() -> "RankingScore":
+        """
+        See `getPositivePredictiveValue()`.
+        """
         rs = RankingScore.getPositivePredictiveValue()
         rs.rename("Precision", "Pr")
-        return rs
-
-    @staticmethod
-    def getInversePrecision() -> "RankingScore":
-        rs = RankingScore.getNegativePredictiveValue()
-        rs.rename("Inverse Precision", "Pr-Inv")
-        return rs
-
-    @staticmethod
-    def getRecall() -> "RankingScore":
-        rs = RankingScore.getTruePositiveRate()
-        rs.rename("Recall", "Re")
-        return rs
-
-    @staticmethod
-    def getInverseRecall() -> "RankingScore":
-        rs = RankingScore.getTrueNegativeRate()
-        rs.rename("Inverse Recall", "Re-Inv")
         return rs
 
     @staticmethod
     def getIntersectionOverUnion() -> "RankingScore":
         """
         Intersection over Union (IoU).
+        .. math::
+            IoU = P(\\{tp\\} | \\{fp, fn, tp\\}) = P(S=1 | Y=c_+ \\vee \\hat{Y}=c_+)
+
+        This score is a particular case of (non-canonical) ranking score with the importance
+        proportional to
+        :math:`I(tn)=0`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=1`.
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/IntersectionOverUnion_in_ROC.svg
+
         Synonyms: Jaccard index, Jaccard similarity coefficient, Tanimoto coefficient, similarity, critical success index (CSI), threat score.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
         """
         importance = Importance(itn=0, ifp=1, ifn=1, itp=1)
         name = "Intersection over Union"
@@ -534,44 +672,106 @@ class RankingScore(AbstractScore):
         return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
-    def getInverseIntersectionOverUnion() -> "RankingScore":
-        importance = Importance(itn=1, ifp=1, ifn=1, itp=0)
-        name = "Inverse Intersection over Union"
-        abbreviation = "IoU-Inv"
-        return RankingScore(importance, name=name, abbreviation=abbreviation)
-
-    @staticmethod
     def getJaccard() -> "RankingScore":
+        """
+        See `getIntersectionOverUnion()`.
+        """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Jaccard", "J")
         return rs
 
     @staticmethod
-    def getInverseJaccard() -> "RankingScore":
-        rs = RankingScore.getInverseIntersectionOverUnion()
-        rs.rename("Inverse Jaccard", "J-Inv")
-        return rs
-
-    @staticmethod
     def getTanimotoCoefficient() -> "RankingScore":
+        """
+        See `getIntersectionOverUnion()`.
+        """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Tanimoto Coefficient", "TC")
         return rs
 
     @staticmethod
     def getSimilarity() -> "RankingScore":
+        """
+        See `getIntersectionOverUnion()`.
+        """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Similarity")
         return rs
 
     @staticmethod
     def getCriticalSuccessIndex() -> "RankingScore":
+        """
+        See `getIntersectionOverUnion()`.
+        """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Critical Success Index", "CSI")
         return rs
 
     @staticmethod
+    def getThreatScore() -> "RankingScore":
+        """
+        See `getIntersectionOverUnion()`.
+        """
+        rs = RankingScore.getIntersectionOverUnion()
+        rs.rename("Threat Score")
+        return rs
+
+    @staticmethod
+    def getInverseIntersectionOverUnion() -> "RankingScore":
+        """
+        Inverse Intersection over Union (IoU).
+        .. math::
+            IoU-Inv = P(\\{tn\\} | \\{tn, fp, fn\\}) = P(S=1 | Y=c_- \\vee \\hat{Y}=c_-)
+
+        This score is a particular case of (non-canonical) ranking score with the importance
+        proportional to
+        :math:`I(tn)=1`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=0`.
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/InverseIntersectionOverUnion_in_ROC.svg
+
+        Synonyms: inverse Jaccard index, inverse Jaccard similarity coefficient, inverse Tanimoto coefficient, inverse similarity, inverse critical success index, inverse threat score.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
+        importance = Importance(itn=1, ifp=1, ifn=1, itp=0)
+        name = "Inverse Intersection over Union"
+        abbreviation = "IoU-Inv"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
+
+    @staticmethod
+    def getInverseJaccard() -> "RankingScore":
+        """
+        See `getInverseIntersectionOverUnion()`.
+        """
+        rs = RankingScore.getInverseIntersectionOverUnion()
+        rs.rename("Inverse Jaccard", "J-Inv")
+        return rs
+
+    @staticmethod
     def getF(beta=1.0) -> "RankingScore":
+        """
+        The F-score. See https://en.wikipedia.org/wiki/F-score
+        .. math::
+            F_\\beta = \\frac{ (1+\\beta^2) P(\\{tp\\} }{ 1 P(\\{fp\\} + \\beta^2 P(\\{fn\\} + (1+\\beta^2) P(\\{tp\\} }
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=0`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=beta**2`,
+        and :math:`I(tp)=1 + beta**2`.
+
+        Args:
+            beta (float, optional): :math:`\\beta`. Defaults to 1.0.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
         if not isinstance(beta, float):
             raise ValueError(f"beta must be a real number, got {beta}")
         if math.isnan(beta) or beta < 0:
@@ -588,7 +788,52 @@ class RankingScore(AbstractScore):
         )
 
     @staticmethod
+    def getDiceSorensenCoefficient() -> "RankingScore":
+        """
+        See `getF()` with :math:`\\beta=1`.
+        """
+        rs = RankingScore.getF(beta=1.0)
+        rs.rename("Dice-Sørensen coefficient", "DSC")
+        return rs
+
+    @staticmethod
+    def getZijdenbosSimilarityIndex() -> "RankingScore":
+        """
+        See `getF()` with :math:`\\beta=1`.
+        """
+        rs = RankingScore.getF(beta=1.0)
+        rs.rename("Zijdenbos Similarity Index", "ZSI")
+        return rs
+
+    @staticmethod
+    def getCzekanowskiBinaryIndex() -> "RankingScore":
+        """
+        See `getF()` with :math:`\\beta=1`.
+        """
+        rs = RankingScore.getF(beta=1.0)
+        rs.rename("Czekanowski Binary Index", "CBI")
+        return rs
+
+    @staticmethod
     def getInverseF(beta=1.0) -> "RankingScore":
+        """
+        The inverse F-score.
+        .. math::
+            F_\\beta-inv = \\frac{ (1+\\beta^2) P(\\{tn\\} }{ 1 P(\\{fn\\} + \\beta^2 P(\\{fp\\} + (1+\\beta^2) P(\\{tn\\} }
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=1 + beta**2`,
+        :math:`I(fp)=beta**2`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=0`.
+
+        Args:
+            beta (float, optional): :math:`\\beta`. Defaults to 1.0.
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
         if not isinstance(beta, float):
             raise ValueError(f"beta must be a real number, got {beta}")
         if math.isnan(beta) or beta < 0:
@@ -605,25 +850,25 @@ class RankingScore(AbstractScore):
         )
 
     @staticmethod
-    def getDiceSorensenCoefficient() -> "RankingScore":
-        rs = RankingScore.getF(beta=1.0)
-        rs.rename("Dice-Sørensen coefficient", "DSC")
-        return rs
-
-    @staticmethod
-    def getZijdenbosSimilarityIndex() -> "RankingScore":
-        rs = RankingScore.getF(beta=1.0)
-        rs.rename("Zijdenbos Similarity Index", "ZSI")
-        return rs
-
-    @staticmethod
-    def getCzekanowskiBinaryIndex() -> "RankingScore":
-        rs = RankingScore.getF(beta=1.0)
-        rs.rename("Czekanowski Binary Index", "CBI")
-        return rs
-
-    @staticmethod
     def getAccuracy() -> "RankingScore":
+        """
+        Accuracy (A).
+        .. math::
+            A = P(\\{tn, tp\\}) = P(S=1)
+
+        This score is a particular case of canonical ranking score with the importance
+        proportional to
+        :math:`I(tn)=1`,
+        :math:`I(fp)=1`,
+        :math:`I(fn)=1`,
+        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        The behavior of this score, in ROC, is as follows.
+        .. image:: /figures/Accuracy_in_ROC.svg
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
         importance = Importance(itn=1, ifp=1, ifn=1, itp=1)
         name = "Accuracy"
@@ -640,8 +885,8 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSkewInsensitiveVersionOfF(priorPos: float) -> "RankingScore":
         """
-        The skew-insensitive version of :math:`\\scoreFOne`.
-        Defined in cite:t:`Flach2003TheGeometry`.
+        The skew-insensitive version of :math:`\\scoreFOne`,
+        defined in cite:t:`Flach2003TheGeometry`.
         """
         # The argument `priorPos` is checked in the constructor of the constraint.
         constraint = ConstraintFixedClassPriors(priorPos=priorPos)
@@ -759,7 +1004,50 @@ class RankingScore(AbstractScore):
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"Ranking Score: {self.longLabel} with importance {str(self._importance)}"
         )
+
+    def __eq__(self, other):
+        """
+        Two ranking scores are equal if and only if the importance values
+        associated to both are proportional.
+        """
+        if isinstance(other, RankingScore):
+            self_itn = self._importance.itn
+            self_ifp = self._importance.ifp
+            self_ifn = self._importance.ifn
+            self_itp = self._importance.itp
+            sum = self_itn + self_ifp + self_ifn + self_itp
+            self_itn /= sum
+            self_ifp /= sum
+            self_ifn /= sum
+            self_itp /= sum
+
+            other_itn = other._importance.itn
+            other_ifp = other._importance.ifp
+            other_ifn = other._importance.ifn
+            other_itp = other._importance.itp
+            sum = other_itn + other_ifp + other_ifn + other_itp
+            other_itn /= sum
+            other_ifp /= sum
+            other_ifn /= sum
+            other_itp /= sum
+
+            if not math.isclose(self_itn, other_itn, abs_tol=1e-8):
+                return False
+
+            if not math.isclose(self_ifp, other_ifp, abs_tol=1e-8):
+                return False
+
+            if not math.isclose(self_ifn, other_ifn, abs_tol=1e-8):
+                return False
+
+            if not math.isclose(self_itp, other_itp, abs_tol=1e-8):
+                return False
+
+            return True
+
+        else:
+            return NotImplemented
