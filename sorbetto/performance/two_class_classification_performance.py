@@ -94,40 +94,52 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         """
         return self._ptp
 
+    # TODO: should we add @property?
     def getMassFunction(self) -> np.ndarray:
         return np.array([self._ptn, self._pfp, self._pfn, self._ptp])
 
-    def _accuracy(self):
+    # TODO: should we add @property?
+    def _accuracy(self) -> float:
         return self.ptn + self.ptp
 
-    def _tnr(self):
+    # TODO: should we add @property?
+    def _tnr(self) -> float:
         return self.ptn / (self.ptn + self.pfp)
 
-    def _fpr(self):
+    # TODO: should we add @property?
+    def _fpr(self) -> float:
         return self.pfp / (self.ptn + self.pfp)
 
-    def _fnr(self):
+    # TODO: should we add @property?
+    def _fnr(self) -> float:
         return self.pfn / (self.pfn + self.pfp)
 
-    def _tpr(self):
+    # TODO: should we add @property?
+    def _tpr(self) -> float:
         return self.ptp / (self.pfn + self.ptp)
 
-    def _npv(self):
+    # TODO: should we add @property?
+    def _npv(self) -> float:
         return self.ptn / (self.ptn + self.pfn)
 
-    def _ppv(self):
+    # TODO: should we add @property?
+    def _ppv(self) -> float:
         return self.ptp / (self.pfp + self.ptp)
 
-    def _prior_neg(self):
+    # TODO: should we add @property?
+    def _prior_neg(self) -> float:
         return self.ptn + self.pfp
 
-    def _prior_pos(self):
+    # TODO: should we add @property?
+    def _prior_pos(self) -> float:
         return self.pfn + self.ptp
 
-    def _rate_neg(self):
+    # TODO: should we add @property?
+    def _rate_neg(self) -> float:
         return self.ptn + self.pfn
 
-    def _rate_pos(self):
+    # TODO: should we add @property?
+    def _rate_pos(self) -> float:
         return self.pfp + self.ptp
 
     @staticmethod
@@ -139,6 +151,22 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         ratePos: float | None = None,
         name: str | None = None,
     ) -> Self:
+        """
+        Computes the performance of the no-skill classifier fo the given class
+        priors and the prediction rates. A performance :math:`P` is said "no-skill"
+        if and only if :math:`P(Y,\\hat{Y}) = P(Y) P(\\hat{Y})`.
+
+        Args:
+            priorNeg (float | None, optional): The prior of the negative class, :math:`\\pi_- = P( Y=c_- )`. If set to None, it is computed as :math:`1-\\pi_+`. Defaults to None.
+            priorPos (float | None, optional): The prior of the positive class, :math:`\\pi_+ = P( Y=c_+ )`. If set to None, it is computed as :math:`1-\\pi_-`. Defaults to None.
+            rateNeg (float | None, optional): The rate of negative predictions, :math:`\\tau_- = P( \\hat{Y}=c_- )`. If set to None, it is computed as :math:`1-\\tau_+`. Defaults to None.
+            ratePos (float | None, optional): The rate of negative predictions, :math:`\\tau_+ = P( \\hat{Y}=c_+ )`. If set to None, it is computed as :math:`1-\\tau_-`. Defaults to None.
+            name (str | None, optional): _description_. The name of the no-skill performance. Defaults to None.
+
+        Returns:
+            Self: The no-skill performance.
+        """
+
         def snoopy(v1: float | None = None, v2: float | None = None):
             if v1 is not None:
                 assert isinstance(v1, float)
@@ -213,6 +241,34 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def buildForConstantCanonicalRankingScoreValue(
+        value: float,
+    ) -> "TwoClassClassificationPerformance":
+        """
+        Builds a two-class classification performance such that all canonical
+        ranking scores (ie, the ranking scores such that :math:`I(tn)+I(tp)=1`
+        and :math:`I(fp)+I(fn)=1`) take the same value, given in argument.
+
+        See footnote number 7 in :cite:t:`Pierard2025AMethodology`.
+
+        Args:
+            value (float): The value to be taken by all canonical ranking scores, between 0.0 and 1.0.
+
+        Returns:
+            TwoClassClassificationPerformance: The two-class classification performance.
+        """
+        assert isinstance(value, float)
+        assert value >= 0.0
+        assert value <= 1.0
+        ptn = 0.5 * value
+        pfp = 0.5 * (1.0 - value)
+        pfn = 0.5 * (1.0 - value)
+        ptp = 0.5 * value
+        name = "Performance for which all canonical ranking scores take the value {:g}".format(
+            value
+        )
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
 
     @staticmethod
     def buildFromRankingScoreValues(
