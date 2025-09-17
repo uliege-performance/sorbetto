@@ -882,16 +882,52 @@ class RankingScore(AbstractScore):
     #     rs.rename("MC")
     #     return rs
 
+    # WARNING: In Flach2003TheGeometry, the skew-insensitive version has been
+    # established only for beta=1. We could do it also for any beta, but in
+    # that case, it is not anymore ( 2 TPR ) / ( TPR + FPR + 1 ), and not
+    # anymore a score introduced in cite:t:`Flach2003TheGeometry`. So,
+    # for now, we implement only the beta=1 case.
     @staticmethod
-    def getSkewInsensitiveVersionOfF(priorPos: float) -> "RankingScore":
+    def getSkewInsensitiveVersionOfF1(priorPos: float) -> "RankingScore":
         """
-        The skew-insensitive version of :math:`\\scoreFOne`,
+        The skew-insensitive version of :math:`F_1`,
         defined in cite:t:`Flach2003TheGeometry`.
+        .. math::
+            SIVF = \\frac{ 2 TPR }{ TPR + FPR + 1 }
+        This score is clearly undefined when one of the class priors is zero,
+        as in this case either FPR or TPR is undefined.
+
+        When used on performances with the class priors, for the negative and positve
+        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        this score becomes a particular case of (non-canonical) ranking score with the
+        importance proportional to
+        :math:`I(tn)=0`,
+        :math:`I(fp)=\\pi_+`,
+        :math:`I(fn)=\\pi_-`,
+        and :math:`I(tp)=2 \\pi_-`.
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+
+        Returns:
+            RankingScore: the score as a RankingScore object that can be used only
+              on performances satisfying the constraint of fixed priors.
         """
         # The argument `priorPos` is checked in the constructor of the constraint.
         constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        importance = NotImplemented  # TODO
-        name = "Skew Insensitive Version of F"
+        # But the check performed over there allows priors to be zero.
+        # So we need more checks.
+        priorNeg = 1.0 - priorPos
+        assert priorNeg != 0.0
+        assert priorPos != 0.0
+
+        # SIVF = ( 2 TPR ) / ( TPR + FPR + 1 )
+        #      = ( 2 TPR ) / ( FPR + FNR + 2 TPR )
+        #      = ( 2 PTP/priorPos ) / ( PFP/priorNeg + PFN/priorPos + 2 PTP/priorPos )
+        #      = ( 2 PTP*priorNeg ) / ( PFP*priorPos + PFN*priorNeg + 2 PTP*priorNeg )
+
+        importance = Importance(itn=0.0, ifp=priorPos, ifn=priorNeg, itp=2.0 * priorNeg)
+        name = "Skew-Insensitive Version of F"
         abbreviation = "SIVF"
         return RankingScore(
             importance, constraint=constraint, name=name, abbreviation=abbreviation
@@ -902,8 +938,8 @@ class RankingScore(AbstractScore):
         # The argument `priorPos` is checked in the constructor of the constraint.
         constraint = ConstraintFixedClassPriors(priorPos=priorPos)
         assert isinstance(weightPos, float)
-        assert weightPos >= 0
-        assert weightPos <= 1
+        assert weightPos >= 0.0
+        assert weightPos <= 1.0
         # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
         importance = NotImplemented  # TODO
         name = "Weighted Accuracy ({:g})".format(weightPos)
