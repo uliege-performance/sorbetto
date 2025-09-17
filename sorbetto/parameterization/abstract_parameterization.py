@@ -300,27 +300,199 @@ class AbstractParameterization(ABC):
     def locateHeidkeSkillScore(self, priorPos: float) -> Point:
         raise NotImplementedError()  # TODO: Implement this!
 
-    def locateProbabilityTrueNegative(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getProbabilityTrueNegative())
+    def locateProbabilityTrueNegative(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        The Probability of True Negative is the score defined as
+        .. math::
+            PTN : \\mathbb{P} \rightarrow [0,1] : P \\mapsto PTN(P) = P(\\{tn\\})
 
-    def locateProbabilityFalsePositiveComplenent(self, priorPos: float) -> Point:
-        return self.locateRankingScore(
-            RankingScore.getProbabilityFalsePositiveComplenent()
-        )
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
+        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTN = TNR \\pi_-`, so the
+        performance ordering induced by :math:`PTN` is the same as the one induced
+        by the canonical ranking score :math:`TNR`.
+        See :cite:t:`Pierard2025Foundations`, Section A.7.4.
 
-    def locateProbabilityFalseNegativeComplenent(self, priorPos: float) -> Point:
-        return self.locateRankingScore(
-            RankingScore.getProbabilityFalseNegativeComplenent()
-        )
+        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
+        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`PTN = NPV \\tau_-`, so the
+        performance ordering induced by :math:`PTN` is the same as the one induced
+        by the canonical ranking score :math:`NPV`.
 
-    def locateProbabilityTruePositive(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getProbabilityTruePositive())
+        Args:
+            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1) `. Defaults to None.
 
-    def locateDetectionRate(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getDetectionRate())
+        Returns:
+            Point: the point on the Tile where the performance ordering induced
+                by the score :math:`PTN` is, when the ordering is retricted to the
+                performances with the specified constraint.
+        """
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos > 0.0  # not >=, see doc here-above
+                assert ratePos < 1.0  # not <=, see doc here-above
+                return self.locateNegativePredictiveValue()
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos > 0.0  # not >=, see doc here-above
+                assert priorPos < 1.0  # not <=, see doc here-above
+                return self.locateTrueNegativeRate()
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
 
-    def locateRejectionRate(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getRejectionRate())
+    def locateRejectionRate(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        See `locateProbabilityTrueNegative()`.
+        """
+        return self.locateProbabilityTrueNegative(priorPos=priorPos, ratePos=ratePos)
+
+    def locateProbabilityFalsePositiveComplenent(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        The Complement of the Probability of False Positive is the score defined as
+        .. math::
+            (1-PFP)(P) = P(\\{tn,fn,tp\\}
+
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
+        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`(1-PFP) = \\pi_+ + TNR \\pi_-`, so the
+        performance ordering induced by :math:`(1-PFP)` is the same as the one induced
+        by the canonical ranking score :math:`TNR`.
+
+        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
+        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`(1-PFP) = \\tau_- + PPV \\tau_+`, so the
+        performance ordering induced by :math:`(1-PFP)` is the same as the one induced
+        by the canonical ranking score :math:`PPV`.
+
+        Args:
+            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1)`. Defaults to None.
+
+        Returns:
+            Point: the point on the Tile where the performance ordering induced
+                by the score :math:`(1-PFP)` is, when the ordering is retricted to the
+                performances with the specified constraint.
+        """
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos > 0.0  # not >=, see doc here-above
+                assert ratePos < 1.0  # not <=, see doc here-above
+                return self.locatePositivePredictiveValue()
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos > 0.0  # not >=, see doc here-above
+                assert priorPos < 1.0  # not <=, see doc here-above
+                return self.locateTrueNegativeRate()
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
+
+    def locateProbabilityFalseNegativeComplenent(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        The Complement of the Probability of False Negative is the score defined as
+        .. math::
+            (1-PFN)(P) = P(\\{tn,fp,tp\\}
+
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
+        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`(1-PFN) = \\pi_- + TPR \\pi_+`, so the
+        performance ordering induced by :math:`(1-PFN)` is the same as the one induced
+        by the canonical ranking score :math:`TPR`.
+
+        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
+        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`(1-PFN) = \\tau_+ + NPV \\tau_-`, so the
+        performance ordering induced by :math:`(1-PFN)` is the same as the one induced
+        by the canonical ranking score :math:`NPV`.
+
+        Args:
+            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1)`. Defaults to None.
+
+        Returns:
+            Point: the point on the Tile where the performance ordering induced
+                by the score :math:`(1-PFN)` is, when the ordering is retricted to the
+                performances with the specified constraint.
+        """
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos > 0.0  # not >=, see doc here-above
+                assert ratePos < 1.0  # not <=, see doc here-above
+                return self.locateNegativePredictiveValue()
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos > 0.0  # not >=, see doc here-above
+                assert priorPos < 1.0  # not <=, see doc here-above
+                return self.locateTruePositiveRate()
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
+
+    def locateProbabilityTruePositive(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        The Probability of True Positive is the score defined as
+        .. math::
+            PTP : \\mathbb{P} \rightarrow [0,1] : P \\mapsto PTP(P) = P(\\{tp\\})
+
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
+        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTP = TPR \\pi_+`, so the
+        performance ordering induced by :math:`PTP` is the same as the one induced
+        by the canonical ranking score :math:`TPR`.
+        See :cite:t:`Pierard2025Foundations`, Section A.7.4.
+
+        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
+        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`PTP = PPV \\tau_+`, so the
+        performance ordering induced by :math:`PTP` is the same as the one induced
+        by the canonical ranking score :math:`PPV`.
+
+        Args:
+            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1) `. Defaults to None.
+
+        Returns:
+            Point: the point on the Tile where the performance ordering induced
+                by the score :math:`PTP` is, when the ordering is retricted to the
+                performances with the specified constraint.
+        """
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos > 0.0  # not >=, see doc here-above
+                assert ratePos < 1.0  # not <=, see doc here-above
+                return self.locatePositivePredictiveValue()
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos > 0.0  # not >=, see doc here-above
+                assert priorPos < 1.0  # not <=, see doc here-above
+                return self.locateTruePositiveRate()
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
+
+    def locateDetectionRate(
+        self, *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> Point:
+        """
+        See `locateProbabilityTruePositive()`.
+        """
+        return self.locateProbabilityTruePositive(priorPos=priorPos, ratePos=ratePos)
 
     def locateNormalizedConfusionMatrixDeterminent(self, priorPos: float) -> Point:
         """

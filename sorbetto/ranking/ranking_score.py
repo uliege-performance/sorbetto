@@ -1118,58 +1118,6 @@ class RankingScore(AbstractScore):
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
 
-    @staticmethod
-    def getProbabilityTrueNegative(priorPos: float) -> "RankingScore":
-        # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-        importance = NotImplemented  # TODO
-        name = "Probability of True Negative"
-        abbreviation = "PTN"
-        return RankingScore(
-            importance, constraint=constraint, name=name, abbreviation=abbreviation
-        )
-
-    @staticmethod
-    def getProbabilityFalsePositiveComplenent(priorPos: float) -> "RankingScore":
-        # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        importance = NotImplemented  # TODO
-        name = "Complement of the Probability of False Positive"
-        return RankingScore(importance, constraint=constraint, name=name)
-
-    @staticmethod
-    def getProbabilityFalseNegativeComplenent(priorPos: float) -> "RankingScore":
-        # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        importance = NotImplemented  # TODO
-        name = "Complement of the Probability of False Negative"
-        return RankingScore(importance, constraint=constraint, name=name)
-
-    @staticmethod
-    def getProbabilityTruePositive(priorPos: float) -> "RankingScore":
-        # The argument `priorPos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-        importance = NotImplemented  # TODO
-        name = "Probability of True Positive"
-        abbreviation = "PTP"
-        return RankingScore(
-            importance, constraint=constraint, name=name, abbreviation=abbreviation
-        )
-
-    @staticmethod
-    def getDetectionRate(priorPos: float) -> "RankingScore":
-        rs = RankingScore.getProbabilityTruePositive(priorPos)
-        rs.rename("Detection Rate", "DR")
-        return rs
-
-    @staticmethod
-    def getRejectionRate(priorPos: float) -> "RankingScore":
-        rs = RankingScore.getProbabilityTrueNegative(priorPos)
-        rs.rename("Rejection Rate", "RR")
-        return rs
-
     def __str__(self) -> str:
         return (
             f"Ranking Score: {self.longLabel} with importance {str(self._importance)}"
