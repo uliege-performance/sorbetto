@@ -9,6 +9,7 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from sorbetto.core.matplotlib_utils import filter_properties_for_plot
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 
 
@@ -409,6 +410,8 @@ class Conic(AbstractGeometricObject2D):
         assert x_max > x_min
         assert y_max > y_min
 
+        options_for_plot = filter_properties_for_plot(plt_kwargs)
+
         x = np.linspace(x_min, x_max, 1000)
 
         def draw_y_fct_of_x(f):
@@ -425,7 +428,7 @@ class Conic(AbstractGeometricObject2D):
             ok = np.logical_and(np.isfinite(y), -1.0 <= g, g <= 1.0)
             ko = np.logical_not(ok)
             y[ko] = np.nan
-            ax.plot(x, y, "-", **plt_kwargs)
+            ax.plot(x, y, "-", **options_for_plot)
 
         draw_y_fct_of_x(self.getSmallestY)
         draw_y_fct_of_x(self.getLargestY)
@@ -446,7 +449,7 @@ class Conic(AbstractGeometricObject2D):
             ok = np.logical_and(np.isfinite(x), -1.0 <= g, g <= 1.0)
             ko = np.logical_not(ok)
             x[ko] = np.nan
-            ax.plot(x, y, "-", **plt_kwargs)
+            ax.plot(x, y, "-", **options_for_plot)
 
         draw_x_fct_of_y(self.getSmallestX)
         draw_x_fct_of_y(self.getLargestX)

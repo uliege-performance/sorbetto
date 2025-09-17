@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from sorbetto.core.matplotlib_utils import filter_properties_for_plot
 from sorbetto.geometry.conic import Conic
 
 
@@ -98,6 +99,8 @@ class BilinearCurve(Conic):
         assert x_max > x_min
         assert y_max > y_min
 
+        options_for_plot = filter_properties_for_plot(plt_kwargs)
+
         if Kx != 0.0 or Kxy != 0.0:
             # Let's plot x = - ( Ky y + K ) / ( Kxy y + Kx )
             # where -1 <= dx/dy <= 1
@@ -112,7 +115,7 @@ class BilinearCurve(Conic):
             bad = np.logical_or(np.abs(d_x_d_y) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
-            ax.plot(x, y, "-", **plt_kwargs)
+            ax.plot(x, y, "-", **options_for_plot)
 
         if Ky != 0.0 or Kxy != 0.0:
             # Let's plot y = - ( Kx x + K ) / ( Kxy x + Ky )
@@ -128,7 +131,7 @@ class BilinearCurve(Conic):
             bad = np.logical_or(np.abs(d_y_d_x) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
-            ax.plot(x, y, "-", **plt_kwargs)
+            ax.plot(x, y, "-", **options_for_plot)
 
     def __str__(self) -> str:
         assert self._a == 0.0

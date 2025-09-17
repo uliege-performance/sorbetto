@@ -4,6 +4,7 @@
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from sorbetto.core.matplotlib_utils import filter_properties_for_plot
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.point import Point
 
@@ -63,7 +64,8 @@ class LineSegment(AbstractGeometricObject2D):
         p1 = self._p1
         p2 = self._p2
 
-        ax.plot([p1.x, p2.x], [p1.y, p2.y], "-", **plt_kwargs)
+        options_for_plot = filter_properties_for_plot(plt_kwargs)
+        ax.plot([p1.x, p2.x], [p1.y, p2.y], "-", **options_for_plot)
 
     def __str__(self) -> str:
         p1 = self._p1

@@ -4,6 +4,7 @@
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from sorbetto.core.matplotlib_utils import filter_properties_for_plot
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 
 
@@ -74,7 +75,8 @@ class Point(AbstractGeometricObject2D):
         if y < y_min or y > y_max:
             return
 
-        ax.plot(x, y, **plt_kwargs)
+        options_for_plot = filter_properties_for_plot(plt_kwargs)
+        ax.plot(x, y, **options_for_plot)
 
     def __str__(self) -> str:
         return "point ({:g}, {:g})".format(self.x, self.y)

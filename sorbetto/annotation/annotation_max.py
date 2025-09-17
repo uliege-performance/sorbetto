@@ -4,6 +4,10 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.core.matplotlib_utils import (
+    filter_properties_for_plot,
+    filter_properties_for_text,
+)
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -46,6 +50,9 @@ class AnnotationMax(AbstractAnnotation):
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
+        options_for_text = filter_properties_for_text(self._plt_kwargs)
+        options_for_plot = filter_properties_for_plot(self._plt_kwargs)
+
         x, y, label = self._whatShouldWeDraw(tile)
 
         parameterization = tile.parameterization
@@ -60,14 +67,14 @@ class AnnotationMax(AbstractAnnotation):
             )
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
-        ax.plot(x, y, "o", **self._plt_kwargs)
+        ax.plot(x, y, "o", **options_for_plot)
         if x < center_x:
             if y < center_y:
-                ax.text(x, y, label, ha="left", va="bottom", **self._plt_kwargs)
+                ax.text(x, y, label, ha="left", va="bottom", **options_for_text)
             else:
-                ax.text(x, y, label, ha="left", va="top", **self._plt_kwargs)
+                ax.text(x, y, label, ha="left", va="top", **options_for_text)
         else:
             if y < center_y:
-                ax.text(x, y, label, ha="right", va="bottom", **self._plt_kwargs)
+                ax.text(x, y, label, ha="right", va="bottom", **options_for_text)
             else:
-                ax.text(x, y, label, ha="right", va="top", **self._plt_kwargs)
+                ax.text(x, y, label, ha="right", va="top", **options_for_text)

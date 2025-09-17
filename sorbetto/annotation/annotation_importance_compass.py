@@ -4,6 +4,10 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.core.matplotlib_utils import (
+    filter_properties_for_arrow,
+    filter_properties_for_text,
+)
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -39,6 +43,9 @@ class AnnotationImportanceCompass(AbstractAnnotation):
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
 
+        options_for_text = filter_properties_for_text(self._plt_kwargs)
+        options_for_arrow = filter_properties_for_arrow(self._plt_kwargs)
+
         lx = 0.25 * (max_x - min_x)
         ly = 0.25 * (max_y - min_y)
         ax.arrow(
@@ -51,7 +58,7 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             linewidth=1,
             length_includes_head=True,
             facecolor=None,
-            **self._plt_kwargs,
+            **options_for_arrow,
         )
         ax.arrow(
             center_x,
@@ -63,7 +70,7 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             linewidth=1,
             length_includes_head=True,
             facecolor=None,
-            **self._plt_kwargs,
+            **options_for_arrow,
         )
         ax.arrow(
             center_x,
@@ -75,7 +82,7 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             linewidth=1,
             length_includes_head=True,
             facecolor=None,
-            **self._plt_kwargs,
+            **options_for_arrow,
         )
         ax.arrow(
             center_x,
@@ -87,7 +94,7 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             linewidth=1,
             length_includes_head=True,
             facecolor=None,
-            **self._plt_kwargs,
+            **options_for_arrow,
         )
 
         x = center_x
@@ -111,7 +118,7 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             ha="center",
             va="bottom",
             rotation_mode="anchor",
-            **self._plt_kwargs,
+            **options_for_text,
         )
 
         x = 0.8 * min_x + 0.2 * max_x
@@ -125,5 +132,5 @@ class AnnotationImportanceCompass(AbstractAnnotation):
             ha="center",
             va="bottom",
             rotation_mode="anchor",
-            **self._plt_kwargs,
+            **options_for_text,
         )

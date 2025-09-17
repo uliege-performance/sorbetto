@@ -85,7 +85,9 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
             mat_values,
             levels=levels,
             colors="cornflowerblue",
-            **self._plt_kwargs,
+            **self._plt_kwargs,  # TODO: filter these properties with a function in sorbetto.core.matplotlib_utils
         )
         tiny = 6
-        ax.clabel(cs, inline=True, fontsize=tiny, **self._plt_kwargs)
+        ax.clabel(
+            cs, inline=True, fontsize=tiny, **self._plt_kwargs
+        )  # TODO: filter these properties with a function in sorbetto.core.matplotlib_utils

@@ -6,6 +6,7 @@ from matplotlib.figure import Figure
 from scipy.ndimage import generate_binary_structure, label
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.core.matplotlib_utils import filter_properties_for_text
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -42,6 +43,8 @@ class AnnotationSymbols(AbstractAnnotation):
         if not isinstance(tile, SymbolicTile):
             message = "Trying to draw an annotation of type AnnotationSymbols on a Tile that is not a SymbolicTile. This makes no sense."
             raise RuntimeError(message)
+
+        options_for_text = filter_properties_for_text(self._plt_kwargs)
 
         # parameterization = tile.parameterization
         # min_x, max_x = parameterization.getBoundsParameter1()
@@ -94,5 +97,5 @@ class AnnotationSymbols(AbstractAnnotation):
                         va="center",
                         color="black",
                         fontsize=tiny,
-                        **self._plt_kwargs,
+                        **options_for_text,
                     )
