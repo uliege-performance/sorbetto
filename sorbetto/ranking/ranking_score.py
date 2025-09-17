@@ -943,7 +943,7 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getMacroAveragedRecall(
-        priorPos: float, weightPos: float = 0.5
+        priorPos: float, weightClassPos: float = 0.5
     ) -> "RankingScore":
         """
         The macro-averaged recall, with a weighted arithmetic mean, is defined as
@@ -965,7 +965,7 @@ class RankingScore(AbstractScore):
 
         Args:
             priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
-            weightPos (float, optional): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`. Defaults to 0.5.
+            weightClassPos (float, optional): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`. Defaults to 0.5.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
@@ -979,10 +979,10 @@ class RankingScore(AbstractScore):
         assert priorNeg != 0.0
         assert priorPos != 0.0
 
-        assert isinstance(weightPos, float)
-        assert weightPos >= 0.0
-        assert weightPos <= 1.0
-        weightNeg = 1.0 - weightPos
+        assert isinstance(weightClassPos, float)
+        assert weightClassPos >= 0.0
+        assert weightClassPos <= 1.0
+        weightClassNeg = 1.0 - weightClassPos
 
         # macroRecall
         #    = wNeg TNR + wPos TPR
@@ -992,21 +992,21 @@ class RankingScore(AbstractScore):
         #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ wNeg (PTN+PFP)/priorNeg + wPos (PFN+PTP)/priorPos ]
         #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ (wNeg/priorNeg) PTN + (wNeg/priorNeg) PFP + (wPos/priorPos) PFN + (wPos/priorPos) PTP ]
 
-        itn = ifp = weightNeg / priorNeg
-        ifn = itp = weightPos / priorPos
+        itn = ifp = weightClassNeg / priorNeg
+        ifn = itp = weightClassPos / priorPos
         importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        if weightPos == 0.5:
+        if weightClassPos == 0.5:
             name = "Arithmetcially Macro-Averaged Recall"
             abbreviation = "m-Re"
         else:
-            name = "{:g} Re_- + {:g} Re_+".format(weightNeg, weightPos)
+            name = "{:g} Re_- + {:g} Re_+".format(weightClassNeg, weightClassPos)
             abbreviation = "wm-Re"
         return RankingScore(
             importance, constraint=constraint, name=name, abbreviation=abbreviation
         )
 
     @staticmethod
-    def getWeightedAccuracy(priorPos: float, weightPos: float) -> "RankingScore":
+    def getWeightedAccuracy(priorPos: float, weightClassPos: float) -> "RankingScore":
         """
         The weighted accuracy is defined as
         .. math::
@@ -1025,18 +1025,18 @@ class RankingScore(AbstractScore):
 
         Args:
             priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
-            weightPos (float): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`.
+            weightClassPos (float): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
               on performances satisfying the constraint of fixed priors.
         """
-        rs = RankingScore.getMacroAveragedRecall(priorPos, weightPos)
-        if weightPos == priorPos:
+        rs = RankingScore.getMacroAveragedRecall(priorPos, weightClassPos)
+        if weightClassPos == priorPos:
             name = "Accuracy"
             abbreviation = "A"
         else:
-            name = "Weighted Accuracy ({:g})".format(weightPos)
+            name = "Weighted Accuracy ({:g})".format(weightClassPos)
             abbreviation = "WA"
         rs.rename(name, abbreviation)
         return rs
@@ -1044,7 +1044,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getBalancedAccuracy(priorPos: float) -> "RankingScore":
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
-        rs = RankingScore.getMacroAveragedRecall(priorPos, weightPos=0.5)
+        rs = RankingScore.getMacroAveragedRecall(priorPos, weightClassPos=0.5)
         if priorPos == 0.5:
             name = "Accuracy"
             abbreviation = "A"
@@ -1053,6 +1053,70 @@ class RankingScore(AbstractScore):
             abbreviation = "BA"
         rs.rename(name, abbreviation)
         return rs
+
+    @staticmethod
+    def getMacroAveragedPrecision(
+        ratePos: float, weightClassPos: float = 0.5
+    ) -> "RankingScore":
+        """
+        The macro-averaged precision, with a weighted arithmetic mean, is defined as
+        .. math::
+            m-Pr = \\lambda_- Pr_- + \\lambda_+ Pr_+
+        where :math:`Pr_-` is the precision of the negative class (:math:`Pr_- = NPV`),
+        :math:`Pr_+` is the precision of the positive class (:math:`Pr_+ = PPV`),
+        and :math:`(\\lambda_-, \\lambda_+)` are the class weights such that
+        :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
+        This score is clearly undefined when one of the class prediction rates is zero,
+        as in this case either :math:`Pr_-` or :math:`Pr_+` is undefined.
+
+        When used on performances with the class prediction rates, for the negative and positve
+        classes of :math:`P(\\hat{Y}=c_-)=\\tau_-` and :math:`P(\\hat{Y}=c_+)=\\tau_+`, respectively,
+        this score becomes a particular case of canonical ranking score with the
+        importance proportional to
+        :math:`I(tn) = I(fn) = \\frac{ \\lambda_- }{ \\tau_- }`
+        and :math:`I(fp) = I(tp) = \\frac{ \\lambda_+ }{ \\tau_+ }`.
+
+        Args:
+            ratePos (float): The prediction rate of the positive class, :math:`\\tau_+\\in(0,1)`.
+            weightClassPos (float, optional): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`. Defaults to 0.5.
+
+        Returns:
+            RankingScore: the score as a RankingScore object that can be used only
+              on performances satisfying the constraint of fixed prediction rates.
+        """
+        # The argument `ratePos` is checked in the constructor of the constraint.
+        constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+        # But the check performed over there allows prediction rates to be zero.
+        # So we need more checks.
+        rateNeg = 1.0 - ratePos
+        assert rateNeg != 0.0
+        assert ratePos != 0.0
+
+        assert isinstance(weightClassPos, float)
+        assert weightClassPos >= 0.0
+        assert weightClassPos <= 1.0
+        weightClassNeg = 1.0 - weightClassPos
+
+        # macroPrecision
+        #    = wNeg NPV + wPos PPV
+        #    = wNeg PTN/rateNeg + wPos PTP/ratePos
+        #    = (wNeg/rateNeg) PTN + (wPos/ratePos) PTP
+        #    = [ (wNeg/rateNeg) PTN + (wPos/ratePos) PTP ] / [ wNeg + wPos ]
+        #    = [ (wNeg/rateNeg) PTN + (wPos/ratePos) PTP ] / [ wNeg (PTN+PFN)/rateNeg + wPos (PFP+PTP)/ratePos ]
+        #    = [ (wNeg/rateNeg) PTN + (wPos/ratePos) PTP ] / [ (wNeg/rateNeg) PTN + (wPos/ratePos) PFP + (wNeg/rateNeg) PFN + (wPos/ratePos) PTP ]
+
+        itn = ifn = weightClassNeg / rateNeg
+        ifp = itp = weightClassPos / ratePos
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+        if weightClassPos == 0.5:
+            name = "Arithmetcially Macro-Averaged Precision"
+            abbreviation = "m-Pr"
+        else:
+            name = "{:g} Pr_- + {:g} Pr_+".format(weightClassNeg, weightClassPos)
+            abbreviation = "wm-Pr"
+        return RankingScore(
+            importance, constraint=constraint, name=name, abbreviation=abbreviation
+        )
 
     @staticmethod
     def getProbabilityTrueNegative(priorPos: float) -> "RankingScore":
@@ -1105,22 +1169,6 @@ class RankingScore(AbstractScore):
         rs = RankingScore.getProbabilityTrueNegative(priorPos)
         rs.rename("Rejection Rate", "RR")
         return rs
-
-    @staticmethod
-    def getMacroAveragedPrecision(ratePos: float) -> "RankingScore":
-        # The argument `ratePos` is checked in the constructor of the constraint.
-        constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
-        rateNeg = 1.0 - ratePos
-        itn = ratePos
-        ifp = rateNeg
-        ifn = ratePos
-        itp = rateNeg
-        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        name = "(Arithmetcially) Macro-Averaged Precision"
-        abbreviation = "m-Pr"
-        return RankingScore(
-            importance, constraint=constraint, name=name, abbreviation=abbreviation
-        )
 
     def __str__(self) -> str:
         return (
