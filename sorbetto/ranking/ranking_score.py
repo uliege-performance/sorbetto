@@ -935,13 +935,54 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getWeightedAccuracy(priorPos: float, weightPos: float) -> "RankingScore":
+        """
+        The weighted accuracy is defined as
+        .. math::
+            WA = \\lambda_- TNR + \\lambda_+ TPR
+        with :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
+        This score is clearly undefined when one of the class priors is zero,
+        as in this case either TNR or TPR is undefined.
+
+        When used on performances with the class priors, for the negative and positve
+        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        this score becomes a particular case of canonical ranking score with the
+        importance proportional to
+        :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
+        and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
+        See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            weightPos (float): The weith for the positive class, :math:`\\lambda_+\\in[0,1]`.
+
+        Returns:
+            RankingScore: the score as a RankingScore object that can be used only
+              on performances satisfying the constraint of fixed priors.
+        """
         # The argument `priorPos` is checked in the constructor of the constraint.
         constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+        # But the check performed over there allows priors to be zero.
+        # So we need more checks.
+        priorNeg = 1.0 - priorPos
+        assert priorNeg != 0.0
+        assert priorPos != 0.0
+
         assert isinstance(weightPos, float)
         assert weightPos >= 0.0
         assert weightPos <= 1.0
+        weightNeg = 1.0 - weightPos
+
         # See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
-        importance = NotImplemented  # TODO
+        # # WA = wNeg TNR + wPos TPR
+        #    = wNeg PTN/priorNeg + wPos PTP/priorPos
+        #    = (wNeg/priorNeg) PTN + (wPos/priorPos) PTP
+        #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ wNeg + wPos ]
+        #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ wNeg (PTN+PFP)/priorNeg + wPos (PFN+PTP)/priorPos ]
+        #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ (wNeg/priorNeg) PTN + (wNeg/priorNeg) PFP + (wPos/priorPos) PFN + (wPos/priorPos) PTP ]
+
+        i_neg = weightNeg / priorNeg
+        i_pos = weightPos / priorPos
+        importance = Importance(itn=i_neg, ifp=i_neg, ifn=i_pos, itp=i_pos)
         name = "Weighted Accuracy ({:g})".format(weightPos)
         abbreviation = "WA"
         return RankingScore(
