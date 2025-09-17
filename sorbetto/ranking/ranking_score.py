@@ -777,9 +777,11 @@ class RankingScore(AbstractScore):
         if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
-        importance = Importance(
-            itn=0, ifp=1 / (1 + beta**2), ifn=beta**2 / (1 + beta**2), itp=1
-        )
+        itn = 0
+        ifp = 1
+        ifn = beta**2
+        itp = 1 + beta**2
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         name = "F-score for β={:g}".format(beta)
         abbreviation = "F{:g}".format(beta)
         symbol = "$F_{" + "{:g}".format(beta) + "}$"
@@ -839,9 +841,11 @@ class RankingScore(AbstractScore):
         if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
 
-        importance = Importance(
-            itn=1, ifp=beta**2 / (1 + beta**2), ifn=1 / (1 + beta**2), itp=0
-        )
+        itn = 1 + beta**2
+        ifp = beta**2
+        ifn = 1
+        itp = 0
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         name = "Inverse F-score for β={:g}".format(beta)
         abbreviation = "F{:g}-Inv".format(beta)
         symbol = "$F_{" + "{:g}".format(beta) + "}$-Inv"
@@ -926,7 +930,11 @@ class RankingScore(AbstractScore):
         #      = ( 2 PTP/priorPos ) / ( PFP/priorNeg + PFN/priorPos + 2 PTP/priorPos )
         #      = ( 2 PTP*priorNeg ) / ( PFP*priorPos + PFN*priorNeg + 2 PTP*priorNeg )
 
-        importance = Importance(itn=0.0, ifp=priorPos, ifn=priorNeg, itp=2.0 * priorNeg)
+        itn = 0.0
+        ifp = priorPos
+        ifn = priorNeg
+        itp = 2.0 * priorNeg
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         name = "Skew-Insensitive Version of F"
         abbreviation = "SIVF"
         return RankingScore(
@@ -980,9 +988,9 @@ class RankingScore(AbstractScore):
         #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ wNeg (PTN+PFP)/priorNeg + wPos (PFN+PTP)/priorPos ]
         #    = [ (wNeg/priorNeg) PTN + (wPos/priorPos) PTP ] / [ (wNeg/priorNeg) PTN + (wNeg/priorNeg) PFP + (wPos/priorPos) PFN + (wPos/priorPos) PTP ]
 
-        i_neg = weightNeg / priorNeg
-        i_pos = weightPos / priorPos
-        importance = Importance(itn=i_neg, ifp=i_neg, ifn=i_pos, itp=i_pos)
+        itn = ifp = weightNeg / priorNeg
+        ifn = itp = weightPos / priorPos
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         name = "Weighted Accuracy ({:g})".format(weightPos)
         abbreviation = "WA"
         return RankingScore(
