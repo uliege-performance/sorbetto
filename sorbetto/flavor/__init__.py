@@ -7,6 +7,7 @@ from .abstract_symbolic_flavor import AbstractSymbolicFlavor
 from .best_flavor import BestFlavor
 from .correlation_flavor import CorrelationFlavor
 from .entity_flavor import EntityFlavor
+from .no_skills_equivalence_flavor import NoSkillsEquivalenceFlavor
 from .ranking_flavor import RankingFlavor
 from .value_flavor import ValueFlavor
 from .worst_flavor import WorstFlavor
@@ -21,4 +22,5 @@ __all__ = [
     "RankingFlavor",
     "BestFlavor",
     "ValueFlavor",
+    "NoSkillsEquivalenceFlavor",
 ]
