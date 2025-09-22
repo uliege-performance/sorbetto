@@ -216,7 +216,10 @@ class Tile:
         self._annotations.clear()
 
     def draw(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        print_traceback_on_annotation_exception: bool = False,
     ) -> tuple[Figure, Axes]:
         """Draws the Tile in the given figure and axes.
 
@@ -245,7 +248,10 @@ class Tile:
             try:
                 annotation.draw(tile, fig, ax)
             except BaseException as e:
-                # print(traceback.format_exc())
+                if print_traceback_on_annotation_exception:
+                    import traceback
+
+                    print(traceback.format_exc())
                 message = "Something went wrong while drawing annotation {!r}, got {} ({})".format(
                     annotation.name, type(e), e
                 )
