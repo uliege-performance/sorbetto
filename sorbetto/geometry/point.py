@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 

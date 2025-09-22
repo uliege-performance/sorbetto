@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from sorbetto.flavor.best_flavor import BestFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (

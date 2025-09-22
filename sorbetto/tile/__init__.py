@@ -1,3 +1,6 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
 from .best_tile import BestTile
 from .correlation_tile import CorrelationTile
 from .entity_tile import EntityTile
