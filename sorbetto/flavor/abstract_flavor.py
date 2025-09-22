@@ -11,8 +11,8 @@ from sorbetto.core.importance import Importance
 
 class AbstractFlavor(ABC):
     """
-    A flavor is a function that gives something to show on a Tile for any given
-    importance values.
+    A flavor is a function of importance values.
+    It can be represented graphically with Tiles.
     """
 
     # TODO: I guess that a colormap should be:

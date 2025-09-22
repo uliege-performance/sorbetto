@@ -134,7 +134,7 @@ class NumericTile(Tile):
 
     def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
         """
-        Minimization of the flavor over the Tile. The default implementation
+        Minimization of the Flavor over the Tile. The default implementation
         does it by gradient descent.
 
         Args:
@@ -144,13 +144,13 @@ class NumericTile(Tile):
             tuple[float, float, float]:
             - float: the first coordinate of the point on the Tile where the smallest value has been found.
             - float: the second coordinate of the point on the Tile where the smallest value has been found.
-            ) float: the smallest value that has been found.
+            - float: the smallest value that has been found.
         """
         return self._optimize(1.0, precision)
 
     def maximize(self, precision: float = 1e-6) -> tuple[float, float, float]:
         """
-        Maximization of the flavor over the Tile. The default implementation
+        Maximization of the Flavor over the Tile. The default implementation
         does it by gradient descent.
 
         Args:
@@ -160,7 +160,7 @@ class NumericTile(Tile):
             tuple[float, float, float]:
             - float: the first coordinate of the point on the Tile where the largest value has been found.
             - float: the second coordinate of the point on the Tile where the largest value has been found.
-            ) float: the largest value that has been found.
+            - float: the largest value that has been found.
         """
         return self._optimize(-1.0, precision)
 

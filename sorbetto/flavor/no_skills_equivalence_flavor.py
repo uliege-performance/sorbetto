@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 
@@ -47,7 +47,12 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
 
     def __init__(
         self,
-        parameter_name: str,
+        parameter_name: Literal[
+            "negative prediction rate",
+            "positive prediction rate",
+            "prior of the negative class",
+            "prior of the positive class",
+        ],
         name: str | None = None,
         colormap: Any = None,
     ):

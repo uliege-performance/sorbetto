@@ -35,14 +35,20 @@ from sorbetto.performance.two_class_classification_performance import (
 class RankingScore(AbstractScore):
     """
     Implementation of the family of scores named *ranking scores* (:math:`R_I`)
-    in the particular case of problems assimilated to two-class crip classification.
+    in the particular case of problems assimilated to two-class crisp classification.
     More precisely, this is when the sample space contains four elements
-    (:math:`\\Omega=\\{tn,fp,fn,tp\\}) and the random variabale satisfaction is
-    0.0 for two of them and 1.0 for the other two (:math:`S(tn)=1`,
-    :math:`S(fp)=0`, :math:`S(fn)=0`, :math:`S(tp)=1`).
+    (:math:`\\Omega=\\{tn,fp,fn,tp\\}`) and the random variable satisfaction is
+    0.0 for two of them and 1.0 for the other two:
+
+    * :math:`S(tn)=1`;
+    * :math:`S(fp)=0`;
+    * :math:`S(fn)=0`;
+    * :math:`S(tp)=1`.
+
+    The formula for the scores of this family is:
 
     .. math::
-        R_I(P = \\frac{E_P[SI]}{E_P[I]} = \\frac{ I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) }{ I(tn) P(\\{tn\\}) + I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) + I(tp) P(\\{tp\\}) }
+        R_I(P) = \\frac{E_P[SI]}{E_P[I]} = \\frac{ I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) }{ I(tn) P(\\{tn\\}) + I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) + I(tp) P(\\{tp\\}) }
     """
 
     def __init__(
@@ -173,9 +179,9 @@ class RankingScore(AbstractScore):
 
         return math.isclose(itn + itp, ifp + ifn, abs_tol=tol)  # TODO: explain !
 
-        canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
-        canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
-        return canonical_for_satisfying and canonical_for_unsatisfying
+        # canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
+        # canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
+        # return canonical_for_satisfying and canonical_for_unsatisfying
 
     def drawInROC(
         self,
@@ -473,17 +479,21 @@ class RankingScore(AbstractScore):
     def getTrueNegativeRate() -> "RankingScore":
         """
         True Negative Rate (TNR).
+
         .. math::
             TNR = P(\\{tn\\} | \\{tn, fp\\}) = P(S=1 | Y=c_-)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=1`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=0`,
-        and :math:`I(tp)=0` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        * :math:`I(tn)=1`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=0`,
+        * and :math:`I(tp)=0`
+        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/TrueNegativeRate_in_ROC.svg
 
         Synonyms: specificity, selectivity, inverse recall.
@@ -500,7 +510,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSpecificity() -> "RankingScore":
         """
-        See `getTrueNegativeRate()`.
+        See :meth:`sorbetto.ranking.RankingScore.getTrueNegativeRate`.
         """
         rs = RankingScore.getTrueNegativeRate()
         rs.rename("Specificity", "Sp")
@@ -509,7 +519,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSelectivity() -> "RankingScore":
         """
-        See `getTrueNegativeRate()`.
+        See :meth:`sorbetto.ranking.RankingScore.getTrueNegativeRate`.
         """
         rs = RankingScore.getTrueNegativeRate()
         rs.rename("Selectivity")
@@ -518,7 +528,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getInverseRecall() -> "RankingScore":
         """
-        See `getTrueNegativeRate()`.
+        See :meth:`sorbetto.ranking.RankingScore.getTrueNegativeRate`.
         """
         rs = RankingScore.getTrueNegativeRate()
         rs.rename("Inverse Recall", "Re-Inv")
@@ -528,17 +538,21 @@ class RankingScore(AbstractScore):
     def getTruePositiveRate() -> "RankingScore":
         """
         True Positive Rate (TPR).
+
         .. math::
             TPR = P(\\{tp\\} | \\{fn, tp\\}) = P(S=1 | Y=c_+)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=0`,
-        :math:`I(fp)=0`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=0`,
+        * :math:`I(fn)=1`,
+        and :math:`I(tp)=1`
+        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/TruePositiveRate_in_ROC.svg
 
         Synonyms: sensitivity, recall.
@@ -555,7 +569,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSensitivity() -> "RankingScore":
         """
-        See `getTruePositiveRate()`.
+        See :meth:`sorbetto.ranking.RankingScore.getTruePositiveRate`.
         """
         rs = RankingScore.getTruePositiveRate()
         rs.rename("Sensitivity")
@@ -564,7 +578,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getRecall() -> "RankingScore":
         """
-        See `getTruePositiveRate()`.
+        See :meth:`sorbetto.ranking.RankingScore.getTruePositiveRate`.
         """
         rs = RankingScore.getTruePositiveRate()
         rs.rename("Recall", "Re")
@@ -574,17 +588,21 @@ class RankingScore(AbstractScore):
     def getNegativePredictiveValue() -> "RankingScore":
         """
         Negative Predictive Value (NPV).
+
         .. math::
             NPV = P(\\{tn\\} | \\{tn, fn\\}) = P(S=1 | \\hat{Y}=c_-)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=1`,
-        :math:`I(fp)=0`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=0` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        * :math:`I(tn)=1`,
+        * :math:`I(fp)=0`,
+        * :math:`I(fn)=1`,
+        * and :math:`I(tp)=0`
+        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/NegativePredictiveValue_in_ROC.svg
 
         Synonym: inverse precision
@@ -601,7 +619,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getInversePrecision() -> "RankingScore":
         """
-        See `getNegativePredictiveValue()`.
+        See :meth:`sorbetto.ranking.RankingScore.getNegativePredictiveValue`.
         """
         rs = RankingScore.getNegativePredictiveValue()
         rs.rename("Inverse Precision", "Pr-Inv")
@@ -611,17 +629,21 @@ class RankingScore(AbstractScore):
     def getPositivePredictiveValue() -> "RankingScore":
         """
         Positive Predictive Value (PPV).
+
         .. math::
             PPV = P(\\{tp\\} | \\{fp, tp\\}) = P(S=1 | \\hat{Y}=c_+)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=0`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=0`,
-        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=0`,
+        * and :math:`I(tp)=1`
+        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/PositivePredictiveValue_in_ROC.svg
 
         Synonym: precision
@@ -638,7 +660,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getPrecision() -> "RankingScore":
         """
-        See `getPositivePredictiveValue()`.
+        See :meth:`sorbetto.ranking.RankingScore.getPositivePredictiveValue`.
         """
         rs = RankingScore.getPositivePredictiveValue()
         rs.rename("Precision", "Pr")
@@ -648,17 +670,20 @@ class RankingScore(AbstractScore):
     def getIntersectionOverUnion() -> "RankingScore":
         """
         Intersection over Union (IoU).
+
         .. math::
             IoU = P(\\{tp\\} | \\{fp, fn, tp\\}) = P(S=1 | Y=c_+ \\vee \\hat{Y}=c_+)
 
         This score is a particular case of (non-canonical) ranking score with the importance
         proportional to
-        :math:`I(tn)=0`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=1`.
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=1`,
+        * and :math:`I(tp)=1`.
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/IntersectionOverUnion_in_ROC.svg
 
         Synonyms: Jaccard index, Jaccard similarity coefficient, Tanimoto coefficient, similarity, critical success index (CSI), threat score.
@@ -674,7 +699,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getJaccard() -> "RankingScore":
         """
-        See `getIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`.
         """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Jaccard", "J")
@@ -683,7 +708,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getTanimotoCoefficient() -> "RankingScore":
         """
-        See `getIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`.
         """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Tanimoto Coefficient", "TC")
@@ -692,7 +717,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getSimilarity() -> "RankingScore":
         """
-        See `getIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`.
         """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Similarity")
@@ -701,7 +726,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getCriticalSuccessIndex() -> "RankingScore":
         """
-        See `getIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`.
         """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Critical Success Index", "CSI")
@@ -710,7 +735,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getThreatScore() -> "RankingScore":
         """
-        See `getIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`.
         """
         rs = RankingScore.getIntersectionOverUnion()
         rs.rename("Threat Score")
@@ -720,17 +745,20 @@ class RankingScore(AbstractScore):
     def getInverseIntersectionOverUnion() -> "RankingScore":
         """
         Inverse Intersection over Union (IoU).
+
         .. math::
             IoU-Inv = P(\\{tn\\} | \\{tn, fp, fn\\}) = P(S=1 | Y=c_- \\vee \\hat{Y}=c_-)
 
         This score is a particular case of (non-canonical) ranking score with the importance
         proportional to
-        :math:`I(tn)=1`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=0`.
+
+        * :math:`I(tn)=1`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=1`,
+        * and :math:`I(tp)=0`.
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/InverseIntersectionOverUnion_in_ROC.svg
 
         Synonyms: inverse Jaccard index, inverse Jaccard similarity coefficient, inverse Tanimoto coefficient, inverse similarity, inverse critical success index, inverse threat score.
@@ -746,7 +774,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getInverseJaccard() -> "RankingScore":
         """
-        See `getInverseIntersectionOverUnion()`.
+        See :meth:`sorbetto.ranking.RankingScore.getInverseIntersectionOverUnion`.
         """
         rs = RankingScore.getInverseIntersectionOverUnion()
         rs.rename("Inverse Jaccard", "J-Inv")
@@ -756,15 +784,17 @@ class RankingScore(AbstractScore):
     def getF(beta=1.0) -> "RankingScore":
         """
         The F-score. See https://en.wikipedia.org/wiki/F-score
+
         .. math::
             F_\\beta = \\frac{ (1+\\beta^2) P(\\{tp\\} }{ 1 P(\\{fp\\} + \\beta^2 P(\\{fn\\} + (1+\\beta^2) P(\\{tp\\} }
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=0`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=beta**2`,
-        and :math:`I(tp)=1 + beta**2`.
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=beta**2`,
+        * and :math:`I(tp)=1 + beta**2`.
 
         Args:
             beta (float, optional): :math:`\\beta`. Defaults to 1.0.
@@ -792,7 +822,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getDiceSorensenCoefficient() -> "RankingScore":
         """
-        See `getF()` with :math:`\\beta=1`.
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Dice-Sørensen coefficient", "DSC")
@@ -801,7 +831,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getZijdenbosSimilarityIndex() -> "RankingScore":
         """
-        See `getF()` with :math:`\\beta=1`.
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Zijdenbos Similarity Index", "ZSI")
@@ -810,7 +840,7 @@ class RankingScore(AbstractScore):
     @staticmethod
     def getCzekanowskiBinaryIndex() -> "RankingScore":
         """
-        See `getF()` with :math:`\\beta=1`.
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Czekanowski Binary Index", "CBI")
@@ -820,15 +850,17 @@ class RankingScore(AbstractScore):
     def getInverseF(beta=1.0) -> "RankingScore":
         """
         The inverse F-score.
+
         .. math::
             F_\\beta-inv = \\frac{ (1+\\beta^2) P(\\{tn\\} }{ 1 P(\\{fn\\} + \\beta^2 P(\\{fp\\} + (1+\\beta^2) P(\\{tn\\} }
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=1 + beta**2`,
-        :math:`I(fp)=beta**2`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=0`.
+
+        * :math:`I(tn)=1 + beta**2`,
+        * :math:`I(fp)=beta**2`,
+        * :math:`I(fn)=1`,
+        * and :math:`I(tp)=0`.
 
         Args:
             beta (float, optional): :math:`\\beta`. Defaults to 1.0.
@@ -857,17 +889,20 @@ class RankingScore(AbstractScore):
     def getAccuracy() -> "RankingScore":
         """
         Accuracy (A).
+
         .. math::
             A = P(\\{tn, tp\\}) = P(S=1)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
-        :math:`I(tn)=1`,
-        :math:`I(fp)=1`,
-        :math:`I(fn)=1`,
-        and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+
+        * :math:`I(tn)=1`,
+        * :math:`I(fp)=1`,
+        * :math:`I(fn)=1`,
+        * and :math:`I(tp)=1` (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
+
         .. image:: /figures/Accuracy_in_ROC.svg
 
         Returns:
@@ -896,19 +931,21 @@ class RankingScore(AbstractScore):
         """
         The skew-insensitive version of :math:`F_1`,
         defined in cite:t:`Flach2003TheGeometry`.
+
         .. math::
             SIVF = \\frac{ 2 TPR }{ TPR + FPR + 1 }
         This score is clearly undefined when one of the class priors is zero,
         as in this case either FPR or TPR is undefined.
 
-        When used on performances with the class priors, for the negative and positve
+        When used on performances with the class priors, for the negative and positive
         classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
         this score becomes a particular case of (non-canonical) ranking score with the
         importance proportional to
-        :math:`I(tn)=0`,
-        :math:`I(fp)=\\pi_+`,
-        :math:`I(fn)=\\pi_-`,
-        and :math:`I(tp)=2 \\pi_-`.
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=\\pi_+`,
+        * :math:`I(fn)=\\pi_-`,
+        * and :math:`I(tp)=2 \\pi_-`.
 
         Args:
             priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
@@ -947,6 +984,7 @@ class RankingScore(AbstractScore):
     ) -> "RankingScore":
         """
         The macro-averaged recall, with a weighted arithmetic mean, is defined as
+
         .. math::
             m-Re = \\lambda_- Re_- + \\lambda_+ Re_+
         where :math:`Re_-` is the recall of the negative class (:math:`Re_- = TNR`),
@@ -956,12 +994,13 @@ class RankingScore(AbstractScore):
         This score is clearly undefined when one of the class priors is zero,
         as in this case either :math:`Re_-` or :math:`Re_+` is undefined.
 
-        When used on performances with the class priors, for the negative and positve
+        When used on performances with the class priors, for the negative and positive
         classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
-        :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
-        and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
+
+        * :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
+        * and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
 
         Args:
             priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
@@ -996,7 +1035,7 @@ class RankingScore(AbstractScore):
         ifn = itp = weightClassPos / priorPos
         importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         if weightClassPos == 0.5:
-            name = "Arithmetcially Macro-Averaged Recall"
+            name = "Arithmetically Macro-Averaged Recall"
             abbreviation = "m-Re"
         else:
             name = "{:g} Re_- + {:g} Re_+".format(weightClassNeg, weightClassPos)
@@ -1009,18 +1048,20 @@ class RankingScore(AbstractScore):
     def getWeightedAccuracy(priorPos: float, weightClassPos: float) -> "RankingScore":
         """
         The weighted accuracy is defined as
+
         .. math::
             WA = \\lambda_- TNR + \\lambda_+ TPR
         with :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
         This score is clearly undefined when one of the class priors is zero,
         as in this case either TNR or TPR is undefined.
 
-        When used on performances with the class priors, for the negative and positve
+        When used on performances with the class priors, for the negative and positive
         classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
-        :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
-        and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
+
+        * :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
+        * and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
 
         Args:
@@ -1043,6 +1084,21 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getBalancedAccuracy(priorPos: float) -> "RankingScore":
+        """
+        The balanced accuracy (:math:`BA`).
+
+        .. math::
+            BA = \\frac12 TNR + \\frac12 TPR
+
+        See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedRecall`
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+
+        Returns:
+            RankingScore: the score as a RankingScore object that can be used only
+              on performances satisfying the constraint of fixed priors.
+        """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
         rs = RankingScore.getMacroAveragedRecall(priorPos, weightClassPos=0.5)
         if priorPos == 0.5:
@@ -1060,6 +1116,7 @@ class RankingScore(AbstractScore):
     ) -> "RankingScore":
         """
         The macro-averaged precision, with a weighted arithmetic mean, is defined as
+
         .. math::
             m-Pr = \\lambda_- Pr_- + \\lambda_+ Pr_+
         where :math:`Pr_-` is the precision of the negative class (:math:`Pr_- = NPV`),
@@ -1069,12 +1126,13 @@ class RankingScore(AbstractScore):
         This score is clearly undefined when one of the class prediction rates is zero,
         as in this case either :math:`Pr_-` or :math:`Pr_+` is undefined.
 
-        When used on performances with the class prediction rates, for the negative and positve
+        When used on performances with the class prediction rates, for the negative and positive
         classes of :math:`P(\\hat{Y}=c_-)=\\tau_-` and :math:`P(\\hat{Y}=c_+)=\\tau_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
-        :math:`I(tn) = I(fn) = \\frac{ \\lambda_- }{ \\tau_- }`
-        and :math:`I(fp) = I(tp) = \\frac{ \\lambda_+ }{ \\tau_+ }`.
+
+        * :math:`I(tn) = I(fn) = \\frac{ \\lambda_- }{ \\tau_- }`
+        * and :math:`I(fp) = I(tp) = \\frac{ \\lambda_+ }{ \\tau_+ }`.
 
         Args:
             ratePos (float): The prediction rate of the positive class, :math:`\\tau_+\\in(0,1)`.
@@ -1109,7 +1167,7 @@ class RankingScore(AbstractScore):
         ifp = itp = weightClassPos / ratePos
         importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
         if weightClassPos == 0.5:
-            name = "Arithmetcially Macro-Averaged Precision"
+            name = "Arithmetically Macro-Averaged Precision"
             abbreviation = "m-Pr"
         else:
             name = "{:g} Pr_- + {:g} Pr_+".format(weightClassNeg, weightClassPos)

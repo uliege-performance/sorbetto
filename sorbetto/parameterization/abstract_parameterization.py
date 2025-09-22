@@ -13,24 +13,85 @@ from sorbetto.ranking.ranking_score import RankingScore
 
 
 class AbstractParameterization(ABC):
-    """This is the base class for all possible ways of mapping ranking scores (or, equivalently, importance values, tha is some application-related preferences) onto Tiles. All ranking scores inducing the same performance ordering should be mapped to the same point. It is recommended that the subclasses implement continuous mappings between the four importance values and the two parameters. Also, it is recommended that (1) the ranking scores giving no importance at all to the true positives are mapped to points on the left border (minimal value for the first parameter), (2) the ranking scores giving no importance at all to the true negatives are mapped to points on the right border (maximal value for the first parameter), (3) the ranking scores giving no importance at all to the false positives are mapped to points on the lower border (minimal value for the second parameter), and (4) the ranking scores giving no importance at all to the false negatives are mapped to points on the upper border (minimal value for the second parameter)."""
+    """
+    This is the base class for all possible ways of mapping all (or a subset of)
+    4D importances (that is some application-related preferences) onto 2D Tiles.
+    This mechanism allows to map ranking scores, importance values, performance
+    orderings, and rankings onto Tiles.
+
+    All ranking scores inducing the same performance ordering should be mapped
+    to the same point. It is recommended that the subclasses implement continuous
+    mappings between the four importance values and the two parameters.
+
+    Also, it is recommended that:
+    (1) the ranking scores giving no importance at all to the true positives are
+    mapped to points on the left border (minimal value for the first parameter);
+    (2) the ranking scores giving no importance at all to the true negatives are
+    mapped to points on the right border (maximal value for the first parameter);
+    (3) the ranking scores giving no importance at all to the false positives are
+    mapped to points on the lower border (minimal value for the second parameter);
+    and (4) the ranking scores giving no importance at all to the false negatives
+    are mapped to points on the upper border (minimal value for the second parameter).
+
+    An example of parameterization is the "default" parameterization
+    :math:`(x, y)=(a(I), b(I))` that has been defined in :cite:t:`Pierard2024TheTile-arxiv`.
+    """
 
     def __init__(self):
+        """
+        Constructor.
+        """
         ABC.__init__(self)
 
     @abstractmethod
-    def getNameParameter1(self) -> str: ...
+    def getNameParameter1(self) -> str:
+        """
+        Returns the name of the first parameter (the horizontal coordinate, :math:`x`, in Tiles)
+
+        Returns:
+            str: The name of the first parameter.
+        """
+        ...
 
     @abstractmethod
-    def getNameParameter2(self) -> str: ...
+    def getNameParameter2(self) -> str:
+        """
+        Returns the name of the second parameter (the vertical coordinate, :math:`y`, in Tiles)
+
+        Returns:
+            str: The name of the second parameter.
+        """
+        ...
 
     @abstractmethod
-    def getBoundsParameter1(self) -> tuple[float, float]: ...
+    def getBoundsParameter1(self) -> tuple[float, float]:
+        """
+        Returns the bounds for the first parameter (the horizontal coordinate, :math:`x`, in Tiles)
+
+        Returns:
+            tuple[float, float]: The bounds :math:`(\\min_x, \\max_x)` for the first parameter, with :math:`\\min_x < \\max_x`.
+        """
+        ...
 
     @abstractmethod
-    def getBoundsParameter2(self) -> tuple[float, float]: ...
+    def getBoundsParameter2(self) -> tuple[float, float]:
+        """
+        Returns the bounds for the second parameter (the vertical coordinate, :math:`y`, in Tiles)
+
+        Returns:
+            tuple[float, float]: The bounds :math:`(\\min_y, \\max_y)` for the second parameter, with :math:`\\min_y < \\max_y`.
+        """
+        ...
 
     def getExtent(self) -> tuple[float, float, float, float]:
+        """
+        The axis-aligned bounding box, :math:`(\\min_x, \\max_x, \\min_y, \\max_y)`,
+        of Tiles with this parameterization :math:`(x, y)`. This bounding box is
+        such that :math:`\\min_x < \\max_x` and :math:`\\min_y < \\max_y`.
+
+        Returns:
+            tuple[float, float, float, float]: The axis-aligned bounding box.
+        """
         min_x, max_x = self.getBoundsParameter1()
         assert min_x < max_x
         min_y, max_y = self.getBoundsParameter2()
@@ -64,7 +125,7 @@ class AbstractParameterization(ABC):
     def getCanonicalImportanceVectorized(
         self, param1: np.ndarray, param2: np.ndarray
     ) -> np.ndarray:
-        """Computes a array of canonical importances values corresponding to
+        """Computes an array of canonical importance values corresponding to
         the given parameters.
 
         This needs to be implemented by subclasses.
@@ -83,12 +144,37 @@ class AbstractParameterization(ABC):
         return RankingScore(importance)
 
     @abstractmethod
-    def getValueParameter1(self, rankingScore) -> float: ...
+    def getValueParameter1(self, rankingScore: RankingScore) -> float:
+        """
+        Returns the value of the first parameter (the horizontal coordinate, :math:`x`, in Tiles)
+        corresponding to the given ranking score.
+
+        Args:
+            rankingScore (RankingScore): The ranking score.
+
+        Returns:
+            float: The value of the first parameter.
+        """
+        ...
 
     @abstractmethod
-    def getValueParameter2(self, rankingScore) -> float: ...
+    def getValueParameter2(self, rankingScore) -> float:
+        """
+        Returns the value of the second parameter (the vertical coordinate, :math:`y`, in Tiles)
+        corresponding to the given ranking score.
+
+        Args:
+            rankingScore (RankingScore): The ranking score.
+
+        Returns:
+            float: The value of the second parameter.
+        """
+        ...
 
     def locateRankingScore(self, rankingScore) -> Point:
+        """
+        Locates any *Ranking Score*.
+        """
         assert isinstance(rankingScore, RankingScore)
         param1 = self.getValueParameter1(rankingScore)
         param2 = self.getValueParameter2(rankingScore)
@@ -96,106 +182,215 @@ class AbstractParameterization(ABC):
 
     def locateCohenCorrected(self, score: RankingScore) -> Point:
         """
+        Locates the performance ordering induced by the Cohen-corrected version of the provided ranking score.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
         """
         raise NotImplementedError()  # TODO
 
     def locateTrueNegativeRate(self) -> Point:
-        return self.locateRankingScore(RankingScore.getTrueNegativeRate())
+        """
+        Locates the score *True Negative Rate*.
+        See :meth:`sorbetto.ranking.RankingScore.getTrueNegativeRate`
+        """
+        score = RankingScore.getTrueNegativeRate()
+        return self.locateRankingScore(score)
 
     def locateTruePositiveRate(self) -> Point:
-        return self.locateRankingScore(RankingScore.getTruePositiveRate())
+        """
+        Locates the score *True Positive Rate*.
+        See :meth:`sorbetto.ranking.RankingScore.getTruePositiveRate`
+        """
+        score = RankingScore.getTruePositiveRate()
+        return self.locateRankingScore(score)
 
     def locateSpecificity(self) -> Point:
-        return self.locateRankingScore(RankingScore.getSpecificity())
+        """
+        Locates the score *Specificity*.
+        See :meth:`sorbetto.ranking.RankingScore.getSpecificity`
+        """
+        score = RankingScore.getSpecificity()
+        return self.locateRankingScore(score)
 
     def locateSelectivity(self) -> Point:
-        return self.locateRankingScore(RankingScore.getSelectivity())
+        """
+        Locates the score *Selectivity*.
+        See :meth:`sorbetto.ranking.RankingScore.getSelectivity`
+        """
+        score = RankingScore.getSelectivity()
+        return self.locateRankingScore(score)
 
     def locateSensitivity(self) -> Point:
-        return self.locateRankingScore(RankingScore.getSensitivity())
+        """
+        Locates the score *Sensitivity*.
+        See :meth:`sorbetto.ranking.RankingScore.getSensitivity`
+        """
+        score = RankingScore.getSensitivity()
+        return self.locateRankingScore(score)
 
     def locateNegativePredictiveValue(self) -> Point:
-        return self.locateRankingScore(RankingScore.getNegativePredictiveValue())
+        """
+        Locates the score *Negative Predictive Value*.
+        See :meth:`sorbetto.ranking.RankingScore.getNegativePredictiveValue`
+        """
+        score = RankingScore.getNegativePredictiveValue()
+        return self.locateRankingScore(score)
 
     def locatePositivePredictiveValue(self) -> Point:
-        return self.locateRankingScore(RankingScore.getPositivePredictiveValue())
+        """
+        Locates the score *Positive Predictive Value*.
+        See :meth:`sorbetto.ranking.RankingScore.getPositivePredictiveValue`
+        """
+        score = RankingScore.getPositivePredictiveValue()
+        return self.locateRankingScore(score)
 
     def locatePrecision(self) -> Point:
-        return self.locateRankingScore(RankingScore.getPrecision())
+        """
+        Locates the score *Precision*.
+        See :meth:`sorbetto.ranking.RankingScore.getPrecision`
+        """
+        score = RankingScore.getPrecision()
+        return self.locateRankingScore(score)
 
     def locateInversePrecision(self) -> Point:
-        return self.locateRankingScore(RankingScore.getInversePrecision())
+        """
+        Locates the score *Inverse Precision*.
+        See :meth:`sorbetto.ranking.RankingScore.getInversePrecision`
+        """
+        score = RankingScore.getInversePrecision()
+        return self.locateRankingScore(score)
 
     def locateRecall(self) -> Point:
-        return self.locateRankingScore(RankingScore.getRecall())
+        """
+        Locates the score *Recall*.
+        See :meth:`sorbetto.ranking.RankingScore.getRecall`
+        """
+        score = RankingScore.getRecall()
+        return self.locateRankingScore(score)
 
     def locateInverseRecall(self) -> Point:
-        return self.locateRankingScore(RankingScore.getInverseRecall())
+        """
+        Locates the score *Inverse Recall*.
+        See :meth:`sorbetto.ranking.RankingScore.getInverseRecall`
+        """
+        score = RankingScore.getInverseRecall()
+        return self.locateRankingScore(score)
 
     def locateIntersectionOverUnion(self) -> Point:
-        return self.locateRankingScore(RankingScore.getIntersectionOverUnion())
+        """
+        Locates the score *Intersection over Union*.
+        See :meth:`sorbetto.ranking.RankingScore.getIntersectionOverUnion`
+        """
+        score = RankingScore.getIntersectionOverUnion()
+        return self.locateRankingScore(score)
 
     def locateInverseIntersectionOverUnion(self) -> Point:
-        return self.locateRankingScore(RankingScore.getInverseIntersectionOverUnion())
+        """
+        Locates the score *Inverse Intersection over Union*.
+        See :meth:`sorbetto.ranking.RankingScore.getInverseIntersectionOverUnion`
+        """
+        score = RankingScore.getInverseIntersectionOverUnion()
+        return self.locateRankingScore(score)
 
     def locateJaccard(self) -> Point:
         """
-        See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+        Locates the score *Jaccard*.
+        See :meth:`sorbetto.ranking.RankingScore.getJaccard`
         """
-        return self.locateRankingScore(RankingScore.getJaccard())
+        score = RankingScore.getJaccard()
+        return self.locateRankingScore(score)
 
     def locateInverseJaccard(self) -> Point:
-        return self.locateRankingScore(RankingScore.getInverseJaccard())
+        """
+        Locates the score *Inverse Jaccard*.
+        See :meth:`sorbetto.ranking.RankingScore.getInverseJaccard`
+        """
+        score = RankingScore.getInverseJaccard()
+        return self.locateRankingScore(score)
 
     def locateTanimotoCoefficient(self) -> Point:
-        return self.locateRankingScore(RankingScore.getTanimotoCoefficient())
+        """
+        Locates the score *Tanimoto Coefficient*.
+        See :meth:`sorbetto.ranking.RankingScore.getTanimotoCoefficient`
+        """
+        score = RankingScore.getTanimotoCoefficient()
+        return self.locateRankingScore(score)
 
     def locateSimilarity(self) -> Point:
-        return self.locateRankingScore(RankingScore.getSimilarity())
+        """
+        Locates the score *Similarity*.
+        See :meth:`sorbetto.ranking.RankingScore.getSimilarity`
+        """
+        score = RankingScore.getSimilarity()
+        return self.locateRankingScore(score)
 
     def locateCriticalSuccessIndex(self) -> Point:
-        return self.locateRankingScore(RankingScore.getCriticalSuccessIndex())
+        """
+        Locates the score *Critical Success Index*.
+        See :meth:`sorbetto.ranking.RankingScore.getCriticalSuccessIndex`
+        """
+        score = RankingScore.getCriticalSuccessIndex()
+        return self.locateRankingScore(score)
 
     def locateF(self, beta=1.0) -> Point:
         """
-        See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+        Locates the score *F*.
+        See :meth:`sorbetto.ranking.RankingScore.getF`
         """
-        return self.locateRankingScore(RankingScore.getF(beta=beta))
+        score = RankingScore.getF(beta=beta)
+        return self.locateRankingScore(score)
 
     def locateInverseF(self, beta=1.0) -> Point:
-        return self.locateRankingScore(RankingScore.getInverseF(beta=beta))
+        """
+        Locates the score *Inverse F*.
+        See :meth:`sorbetto.ranking.RankingScore.getInverseF`
+        """
+        score = RankingScore.getInverseF(beta=beta)
+        return self.locateRankingScore(score)
 
     def locateDiceSorensenCoefficient(self) -> Point:
         """
-        Dice-Sørensen coefficient.
-        Synonym: F-one :math:`\\scoreFOne`.
-        :math:`\\scoreFOne=\\nicefrac{2\\scoreJaccardPos}{\\scoreJaccardPos+1}`
+        Locates the score *Dice-Sørensen Coefficient*.
+        See :meth:`sorbetto.ranking.RankingScore.getDiceSorensenCoefficient`
         """
-        return self.locateRankingScore(RankingScore.getDiceSorensenCoefficient())
+        score = RankingScore.getDiceSorensenCoefficient()
+        return self.locateRankingScore(score)
 
     def locateZijdenbosSimilarityIndex(self) -> Point:
-        return self.locateRankingScore(RankingScore.getZijdenbosSimilarityIndex())
+        """
+        Locates the score *Zijdenbos Similarity Index*.
+        See :meth:`sorbetto.ranking.RankingScore.getZijdenbosSimilarityIndex`
+        """
+        score = RankingScore.getZijdenbosSimilarityIndex()
+        return self.locateRankingScore(score)
 
     def locateCzekanowskiBinaryIndex(self) -> Point:
-        return self.locateRankingScore(RankingScore.getCzekanowskiBinaryIndex())
+        """
+        Locates the score *Czekanowski Binary Index*.
+        See :meth:`sorbetto.ranking.RankingScore.getCzekanowskiBinaryIndex`
+        """
+        score = RankingScore.getCzekanowskiBinaryIndex()
+        return self.locateRankingScore(score)
 
     def locateAccuracy(self) -> Point:
-        return self.locateRankingScore(RankingScore.getAccuracy())
-
-    def locateMatchingCoefficient(self) -> Point:
-        return self.locateRankingScore(RankingScore.getMatchingCoefficient())
+        """
+        Locates the score *Accuracy*.
+        See :meth:`sorbetto.ranking.RankingScore.getAccuracy`
+        """
+        score = RankingScore.getAccuracy()
+        return self.locateRankingScore(score)
 
     def locateBennettS(self) -> Point:
         """
-        Bennett's :math:`S`.
+        Locates the performance ordering induced by the score *Bennett's :math:`S`*.
         This score is related to the accuracy :math:`A` by :math:`S=2A-1`.
+
         Reference: :cite:t:`Warrens2012TheEffect`.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        return self.locateAccuracy()
 
     def locateSimilarityCoefficientsT(self) -> Point:
         """
+        Locates the performance ordering induced by the scores *Similarity Coefficients T*.
         Similarity coefficients of the family :math:`T_\\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
@@ -203,6 +398,7 @@ class AbstractParameterization(ABC):
 
     def locateSimilarityCoefficientsS(self) -> Point:
         """
+        Locates the performance ordering induced by the scores *Similarity Coefficients S*.
         Similarity coefficients of the family :math:`S_\\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
@@ -210,6 +406,7 @@ class AbstractParameterization(ABC):
 
     def locateSimilarityCoefficients(self) -> Conic:
         """
+        Locates the performance ordering induced by the scores *Similarity Coefficients*.
         Similarity coefficients, as defined in :cite:t:`Batyrshin2016Visualization`.
         See :cite:t:`Batyrshin2016Visualization` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
@@ -217,24 +414,29 @@ class AbstractParameterization(ABC):
 
     def locateStandardizedNegativePredictiveValue(self, priorPos) -> Point:
         """
-        Standardized Negative Predictive Value (SNPV).
-        Defined in :cite:t:`Heston2011Standardizing`.
-        :math:`\\scoreSNPV=\\frac{\\scoreTNR}{\\scoreTNR+\\scoreFNR}=\\frac{\\scoreNPV\\priorpos}{\\scoreNPV(\\priorpos-\\priorneg)+\\priorneg}`
+        Locates the performance ordering induced by the score *Standardized Negative Predictive Value*.
+        The Standardized Negative Predictive Value (SNPV) is defined in :cite:t:`Heston2011Standardizing` as
+        .. math::
+            SNPV=\\frac{TNR}{TNR+FNR}=\\frac{NPV \\pi_+ }{NPV( \\pi_+ - \\pi_- )+ \\pi_- }
+
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateStandardizedPositivePredictiveValue(self, priorPos) -> Point:
         """
-        Standardized Positive Predictive Value (SPPV).
-        Defined in :cite:t:`Heston2011Standardizing`.
-        :math:`\\scoreSPPV=\\frac{\\scoreTPR}{\\scoreFPR+\\scoreTPR}=\\frac{\\scorePPV\\priorneg}{\\scorePPV(\\priorneg-\\priorpos)+\\priorpos}`
+        Locates the performance ordering induced by the score *Standardized Positive Predictive Value*.
+        Standardized Positive Predictive Value (SPPV) is defined in :cite:t:`Heston2011Standardizing` as
+        .. math::
+            SPPV=\\frac{ TPR }{ FPR + TPR }=\\frac{ PPV  \\pi_- }{ PPV ( \\pi_- - \\pi_+ )+ \\pi_+ }
+
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateNegativeLikelihoodRatioComplement(self, priorPos) -> Point:
         """
+        Locates the performance ordering induced by the score *Negative Likelihood Ratio Complement*.
         Negative Likelihood Ratio.
         References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
@@ -243,6 +445,7 @@ class AbstractParameterization(ABC):
 
     def locatePositiveLikelihoodRatio(self, priorPos) -> Point:
         """
+        Locates the performance ordering induced by the score *Positive Likelihood Ratio*.
         Positive Likelihood Ratio.
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
@@ -251,43 +454,67 @@ class AbstractParameterization(ABC):
 
     def locateSkewInsensitiveVersionOfF(self, priorPos) -> Point:
         """
-        The skew-insensitive version of :math:`\\scoreFOne`.
+        Locates the score *Skew-Insensitive Version of F1*.
+        The skew-insensitive version of :math:`F_1`.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
-        return self.locateRankingScore(RankingScore.getSkewInsensitiveVersionOfF())
+        return self.locateRankingScore(RankingScore.getSkewInsensitiveVersionOfF1())
 
     def locateWeightedAccuracy(self, priorPos: float, weightPos: float) -> Point:
-        return self.locateRankingScore(
-            RankingScore.getWeightedAccuracy(priorPos, weightPos)
-        )
+        """
+        Locates the score *Weighted Accuracy*.
+        See :meth:`sorbetto.ranking.RankingScore.getWeightedAccuracy`
+        """
+        score = RankingScore.getWeightedAccuracy(priorPos, weightPos)
+        return self.locateRankingScore(score)
 
     def locateMacroAveragedRecall(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getMacroAveragedRecall(priorPos))
+        """
+        Locates the score *(Arithmetically) Macro-Averaged Recall*.
+        See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedRecall`
+        """
+        score = RankingScore.getMacroAveragedRecall(priorPos)
+        return self.locateRankingScore(score)
 
     def locateBalancedAccuracy(self, priorPos: float) -> Point:
-        return self.locateRankingScore(RankingScore.getBalancedAccuracy(priorPos))
+        """
+        Locates the score *Balanced Accuracy*.
+        See :meth:`sorbetto.ranking.RankingScore.getBalancedAccuracy`
+        """
+        score = RankingScore.getBalancedAccuracy(priorPos)
+        return self.locateRankingScore(score)
 
     def locateYoudenJ(self, priorPos: float) -> Point:
         """
-        Youden's index or Youden's :math:`\\scoreYoudenJ` statistic.
+        Locates the performance ordering induced by the score *Youden*.
+        Youden's index or Youden's :math:` Y_J ` statistic.
         Defined in :cite:t:`Youden1950Index`
         References: :cite:t:`Fluss2005Estimation`.
-        Related to the balanced accuracy by :math:`\\scoreYoudenJ=\\scoreTNR+\\scoreTPR-1=2\\scoreBalancedAccuracy-1`.
+        Related to the balanced accuracy by :math:` Y_J =TNR+ TPR -1=2 BA -1`.
         Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locatePeirceSkillScore(self, priorPos: float) -> Point:
+        """
+        Locates the performance ordering induced by the score *Peirce Skill Score*.
+        """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateInformedness(self, priorPos: float) -> Point:
+        """
+        Locates the performance ordering induced by the score *Informedness*.
+        """
         """
         See :cite:t:`Pierard2025Foundations`, Section A.7.4
         """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateCohenKappa(self, priorPos: float) -> Point:
+        """
+        Locates the performance ordering induced by the score *Cohen Kappa*.
+        """
         """
         Cohen's :math:`\\scoreCohenKappa` statistic.
         Defined in :cite:t:`Cohen1960ACoefficient`
@@ -298,15 +525,20 @@ class AbstractParameterization(ABC):
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateHeidkeSkillScore(self, priorPos: float) -> Point:
+        """
+        Locates the performance ordering induced by the score "Heidke Skill Score".
+        """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateProbabilityTrueNegative(
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        The Probability of True Negative is the score defined as
+        Locates the performance ordering induced by the score "Probability of True Negative".
+        It is defined as
+
         .. math::
-            PTN : \\mathbb{P} \rightarrow [0,1] : P \\mapsto PTN(P) = P(\\{tn\\})
+            PTN : \\mathbb{P} \\rightarrow [0,1] : P \\mapsto PTN(P) = P(\\{tn\\})
 
         When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
         and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTN = TNR \\pi_-`, so the
@@ -325,7 +557,7 @@ class AbstractParameterization(ABC):
 
         Returns:
             Point: the point on the Tile where the performance ordering induced
-                by the score :math:`PTN` is, when the ordering is retricted to the
+                by the score :math:`PTN` is, when the ordering is restricted to the
                 performances with the specified constraint.
         """
         if priorPos is None:
@@ -349,15 +581,18 @@ class AbstractParameterization(ABC):
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        See `locateProbabilityTrueNegative()`.
+        Locates the performance ordering induced by the score "Rejection Rate".
+        See :meth:`locateProbabilityTrueNegative`.
         """
         return self.locateProbabilityTrueNegative(priorPos=priorPos, ratePos=ratePos)
 
-    def locateProbabilityFalsePositiveComplenent(
+    def locateProbabilityFalsePositiveComplement(
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        The Complement of the Probability of False Positive is the score defined as
+        Locates the performance ordering induced by the score "Complement of the Probability of False Positive".
+        It is defined as
+
         .. math::
             (1-PFP)(P) = P(\\{tn,fn,tp\\}
 
@@ -377,7 +612,7 @@ class AbstractParameterization(ABC):
 
         Returns:
             Point: the point on the Tile where the performance ordering induced
-                by the score :math:`(1-PFP)` is, when the ordering is retricted to the
+                by the score :math:`(1-PFP)` is, when the ordering is restricted to the
                 performances with the specified constraint.
         """
         if priorPos is None:
@@ -397,11 +632,13 @@ class AbstractParameterization(ABC):
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
-    def locateProbabilityFalseNegativeComplenent(
+    def locateProbabilityFalseNegativeComplement(
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        The Complement of the Probability of False Negative is the score defined as
+        Locates the performance ordering induced by the score "Complement of the Probability of False Negative".
+        It is defined as
+
         .. math::
             (1-PFN)(P) = P(\\{tn,fp,tp\\}
 
@@ -421,7 +658,7 @@ class AbstractParameterization(ABC):
 
         Returns:
             Point: the point on the Tile where the performance ordering induced
-                by the score :math:`(1-PFN)` is, when the ordering is retricted to the
+                by the score :math:`(1-PFN)` is, when the ordering is restricted to the
                 performances with the specified constraint.
         """
         if priorPos is None:
@@ -445,9 +682,11 @@ class AbstractParameterization(ABC):
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        The Probability of True Positive is the score defined as
+        Locates the performance ordering induced by the score "Probability of True Positive".
+        It is defined as
+
         .. math::
-            PTP : \\mathbb{P} \rightarrow [0,1] : P \\mapsto PTP(P) = P(\\{tp\\})
+            PTP : \\mathbb{P} \\rightarrow [0,1] : P \\mapsto PTP(P) = P(\\{tp\\})
 
         When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
         and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTP = TPR \\pi_+`, so the
@@ -466,7 +705,7 @@ class AbstractParameterization(ABC):
 
         Returns:
             Point: the point on the Tile where the performance ordering induced
-                by the score :math:`PTP` is, when the ordering is retricted to the
+                by the score :math:`PTP` is, when the ordering is restricted to the
                 performances with the specified constraint.
         """
         if priorPos is None:
@@ -490,29 +729,43 @@ class AbstractParameterization(ABC):
         self, *, priorPos: float | None = None, ratePos: float | None = None
     ) -> Point:
         """
-        See `locateProbabilityTruePositive()`.
+        Locates the performance ordering induced by the score "Detection Rate".
+        See :meth:`locateProbabilityTruePositive`.
         """
         return self.locateProbabilityTruePositive(priorPos=priorPos, ratePos=ratePos)
 
-    def locateNormalizedConfusionMatrixDeterminent(self, priorPos: float) -> Point:
+    def locateNormalizedConfusionMatrixDeterminant(self, priorPos: float) -> Point:
         """
-        The determinant of the normalized confusion matrix is :math:`\\scoreConfusionMatrixDeterminant=\\priorneg\\priorpos\\scoreYoudenJ`.
+        Locates the performance ordering induced by the determinant of the normalized
+        confusion matrix is :math:`|\\mathcal{C}|= \\pi_-  \\pi_+  Y_J `.
         Some works using this score: :cite:t:`Wimmer2006APerson`.
+
+        See https://en.wikipedia.org/wiki/Confusion_matrix
+        See https://en.wikipedia.org/wiki/Determinant
         """
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateMacroAveragedPrecision(self, ratePos: float) -> Point:
+        """
+        Locates the score *(Arithmetically) Macro-Averaged Precision*.
+        See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
+        """
         return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
 
     def locateMarkedness(self, ratePos: float) -> Point:
         """
-        Markedness.
-        Defined in :cite:t:`Powers2020Evaluation-arxiv` as :math:`\\scoreNPV+\\scorePPV-1`.
+        Locates the performance ordering induced by the score "Markedness".
+        See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
+        Defined in :cite:t:`Powers2020Evaluation-arxiv` as :math:`NPV+ PPV -1`.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
         return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
 
     def locateClaytonSkillScore(self, ratePos: float) -> Point:
+        """
+        Locates the performance ordering induced by the score "Clayton Skill Score".
+        See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
+        """
         return self.locateRankingScore(RankingScore.getMacroAveragedPrecision(ratePos))
 
     @abstractmethod
@@ -520,7 +773,7 @@ class AbstractParameterization(ABC):
         self, priorPos: float
     ) -> AbstractGeometricObject2D:
         """
-        The set of performance orderings induced by ranking scores that put all no-skill
+        Locates the set of performance orderings induced by ranking scores that put all no-skill
         performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
 
         .. math::
@@ -544,7 +797,7 @@ class AbstractParameterization(ABC):
         self, ratePos: float
     ) -> AbstractGeometricObject2D:
         """
-        The set of performance orderings induced by ranking scores that put all no-skill
+        Locates the set of performance orderings induced by ranking scores that put all no-skill
         performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
 
         .. math::
@@ -563,6 +816,7 @@ class AbstractParameterization(ABC):
 
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
         """
+        Locates the set of performance orderings induced by ranking scores that ..............................
         .. math::
             \\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
             = \\left\\{ R_I : a(I) = b(I) \\right\\}
@@ -572,6 +826,7 @@ class AbstractParameterization(ABC):
 
     def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
         """
+        Locates the set of performance orderings induced by ranking scores that ..............................
         .. math::
             \\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
             = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}
