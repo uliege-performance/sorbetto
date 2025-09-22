@@ -45,8 +45,8 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
 
     @staticmethod
     def _get_auto_levels(mat_values: np.ndarray) -> np.ndarray:
-        max_val = np.max(mat_values)
-        min_val = np.min(mat_values)
+        max_val = np.nanmax(mat_values)
+        min_val = np.nanmin(mat_values)
 
         if np.abs(max_val - min_val) < 1e-6:
             return np.empty(0)
