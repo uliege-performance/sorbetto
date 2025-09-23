@@ -4,7 +4,7 @@
 import math
 from typing import override
 
-from sorbetto.flavor.best_flavor import BestFlavor
+from sorbetto.flavor.worst_value_flavor import WorstValueFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
@@ -13,20 +13,20 @@ from sorbetto.ranking.ranking_score import RankingScore
 from sorbetto.tile.numeric_tile import NumericTile
 
 
-class BestTile(NumericTile):
+class WorstValueTile(NumericTile):
     """
-    Example of Best Tile: the SOTA Tile.
+    Example of Worst Value Tile: the Baseline Tile.
     """
 
     def __init__(
         self,
         parameterization: AbstractParameterization,
-        flavor: BestFlavor,
-        name: str = "Best Tile",
+        flavor: WorstValueFlavor,
+        name: str = "Worst Value Tile",
         resolution: int = 1001,
     ):
         assert isinstance(parameterization, AbstractParameterization)
-        assert isinstance(flavor, BestFlavor)
+        assert isinstance(flavor, WorstValueFlavor)
         assert isinstance(name, str)
         assert isinstance(resolution, int)
         assert resolution > 0
@@ -39,10 +39,10 @@ class BestTile(NumericTile):
         )
 
     @property
-    def flavor(self) -> BestFlavor:
+    def flavor(self) -> WorstValueFlavor:
         # We override the property's getter to ensure the right type of flavor.
         flavor = super().flavor
-        assert isinstance(flavor, BestFlavor)
+        assert isinstance(flavor, WorstValueFlavor)
         return flavor
 
     @property
@@ -50,7 +50,7 @@ class BestTile(NumericTile):
         return self.flavor.performances
 
     @override
-    def maximize(self, precision: float = 1e-6) -> tuple[float, float, float]:
+    def minimize(self, precision: float = 1e-6) -> tuple[float, float, float]:
         assert isinstance(precision, float)
         assert precision >= 0.0
 
@@ -70,9 +70,9 @@ class BestTile(NumericTile):
 
         best_x = math.nan
         best_y = math.nan
-        best_val = -math.inf
+        best_val = math.inf
 
-        def update_for_max(ranking_score):
+        def update_for_min(ranking_score):
             nonlocal best_x
             nonlocal best_y
             nonlocal best_val
@@ -81,15 +81,15 @@ class BestTile(NumericTile):
                 x = parameterization.getValueParameter1(ranking_score)
                 y = parameterization.getValueParameter2(ranking_score)
                 val = ranking_score(performance)
-                if val > best_val:
+                if val < best_val:
                     best_x = x
                     best_y = y
                     best_val = val
 
-        update_for_max(RankingScore.getTrueNegativeRate())
-        update_for_max(RankingScore.getTruePositiveRate())
-        update_for_max(RankingScore.getNegativePredictiveValue())
-        update_for_max(RankingScore.getPositivePredictiveValue())
+        update_for_min(RankingScore.getTrueNegativeRate())
+        update_for_min(RankingScore.getTruePositiveRate())
+        update_for_min(RankingScore.getNegativePredictiveValue())
+        update_for_min(RankingScore.getPositivePredictiveValue())
 
         return best_x, best_y, best_val
 
