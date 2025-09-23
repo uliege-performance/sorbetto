@@ -6,6 +6,7 @@ from .annotation_curve_fixed_class_priors import AnnotationCurveFixedClassPriors
 from .annotation_curve_fixed_prediction_rates import AnnotationCurveFixedPredictionRates
 from .annotation_frontiers_between_rankings import AnnotationFrontiersBetweenRankings
 from .annotation_geometric import AnnotationGeometric
+from .annotation_grid_shift_class_priors import AnnotationGridShiftClassPriors
 from .annotation_importance_compass import AnnotationImportanceCompass
 from .annotation_isovalue_curves import AnnotationIsovalueCurves
 from .annotation_max import AnnotationMax
@@ -19,6 +20,7 @@ __all__ = [
     "AnnotationCurveFixedPredictionRates",
     "AnnotationFrontiersBetweenRankings",
     "AnnotationGeometric",
+    "AnnotationGridShiftClassPriors",
     "AnnotationImportanceCompass",
     "AnnotationIsovalueCurves",
     "AnnotationMin",
