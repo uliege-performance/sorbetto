@@ -19,6 +19,7 @@ from sorbetto.performance.two_class_classification_performance import (
 from sorbetto.ranking.ranking_score import RankingScore
 
 
+# TODO: rename this class as ScoreCorrelationFlavor or CorrelationWithScoreFlavor?
 class CorrelationFlavor(AbstractNumericFlavor):
     """
     For a given performance, the *Correlation Flavor* is the mathematical function
@@ -73,6 +74,12 @@ class CorrelationFlavor(AbstractNumericFlavor):
         self,
         importance: Importance | np.ndarray,
     ):
+        assert (
+            isinstance(importance, Importance)
+            or isinstance(importance, np.ndarray)
+            and importance.shape[-1] == 4
+        )  # TODO: RankingScore also supports list[Importance]. Why not here?
+
         try:  # try if X is vectorized
             x_scores: list | np.ndarray = self._score(self._performances)
         except Exception as e:  # else fallback to loop

@@ -68,6 +68,12 @@ class RankingFlavor(AbstractNumericFlavor):
         self,
         importance: Importance | np.ndarray,
     ) -> float | np.ndarray:
+        assert (
+            isinstance(importance, Importance)
+            or isinstance(importance, np.ndarray)
+            and importance.shape[-1] == 4
+        )  # TODO: RankingScore also supports list[Importance]. Why not here?
+
         values = RankingScore._compute(
             importance=importance, performance=self._performances
         )

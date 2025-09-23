@@ -105,6 +105,12 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
         self,
         importance: Importance | np.ndarray,
     ) -> float | np.ndarray:
+        assert (
+            isinstance(importance, Importance)
+            or isinstance(importance, np.ndarray)
+            and importance.shape[-1] == 4
+        )  # TODO: RankingScore also supports list[Importance]. Why not here?
+
         # See how it is done in RankingScore._parse_importance
         if isinstance(importance, Importance):
             itn = importance.itn
