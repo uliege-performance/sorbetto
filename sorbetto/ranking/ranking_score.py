@@ -453,7 +453,8 @@ class RankingScore(AbstractScore):
         ):
             return math.nan
         else:
-            return satisfying / (satisfying + unsatisfying)
+            with np.errstate(invalid="ignore"):
+                return satisfying / (satisfying + unsatisfying)
 
     def __call__(self, performance: TwoClassClassificationPerformance) -> float:
         if self._constraint and not self._constraint(performance):
