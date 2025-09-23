@@ -8,6 +8,7 @@ import numpy as np
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.conic import Conic
+from sorbetto.geometry.line import Line
 from sorbetto.geometry.point import Point
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -416,6 +417,7 @@ class AbstractParameterization(ABC):
         """
         Locates the performance ordering induced by the score *Standardized Negative Predictive Value*.
         The Standardized Negative Predictive Value (SNPV) is defined in :cite:t:`Heston2011Standardizing` as
+
         .. math::
             SNPV=\\frac{TNR}{TNR+FNR}=\\frac{NPV \\pi_+ }{NPV( \\pi_+ - \\pi_- )+ \\pi_- }
 
@@ -427,6 +429,7 @@ class AbstractParameterization(ABC):
         """
         Locates the performance ordering induced by the score *Standardized Positive Predictive Value*.
         Standardized Positive Predictive Value (SPPV) is defined in :cite:t:`Heston2011Standardizing` as
+
         .. math::
             SPPV=\\frac{ TPR }{ FPR + TPR }=\\frac{ PPV  \\pi_- }{ PPV ( \\pi_- - \\pi_+ )+ \\pi_+ }
 
@@ -817,6 +820,7 @@ class AbstractParameterization(ABC):
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
         """
         Locates the set of performance orderings induced by ranking scores that ..............................
+
         .. math::
             \\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
             = \\left\\{ R_I : a(I) = b(I) \\right\\}
@@ -827,12 +831,53 @@ class AbstractParameterization(ABC):
     def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
         """
         Locates the set of performance orderings induced by ranking scores that ..............................
+
         .. math::
             \\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
             = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}
         """
         # See Theorem 2 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!
+
+    @abstractmethod
+    def locateRelativeImportanceSatisfying(self, itn: float, itp: float) -> Line:
+        """
+        Locates the set of performance orderings induced by the ranking scores
+        corresponding to some given values of importance for the satisfying samples
+        (the elements :math:`\\omega` of the sample space :math:`\\Omega` such that
+        :math:`S(\\omega)=1` are :math:`S^{-1}(1)=\\{tn, tp\\}`). The importance
+        values :math:`I(tn)` and :math:`I(tp)` are provided up to a positive
+        scale factor. This is related to the first parameter (the horizontal
+        coordinate, :math:`x`, in Tiles).
+
+        Args:
+            itn (float): The (relative) importance given to the true negatives, :math:`I(tn) \\ge 0`
+            itp (float): The (relative) importance given to the true positives, :math:`I(tp) \\ge 0`
+
+        Returns:
+            AbstractGeometricObject2D: The locus on the Tile.
+        """
+        ...
+
+    @abstractmethod
+    def locateRelativeImportanceUnsatisfying(self, ifp: float, ifn: float) -> Line:
+        """
+        Locates the set of performance orderings induced by the ranking scores
+        corresponding to some given values of importance for the unsatisfying samples
+        (the elements :math:`\\omega` of the sample space :math:`\\Omega` such that
+        :math:`S(\\omega)=0` are :math:`S^{-1}(0)=\\{fp, fn\\}`). The importance
+        values :math:`I(fp)` and :math:`I(fn)` are provided up to a positive
+        scale factor. This is related to the second parameter (the vertical
+        coordinate, :math:`y`, in Tiles).
+
+        Args:
+            ifp (float): The (relative) importance given to the true negatives, :math:`I(fp) \\ge 0`
+            ifn (float): The (relative) importance given to the true positives, :math:`I(fn) \\ge 0`
+
+        Returns:
+            AbstractGeometricObject2D: The locus on the Tile.
+        """
+        ...
 
     @abstractmethod
     def getName(self):

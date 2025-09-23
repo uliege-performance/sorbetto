@@ -5,6 +5,7 @@ import numpy as np
 
 from sorbetto.core.importance import Importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
+from sorbetto.geometry.line import Line
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -171,6 +172,22 @@ class ParameterizationDefault(AbstractParameterization):
             rateNeg, ratePos
         )
         return BilinearCurve(Kab, Ka, Kb, K, name)
+
+    def locateRelativeImportanceSatisfying(self, itn: float, itp: float) -> Line:
+        # x = itp / ( itn + itp )
+        # a x + b y + c = 0
+        a = -1.0
+        b = 0.0
+        c = itp / (itn + itp)
+        return Line(a, b, c, name="relative importance of satisfying")
+
+    def locateRelativeImportanceUnsatisfying(self, ifp: float, ifn: float) -> Line:
+        # y = ifn / ( ifp + ifn )
+        # a x + b y + c = 0
+        a = 0.0
+        b = -1.0
+        c = ifn / (ifp + ifn)
+        return Line(a, b, c, name="relative importance of unsatisfying")
 
     def getName(self):
         return "default"
