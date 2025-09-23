@@ -33,7 +33,7 @@ class CorrelationTile(NumericTile):
             disable_colorbar=disable_colorbar,
         )
 
-        self._score = self.flavor.score
+        # self._score = self.flavor.score
         self._correlation_coefficient = self.flavor.correlation_coefficient
         self._performance = self.flavor.performances
 
@@ -50,7 +50,7 @@ class CorrelationTile(NumericTile):
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,
         this method implements a custom coarse-to-fine grid-based direct search :cite:t:`Conn2009Introduction`:
         we compute the value on a coarse grid over the Tile, locate the minimum on the grid, center a smaller
-        region of interrest and a finer grid around that point, and iterate until the region of interrest
+        region of interest and a finer grid around that point, and iterate until the region of interest
         is small enough.
 
         Args:
@@ -94,7 +94,7 @@ class CorrelationTile(NumericTile):
                         best_x_y_min = x, y
                         best_val_min = val
 
-        return best_x_y_min[0], best_x_y_min[1], best_val_min
+        return best_x_y_min[0], best_x_y_min[1], best_val_min.item()
 
     def maximize(self, precision: float = 1e-8) -> tuple[float, float, float]:
         """
@@ -102,7 +102,7 @@ class CorrelationTile(NumericTile):
         As described in Section A.7.2 of the supplementary material for :cite:t:`Pierard2025Foundations`,
         this method implements a custom coarse-to-fine grid-based direct search :cite:t:`Conn2009Introduction`:
         we compute the value on a coarse grid over the Tile, locate the maximum on the grid, center a smaller
-        region of interrest and a finer grid around that point, and iterate until the region of interrest
+        region of interest and a finer grid around that point, and iterate until the region of interest
         is small enough.
 
         Args:
@@ -124,8 +124,8 @@ class CorrelationTile(NumericTile):
         center_x = 0.5 * (min_x + max_x)
         center_y = 0.5 * (min_y + max_y)
 
-        best_x_y_min = [center_x, center_y]  # initial point for the optimization
-        best_val_min = -math.inf
+        best_x_y_max = [center_x, center_y]  # initial point for the optimization
+        best_val_max = -math.inf
         scale_x = max_x - min_x
         scale_y = max_y - min_y
         for _ in range(64):
@@ -133,7 +133,7 @@ class CorrelationTile(NumericTile):
                 break
             scale_x = scale_x * 0.5
             scale_y = scale_y * 0.5
-            best_x, best_y = best_x_y_min
+            best_x, best_y = best_x_y_max
             for x in np.linspace(best_x - scale_x, best_x + scale_x, 16):
                 if x < min_x or x > max_x:
                     continue
@@ -142,11 +142,11 @@ class CorrelationTile(NumericTile):
                         continue
                     importance = parameterization.getCanonicalImportance(x, y)
                     val = flavor(importance)
-                    if val > best_val_min:
-                        best_x_y_min = x, y
-                        best_val_min = val
+                    if val > best_val_max:
+                        best_x_y_max = x, y
+                        best_val_max = val
 
-        return best_x_y_min[0], best_x_y_min[1], best_val_min
+        return best_x_y_max[0], best_x_y_max[1], best_val_max.item()
 
     def getExplanation(self) -> str:
         return "Not implemented for CorrelationTile yet."

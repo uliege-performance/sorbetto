@@ -198,6 +198,14 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
         return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
 
+    def toNoSkill(self) -> Self:
+        ptn = self._prior_neg() * self._rate_neg()
+        pfp = self._prior_neg() * self._rate_pos()
+        pfn = self._prior_pos() * self._rate_neg()
+        ptp = self._prior_pos() * self._rate_pos()
+
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, "no-skill")
+
     def isNoSkill(self) -> bool:
         ptn = self._ptn
         pfp = self._pfp
