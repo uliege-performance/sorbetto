@@ -4,7 +4,11 @@
 import logging
 from typing import Any, Callable, Literal
 
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.colors import (
+    LinearSegmentedColormap,
+)
 from scipy import stats
 
 from sorbetto.core.importance import Importance
@@ -130,7 +134,18 @@ class CorrelationFlavor(AbstractNumericFlavor):
         return correlation
 
     def getDefaultColormap(self):
-        return "gist_rainbow"
+        N = 2048
+        colors1 = plt.get_cmap("gist_rainbow_r", N)
+        colors1 = colors1(np.linspace(0, 1, N))
+        colors1 = 0.5 + colors1 * 0.5  # whiter
+        colors2 = plt.get_cmap("gist_rainbow", N)
+        colors2 = colors2(np.linspace(0, 1, N))
+        colors = np.vstack((colors1, colors2))
+        cmap = LinearSegmentedColormap.from_list("correlation", colors, N=2 * N)
+        cmap.set_under("white")
+        cmap.set_over("white")
+        cmap.set_bad("black")
+        return cmap
 
     def getLowerBound(self) -> float:
         return -1.0
