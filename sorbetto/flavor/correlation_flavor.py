@@ -10,6 +10,7 @@ from matplotlib.colors import (
     LinearSegmentedColormap,
 )
 from scipy import stats
+from tqdm import tqdm
 
 from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
@@ -126,7 +127,15 @@ class CorrelationFlavor(AbstractNumericFlavor):
 
         correlation = np.empty((value_scores.shape[1], value_scores.shape[2]))
 
-        for x in range(value_scores.shape[1]):
+        num_correlation_values_to_compute = correlation.size
+        for x in (
+            # We use tqdm only when there are a lot of values to compute.
+            # So, each time this method is called on a single Importance
+            # when minimizing or maximizing, tqdm is not used.
+            range(value_scores.shape[1])
+            if num_correlation_values_to_compute < 100
+            else tqdm(range(value_scores.shape[1]))
+        ):
             for y in range(value_scores.shape[2]):
                 correlation[x, y] = self._correlation_coefficient(
                     self._other_score_values, value_scores[:, x, y]
