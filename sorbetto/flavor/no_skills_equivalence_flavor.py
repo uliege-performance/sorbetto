@@ -25,7 +25,7 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
     on an equal footing is given by
     .. math::
         \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn)
-    See Theorem 4 of our future paper about "The Manifold of Performance Orderings for Two-Class Classification"
+    See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
     See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, right.
 
     This Flavor can also be used with the set of performances that corresponds to
@@ -36,7 +36,7 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
     on an equal footing is given
     .. math::
         \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp)
-    See Theorem 3 of our future paper about "The Manifold of Performance Orderings for Two-Class Classification"
+    See Theorem 3 of :cite:t:`Pierard2025TheManifold`.
     See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, left.
     """
 

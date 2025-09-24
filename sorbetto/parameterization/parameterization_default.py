@@ -101,8 +101,8 @@ class ParameterizationDefault(AbstractParameterization):
              \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
-        # See Theorem 3 of future "paper 6".
-        # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
+        See Theorem 3 of :cite:t:`Pierard2025TheManifold`.
+        See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
 
         Args:
             priorPos (float): the prior of the positive class, :math:`\\pi_+`
@@ -143,7 +143,7 @@ class ParameterizationDefault(AbstractParameterization):
             \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
-        # See Theorem 4 of future "paper 6".
+        See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
 
         Args:
             ratePos (float): the prediction rate for the positive class, :math:`\\tau_+`

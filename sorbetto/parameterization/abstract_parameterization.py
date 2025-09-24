@@ -784,7 +784,7 @@ class AbstractParameterization(ABC):
 
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
-        # See Theorem 3 of future "paper 6".
+        # See Theorem 3 of :cite:t:`Pierard2025TheManifold`.
         # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
 
         Args:
@@ -807,7 +807,7 @@ class AbstractParameterization(ABC):
             \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
-        # See Theorem 4 of future "paper 6".
+        # See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
 
         Args:
             ratePos (float): the prediction rate for the positive class, :math:`\\tau_+`
@@ -819,24 +819,42 @@ class AbstractParameterization(ABC):
 
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
         """
-        Locates the set of performance orderings induced by ranking scores that ..............................
+        Locates the set of performance orderings induced by ranking scores
+        that are inverted when the operation that consists in changing the
+        predicted class is applied to all performances. A performance :math:`P`
+        becomes a performance :math:`P'` such that
+
+        - :math:`P'(\\{tn\\}) = P(\\{fp\\})`
+        - :math:`P'(\\{fp\\}) = P(\\{tn\\})`
+        - :math:`P'(\\{fn\\}) = P(\\{tp\\})`
+        - :math:`P'(\\{tp\\}) = P(\\{fn\\})`
+
+        As demonstrated in Theorem 1 of :cite:t:`Pierard2025TheManifold`,
+        the set is
 
         .. math::
-            \\left\\{ R_I : I(tp) I(fp) = I(tn) I(fn) \\right\\}
-            = \\left\\{ R_I : a(I) = b(I) \\right\\}
+            \\left\\{ I: I(tp) I(fp) = I(tn) I(fn) \\right\\}
         """
-        # See Theorem 1 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!
 
     def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
         """
-        Locates the set of performance orderings induced by ranking scores that ..............................
+        Locates the set of performance orderings induced by ranking scores
+        that are inverted when the operation that consists in changing the
+        groundtruth class is applied to all performances. A performance :math:`P`
+        becomes a performance :math:`P'` such that
+
+        - :math:`P'(\\{tn\\}) = P(\\{fn\\})`
+        - :math:`P'(\\{fp\\}) = P(\\{tp\\})`
+        - :math:`P'(\\{fn\\}) = P(\\{tn\\})`
+        - :math:`P'(\\{tp\\}) = P(\\{fp\\})`
+
+        As demonstrated in Theorem 2 of :cite:t:`Pierard2025TheManifold`,
+        the set is
 
         .. math::
-            \\left\\{ R_I : I(tp) I(fn) = I(tn) I(fp) \\right\\}
-            = \\left\\{ R_I : a(I) + b(I) = 1 \\right\\}
+            \\left\\{ I: I(tp) I(fn) = I(tn) I(fp) \\right\\}
         """
-        # See Theorem 2 of future "paper 6".
         raise NotImplementedError()  # TODO: Implement this!
 
     @abstractmethod
