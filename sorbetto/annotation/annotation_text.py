@@ -104,16 +104,26 @@ class AnnotationText(AbstractAnnotation):
             raise RuntimeError(
                 "Trying to place a marker on the Tile outside the parameterization limits."
             )
-        center_x = 0.5 * (min_x + max_x)
-        center_y = 0.5 * (min_y + max_y)
+
         ax.plot(x, y, "o", **options_for_plot)
-        if x < center_x:
-            if y < center_y:
-                ax.text(x, y, label, ha="left", va="bottom", **options_for_text)
-            else:
-                ax.text(x, y, label, ha="left", va="top", **options_for_text)
+
+        if x < (2.0 * min_x + 1.0 * max_x) / 3.0:
+            dx, ha = 1.0, "left"
+        elif x <= (1.0 * min_x + 2.0 * max_x) / 3.0:
+            dx, ha = 0.0, "center"
         else:
-            if y < center_y:
-                ax.text(x, y, label, ha="right", va="bottom", **options_for_text)
+            dx, ha = -1.0, "right"
+        dx *= 0.025 * (max_x - min_x)
+
+        if y < (2.0 * min_y + 1.0 * max_y) / 3.0:
+            dy, va = 1.0, "baseline"
+        elif y <= (1.0 * min_y + 2.0 * max_y) / 3.0:
+            if dx == 0.0:
+                dy, va = -1.0, "top"
             else:
-                ax.text(x, y, label, ha="right", va="top", **options_for_text)
+                dy, va = 0.0, "center_baseline"
+        else:
+            dy, va = -1.0, "top"
+        dy *= 0.025 * (max_y - min_y)
+
+        ax.text(x + dx, y + dy, label, ha=ha, va=va, **options_for_text)
