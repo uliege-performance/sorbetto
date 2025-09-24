@@ -8,6 +8,8 @@ from typing import cast, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from sorbetto.core.importance import Importance, _parse_importance
@@ -165,28 +167,37 @@ class RankingScore(AbstractScore):
         # return Conic(0.0, Kab, 0.0, Ka, Kb, K, "equivalent")
         return BilinearCurve(Kab, Ka, Kb, K, "equivalent")
 
-    def isCanonical(self, tol=1e-8) -> bool:
+    def isCanonical(self, abs_tol: float = 1e-8) -> bool:
         """
+        Tests if this Ranking Score is canonical. This property is related to
+        the performance ordering induced by these scores: the ordering is
+        insensitive to the relative importance given to the satisfying samples
+        :math:`\\{tn,tp\\}` with respect to the unsatisfying samples
+        :math:`\\{fp,fn\\}`. Therefore, a Ranking Score is said canonical if
+        and only if
 
-
+        .. math::
+            I(tn)+I(tp) = I(fp)+I(fn)
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Definition 1.
+
+        Args:
+            abs_tol (float, optional): The absolute tolerance to use for the comparison of :math:`I(tn)+I(tp)` with :math:`I(fp)+I(fn)`. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the Ranking Score is canonical, False otherwise.
         """
         itn = self._importance.itn
         ifp = self._importance.ifp
         ifn = self._importance.ifn
         itp = self._importance.itp
 
-        return math.isclose(itn + itp, ifp + ifn, abs_tol=tol)  # TODO: explain !
-
-        # canonical_for_satisfying = math.isclose(itn + itp, 1.0, abs_tol=tol)
-        # canonical_for_unsatisfying = math.isclose(ifp + ifn, 1.0, abs_tol=tol)
-        # return canonical_for_satisfying and canonical_for_unsatisfying
+        return math.isclose(itn + itp, ifp + ifn, abs_tol=abs_tol)
 
     def drawInROC(
         self,
-        fig,
-        ax,
+        fig: Figure,
+        ax: Axes,
         priorPos: float,
         show_values_map: bool = True,
         show_iso_value_lines: bool = True,
@@ -194,14 +205,15 @@ class RankingScore(AbstractScore):
         show_no_skills: bool = True,
         show_priors: bool = True,
         show_unbiased: bool = True,
+        show_opposite_unbiased: bool = True,
     ) -> None:
         """
         Displays the ranking score in the ROC space.
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
-            fig (_type_): _description_
-            ax (_type_): _description_
+            fig (Figure): The matplotlib.pyplot Figure to use for drawing.
+            ax (Axes): The matplotlib.pyplot Axes to use for drawing.
             priorPos (float): prior of the positive class :math:`\\pi_+ \\in (0,1)`
             show_values_map (bool, optional): _description_. Defaults to True.
             show_iso_value_lines (bool, optional): _description_. Defaults to True.
@@ -209,7 +221,11 @@ class RankingScore(AbstractScore):
             show_no_skills (bool, optional): _description_. Defaults to True.
             show_priors (bool, optional): _description_. Defaults to True.
             show_unbiased (bool, optional): _description_. Defaults to True.
+            show_opposite_unbiased (bool, optional): _description_. Defaults to True.
         """
+
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
 
         assert isinstance(show_values_map, bool)
         assert isinstance(show_iso_value_lines, bool)
@@ -217,6 +233,7 @@ class RankingScore(AbstractScore):
         assert isinstance(show_no_skills, bool)
         assert isinstance(show_priors, bool)
         assert isinstance(show_unbiased, bool)
+        assert isinstance(show_opposite_unbiased, bool)
 
         # Check priors
         assert isinstance(priorPos, float)
@@ -246,7 +263,8 @@ class RankingScore(AbstractScore):
         # Values taken by the scores
         mat_satisfying = itn * mat_ptn + itp * mat_ptp
         mat_unsatisfying = ifp * mat_pfp + ifn * mat_pfn
-        mat_values = mat_satisfying / (mat_satisfying + mat_unsatisfying)
+        with np.errstate(invalid="ignore"):
+            mat_values = mat_satisfying / (mat_satisfying + mat_unsatisfying)
 
         if show_values_map:
             extent = 0, 1, 0, 1
@@ -281,9 +299,10 @@ class RankingScore(AbstractScore):
             show_no_skills=show_no_skills,
             show_priors=show_priors,
             show_unbiased=show_unbiased,
+            show_opposite_unbiased=show_opposite_unbiased,
         )
 
-    def getPencilInROC(self, priorPos) -> PencilOfLines:
+    def getPencilInROC(self, priorPos: float) -> PencilOfLines:
         """
         For given class priors :math:`(\\pi_-,\\pi_+)`, the locus of points in
         ROC where the ranking score takes a given value is a line, and all these
@@ -296,9 +315,9 @@ class RankingScore(AbstractScore):
             PencilOfLines: The pencil of lines.
         """
         assert isinstance(priorPos, float)
-        assert priorPos > 0
-        assert priorPos < 1
-        priorNeg = 1 - priorPos
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
 
         itn = self._importance.itn
         ifp = self._importance.ifp
