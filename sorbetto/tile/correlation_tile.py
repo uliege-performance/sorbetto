@@ -1,6 +1,7 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
 import math
 
 import numpy as np
@@ -44,6 +45,7 @@ class CorrelationTile(NumericTile):
         assert isinstance(flavor, CorrelationFlavor)
         return flavor
 
+    @functools.cache
     def minimize(self, precision: float = 1e-8) -> tuple[float, float, float]:
         """
         Tries to minimize the value. There is no guarantee to find the minimum with the implemented algorithm.
@@ -96,6 +98,7 @@ class CorrelationTile(NumericTile):
 
         return best_x_y_min[0], best_x_y_min[1], best_val_min.item()
 
+    @functools.cache
     def maximize(self, precision: float = 1e-8) -> tuple[float, float, float]:
         """
         Tries to maximize the value. There is no guarantee to find the maximum with the implemented algorithm.
