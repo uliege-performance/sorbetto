@@ -817,12 +817,14 @@ class AbstractParameterization(ABC):
         """
         ...
 
+    @abstractmethod
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
         """
         Locates the set of performance orderings induced by ranking scores
         that are inverted when the operation that consists in changing the
-        predicted class is applied to all performances. A performance :math:`P`
-        becomes a performance :math:`P'` such that
+        predicted class is applied to all performances.
+        :math:`\\hat{Y}=c_-` becomes :math:`\\hat{Y}=c_+` and vice-versa.
+        A performance :math:`P` becomes a performance :math:`P'` such that:
 
         - :math:`P'(\\{tn\\}) = P(\\{fp\\})`
         - :math:`P'(\\{fp\\}) = P(\\{tn\\})`
@@ -835,14 +837,16 @@ class AbstractParameterization(ABC):
         .. math::
             \\left\\{ I: I(tp) I(fp) = I(tn) I(fn) \\right\\}
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        ...
 
+    @abstractmethod
     def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
         """
         Locates the set of performance orderings induced by ranking scores
         that are inverted when the operation that consists in changing the
-        groundtruth class is applied to all performances. A performance :math:`P`
-        becomes a performance :math:`P'` such that
+        groundtruth class is applied to all performances.
+        :math:`Y=c_-` becomes :math:`Y=c_+` and vice-versa.
+        A performance :math:`P` becomes a performance :math:`P'` such that:
 
         - :math:`P'(\\{tn\\}) = P(\\{fn\\})`
         - :math:`P'(\\{fp\\}) = P(\\{tp\\})`
@@ -855,7 +859,7 @@ class AbstractParameterization(ABC):
         .. math::
             \\left\\{ I: I(tp) I(fn) = I(tn) I(fp) \\right\\}
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        ...
 
     @abstractmethod
     def locateRelativeImportanceSatisfying(self, itn: float, itp: float) -> Line:

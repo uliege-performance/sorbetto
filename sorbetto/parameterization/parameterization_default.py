@@ -173,21 +173,57 @@ class ParameterizationDefault(AbstractParameterization):
         )
         return BilinearCurve(Kab, Ka, Kb, K, name)
 
+    def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Line:
+        # Solution:
+        #     I(tp) I(fp) = I(tn) I(fn)
+        #  => x (1-y) = (1-x) y
+        # <=> x = y
+        #
+        # Equation of geometric object:
+        # a x + b y + c = 0
+        a = 1.0
+        b = -1.0
+        c = 0.0
+        name = "orderings that are inverted when the predicted class changes"
+        return Line(a, b, c, name=name)
+
+    def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Line:
+        # Solution:
+        #     I(tp) I(fn) = I(tn) I(fp)
+        #  => x y = (1-x) (1-y)
+        # <=> x + y - 1 = 0
+        #
+        # Equation of geometric object:
+        # a x + b y + c = 0
+        a = 1.0
+        b = 1.0
+        c = -1.0
+        name = "orderings that are inverted when the groundtruth class changes"
+        return Line(a, b, c, name=name)
+
     def locateRelativeImportanceSatisfying(self, itn: float, itp: float) -> Line:
+        # Solution:
         # x = itp / ( itn + itp )
+        #
+        # Equation of geometric object:
         # a x + b y + c = 0
         a = -1.0
         b = 0.0
         c = itp / (itn + itp)
-        return Line(a, b, c, name="relative importance of satisfying")
+        name = "relative importance of satisfying"
+        return Line(a, b, c, name=name)
 
     def locateRelativeImportanceUnsatisfying(self, ifp: float, ifn: float) -> Line:
+        # Solution:
         # y = ifn / ( ifp + ifn )
+        #
+        # Equation of geometric object:
         # a x + b y + c = 0
         a = 0.0
         b = -1.0
         c = ifn / (ifp + ifn)
-        return Line(a, b, c, name="relative importance of unsatisfying")
+        name = "relative importance of unsatisfying"
+        return Line(a, b, c, name=name)
 
     def getName(self):
         return "default"
