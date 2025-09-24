@@ -164,30 +164,32 @@ class Line(AbstractGeometricObject2D):
         a = self._a
         b = self._b
 
+        tol = 1e-8
+
         points = list()
         if b != 0.0:
             x = x_min
             y = self.getY(x)
-            if (y_min <= y) and (y <= y_max):
+            if (y_min - tol <= y) and (y <= y_max + tol):
                 point = x, y
                 points.append(point)
 
             x = x_max
             y = self.getY(x)
-            if (y_min <= y) and (y <= y_max):
+            if (y_min - tol <= y) and (y <= y_max + tol):
                 point = x, y
                 points.append(point)
 
         if a != 0.0:
             y = y_min
             x = self.getX(y)
-            if (x_min <= x) and (x <= x_max):
+            if (x_min - tol <= x) and (x <= x_max + tol):
                 point = x, y
                 points.append(point)
 
             y = y_max
             x = self.getX(y)
-            if (x_min <= x) and (x <= x_max):
+            if (x_min - tol <= x) and (x <= x_max + tol):
                 point = x, y
                 points.append(point)
 
@@ -204,24 +206,22 @@ class Line(AbstractGeometricObject2D):
             return LineSegment(p1, p2, self.name)
         else:
             # Find the two furthest points
-            # Choose the point p1 arbitrarilly
+            # Choose the point p1 arbitrarily
             p1 = points[0]
-            # Fing the point p2 that is the furthest form p1.
+            # Finding the point p2 that is the furthest form p1.
             p2 = p1
             for p0 in points:
                 d01_sq = (p0[0] - p1[0]) ** 2 + (p0[1] - p1[1]) ** 2
                 d21_sq = (p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2
                 if d01_sq > d21_sq:
                     p2 = p0
-            # Fing the point p1 that is the furthest form p2.
+            # Finding the point p1 that is the furthest form p2.
             for p0 in points:
                 d02_sq = (p0[0] - p2[0]) ** 2 + (p0[1] - p2[1]) ** 2
                 d12_sq = (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2
                 if d02_sq > d12_sq:
                     p1 = p0
-            p1 = points[0]
             p1 = Point(p1[0], p1[1], "endpoint 1")
-            p2 = points[-1]
             p2 = Point(p2[0], p2[1], "endpoint 2")
             return LineSegment(p1, p2, self.name)
 
