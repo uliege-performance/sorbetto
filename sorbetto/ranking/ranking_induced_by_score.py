@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from sorbetto.core.performance_ordering_induced_by_one_score import (
+from sorbetto.performance.performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
 )
 from sorbetto.ranking.abstract_ranking import AbstractRanking

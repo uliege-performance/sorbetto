@@ -74,7 +74,7 @@ class PerformanceOrderingInducedByOneScore(
 
         Args:
             p1 (TwoClassClassificationPerformance): the first performance to compare
-            p2 (TwoClassClassificationPerformance): the seconc performance to compare
+            p2 (TwoClassClassificationPerformance): the second performance to compare
 
         Returns:
             bool: the comparison between `p1` and `p2`.
