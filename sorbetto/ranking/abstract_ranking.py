@@ -9,8 +9,8 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from sorbetto.core.entity import Entity
 from sorbetto.core.named import Named
+from sorbetto.ranking.entity import Entity
 
 
 class AbstractRanking(ABC, Named):
