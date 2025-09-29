@@ -64,6 +64,26 @@ class Importance(Named):
     def itp(self) -> float:
         return self._itp
 
+    def isCanonical(self, abs_tol: float = 1e-8) -> bool:
+        """
+        Tests if
+
+        .. math::
+            I(tn)+I(tp) = I(fp)+I(fn)
+
+        Args:
+            abs_tol (float, optional): The absolute tolerance to use for the comparison of :math:`I(tn)+I(tp)` with :math:`I(fp)+I(fn)`. Defaults to 1e-8.
+
+        Returns:
+            bool: True if the Importance is canonical, False otherwise.
+        """
+        itn = self._itn
+        ifp = self._ifp
+        ifn = self._ifn
+        itp = self._itp
+
+        return math.isclose(itn + itp, ifp + ifn, abs_tol=abs_tol)
+
     def __eq__(self, other):
         if not isinstance(other, Importance):
             return False

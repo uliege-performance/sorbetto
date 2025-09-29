@@ -187,12 +187,7 @@ class RankingScore(AbstractScore):
         Returns:
             bool: True if the Ranking Score is canonical, False otherwise.
         """
-        itn = self._importance.itn
-        ifp = self._importance.ifp
-        ifn = self._importance.ifn
-        itp = self._importance.itp
-
-        return math.isclose(itn + itp, ifp + ifn, abs_tol=abs_tol)
+        return self._importance.isCanonical()
 
     def drawInROC(
         self,
