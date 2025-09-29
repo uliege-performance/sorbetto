@@ -12,7 +12,6 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from sorbetto.core.importance import Importance, _parse_importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.line import Line
@@ -32,6 +31,7 @@ from sorbetto.performance.roc import _setupROC
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
+from sorbetto.ranking.importance import Importance, _parse_importance
 
 
 class RankingScore(AbstractScore):

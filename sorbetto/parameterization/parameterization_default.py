@@ -3,10 +3,10 @@
 
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.line import Line
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 

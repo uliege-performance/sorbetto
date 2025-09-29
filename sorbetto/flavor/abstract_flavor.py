@@ -6,8 +6,8 @@ from typing import Any
 
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.core.named import Named
+from sorbetto.ranking.importance import Importance
 
 
 class AbstractFlavor(ABC, Named):

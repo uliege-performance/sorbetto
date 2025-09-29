@@ -2,8 +2,8 @@ from typing import Any, Literal
 
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
+from sorbetto.ranking.importance import Importance
 
 
 class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):

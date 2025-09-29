@@ -6,12 +6,12 @@ from typing import Any
 import matplotlib.colors
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking.entity import Entity
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 

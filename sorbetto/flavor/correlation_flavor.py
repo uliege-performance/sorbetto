@@ -12,7 +12,6 @@ from matplotlib.colors import (
 from scipy import stats
 from tqdm import tqdm
 
-from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
@@ -20,6 +19,7 @@ from sorbetto.performance.finite_set_of_two_class_classification_performances im
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 

@@ -5,11 +5,11 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
 from sorbetto.geometry.conic import Conic
 from sorbetto.geometry.line import Line
 from sorbetto.geometry.point import Point
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 

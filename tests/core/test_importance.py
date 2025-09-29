@@ -3,7 +3,7 @@
 
 import pytest
 
-from sorbetto.core.importance import Importance
+from sorbetto.ranking.importance import Importance
 
 
 def test_properties():

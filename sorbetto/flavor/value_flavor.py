@@ -5,11 +5,11 @@ from typing import Any
 
 import numpy as np
 
-from sorbetto.core.importance import Importance
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 
