@@ -10,19 +10,20 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from scipy.spatial import ConvexHull
 
+from sorbetto.core.named import Named
 from sorbetto.performance.roc import _setupROC
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 
 
-class FiniteSetOfTwoClassClassificationPerformances:
+class FiniteSetOfTwoClassClassificationPerformances(Named):
     # TODO: FiniteSet or Multiset ?
 
     def __init__(
         self,
         performance_list: list[TwoClassClassificationPerformance] | np.ndarray,
-        name: str = "finite set",
+        name: str | None = None,
     ):
         if isinstance(performance_list, np.ndarray):
             self._performance_list = (
@@ -46,11 +47,13 @@ class FiniteSetOfTwoClassClassificationPerformances:
                 "The performance_list must be a list of TwoClassClassificationPerformance instances or a numpy array"
             )
 
-        self._name = name
         self._ptn = np.array([perf.ptn for perf in self._performance_list])
         self._pfp = np.array([perf.pfp for perf in self._performance_list])
         self._pfn = np.array([perf.pfn for perf in self._performance_list])
         self._ptp = np.array([perf.ptp for perf in self._performance_list])
+
+        default_name = "unnamed multiset of two-class classification performances"
+        Named.__init__(self, default_name, name)
 
     @staticmethod
     def _from_array(array_tn_fp_fn_tp):
@@ -89,10 +92,6 @@ class FiniteSetOfTwoClassClassificationPerformances:
     def performance_list(self) -> list[TwoClassClassificationPerformance]:
         return self._performance_list
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     def getMean(self) -> TwoClassClassificationPerformance:
         """
         The mean is know as the summarized performance :cite:t:`Pierard2020Summarizing`
@@ -104,7 +103,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
         pfp = np.mean(self._pfp)
         pfn = np.mean(self._pfn)
         ptp = np.mean(self._ptp)
-        name = 'mean of the performances "{}"'.format(self._name)
+        name = 'mean of the performances "{}"'.format(self.name)
         return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
 
     def getRange(self, score) -> tuple[float, float]:
@@ -306,7 +305,7 @@ class FiniteSetOfTwoClassClassificationPerformances:
 
     def __str__(self):
         txt = (
-            f"FiniteSetOfTwoClassClassificationPerformances(name={self._name} and "
+            f"FiniteSetOfTwoClassClassificationPerformances(name={self.name} and "
             f"performances=\n{'\n'.join(str(self._performance_list[i]) for i in range(len(self._performance_list)))})"
         )
 

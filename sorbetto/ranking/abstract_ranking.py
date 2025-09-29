@@ -10,31 +10,30 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.core.entity import Entity
+from sorbetto.core.named import Named
 
 
-class AbstractRanking(ABC):
+class AbstractRanking(ABC, Named):
     """
     See Axiom 1 in :cite:t:`Pierard2025Foundations`.
     """
 
-    def __init__(self, entities, performance_ordering, name=None):
+    def __init__(
+        self, entities: iterable[Entity], performance_ordering, name: str | None = None
+    ):
         assert isinstance(entities, iterable)
         for entity in entities:
             assert isinstance(entity, Entity)
 
         self._entities = entities
-        self._performance_ordering = performance_ordering
-        self._name = name
 
         # TODO: help Sebastien
         # assert isinstance(performance_ordering, PerformanceOrderingInducedByOneScore)
         self._performance_ordering = performance_ordering
 
-        if name is None:
-            name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.getName()}"
-        self._name = name
-
         ABC.__init__(self)
+        default_name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.getName()}"
+        Named.__init__(self, default_name, name)
 
     @property
     def entities(self) -> iterable:
@@ -43,10 +42,6 @@ class AbstractRanking(ABC):
     @property
     def performance_ordering(self):
         return self._performance_ordering
-
-    @property
-    def name(self):
-        return self._name
 
     @property
     @abstractmethod

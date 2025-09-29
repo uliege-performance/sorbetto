@@ -5,8 +5,10 @@ import math
 
 import numpy as np
 
+from sorbetto.core.named import Named
 
-class Importance:
+
+class Importance(Named):
     """This class encodes some application-specific preferences.
     Currently, it is a random variable, called importance,
     that gives a positive value to each element of the sample space: tn (for true negative), fp (for false positive), fn (for false negative), and tp (for true positive).
@@ -22,7 +24,7 @@ class Importance:
         ifp: float | int,
         ifn: float | int,
         itp: float | int,
-        name: str = "I",
+        name: str | None = None,
     ):
         assert isinstance(itn, (float, int))
         assert isinstance(ifp, (float, int))
@@ -43,7 +45,8 @@ class Importance:
         self._ifp = float(ifp)
         self._ifn = float(ifn)
         self._itp = float(itp)
-        self._name = name
+
+        Named.__init__(self, "I", name)
 
     @property
     def itn(self) -> float:
@@ -60,10 +63,6 @@ class Importance:
     @property
     def itp(self) -> float:
         return self._itp
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     def __eq__(self, other):
         if not isinstance(other, Importance):

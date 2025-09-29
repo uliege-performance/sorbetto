@@ -59,7 +59,7 @@ class PerformanceOrderingInducedByOneScore(
         raise NotImplementedError()
 
     def __str__(self):
-        return f"PerformanceOrderingInducedByOneScore(name={self._name}, score={self._score})"
+        return f"PerformanceOrderingInducedByOneScore(name={self.name}, score={self._score})"
 
     def __call__(
         self,

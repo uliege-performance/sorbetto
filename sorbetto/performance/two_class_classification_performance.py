@@ -372,7 +372,7 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         return fig, ax
 
     def __str__(self):
-        return f"TwoClassClassificationPerformance(name={self._name}, ptn={self._ptn}, pfp={self._pfp}, pfn={self._pfn}, ptp={self._ptp})"
+        return f"TwoClassClassificationPerformance(name={self.name}, ptn={self._ptn}, pfp={self._pfp}, pfn={self._pfn}, ptp={self._ptp})"
 
 
 if __name__ == "__main__":

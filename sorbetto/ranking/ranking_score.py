@@ -479,7 +479,7 @@ class RankingScore(AbstractScore):
         if self._constraint and not self._constraint(performance):
             logging.warning(
                 f"Performance {performance} does not satisfy the constraint of "
-                f"the ranking score {self._name}"
+                f"the ranking score {self.name}"
             )
         return cast(
             float,

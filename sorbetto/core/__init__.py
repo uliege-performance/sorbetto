@@ -3,6 +3,7 @@
 
 from .entity import Entity
 from .importance import Importance
+from .named import Named
 from .performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
 )
@@ -15,4 +16,5 @@ __all__ = [
     "Extent",
     "Importance",
     "PerformanceOrderingInducedByOneScore",
+    "Named",
 ]

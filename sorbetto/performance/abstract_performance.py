@@ -5,15 +5,14 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from sorbetto.core.named import Named
 
-class AbstractPerformance(ABC):
-    def __init__(self, name: str):
-        self._name = name
+
+class AbstractPerformance(ABC, Named):
+    def __init__(self, name: str | None = None):
         ABC.__init__(self)
+        default_name = "unnamed performance"
+        Named.__init__(self, default_name, name)
 
     @abstractmethod
     def getMassFunction(self) -> np.ndarray: ...
-
-    @property
-    def name(self) -> str:
-        return self._name

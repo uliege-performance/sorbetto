@@ -11,12 +11,13 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.core.named import Named
 from sorbetto.core.types import Extent
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 
 
-class Tile:
+class Tile(Named):
     """
     This is the base class for all Tiles. A Tile is a graphical representation (of what ????) with:
     - a parameterization;
@@ -58,8 +59,6 @@ class Tile:
                 )
         self._flavor = flavor
 
-        self._name = name
-
         if (not isinstance(resolution, int)) or resolution <= 0:
             raise TypeError(
                 f"resolution must be a strictly positive integer, got {resolution!r}"
@@ -72,6 +71,8 @@ class Tile:
         self._update_grid()
 
         self._annotations: list[AbstractAnnotation] = list()
+
+        Named.__init__(self, "unnamed Tile", name)
 
     @property
     def resolution(self) -> int:
@@ -112,18 +113,6 @@ class Tile:
         assert all(isinstance(v, float) for v in zoom)
         extent = self._parameterization.getExtent()
         self._zoom = intersection(zoom, extent)
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        if value is None:
-            value = "Unnamed Tile"
-        elif not isinstance(value, str):
-            value = str(value)
-        self._name = value
 
     @property
     def parameterization(self) -> AbstractParameterization:
@@ -270,6 +259,7 @@ class Tile:
         ax.set_xlabel(parameterization.getNameParameter1())
         ax.set_ylabel(parameterization.getNameParameter2())
         ax.set_title(self.name)
+        ax.set_facecolor("whitesmoke")
 
         return fig, ax
 

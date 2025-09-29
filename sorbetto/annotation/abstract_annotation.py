@@ -10,8 +10,10 @@ from matplotlib.figure import Figure
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
 
+from sorbetto.core.named import Named
 
-class AbstractAnnotation(ABC):
+
+class AbstractAnnotation(ABC, Named):
     """
     This is the base class for all annotations, which are things that are drawn on top of Tiles.
     """
@@ -23,17 +25,8 @@ class AbstractAnnotation(ABC):
         Args:
             name (str | None, optional): the annotation name.
         """
-        if name is None:
-            name = "unnamed annotation"
-        else:
-            if not isinstance(name, str):
-                name = str(name)
-        self._name = name
         ABC.__init__(self)
-
-    @property
-    def name(self) -> str:
-        return self._name
+        Named.__init__(self, "unnamed annotation", name)
 
     @abstractmethod
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:

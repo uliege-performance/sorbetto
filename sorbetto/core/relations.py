@@ -3,15 +3,14 @@
 
 from abc import ABC, abstractmethod
 
+from sorbetto.core.named import Named
 
-class AbstractHomogeneousBinaryRelationOnPerformances(ABC):
+
+class AbstractHomogeneousBinaryRelationOnPerformances(ABC, Named):
     def __init__(self, name: str | None = None):
-        self._name = name
         ABC.__init__(self)
-
-    @property
-    def name(self) -> str | None:
-        return self._name
+        default_name = "unnamed homogeneous binary relation on performances"
+        Named.__init__(self, default_name, name)
 
     # TODO: should we have some tolerance in the following methods ? Instead of bool, one could have something like {yes, perhaps, no}.
     @abstractmethod
@@ -63,7 +62,7 @@ class AbstractHomogeneousBinaryRelationOnPerformances(ABC):
         return _Dual(self)
 
     def __str__(self):
-        return f"AbstractHomogeneousBinaryRelationOnPerformances(name={self._name})"
+        return f"AbstractHomogeneousBinaryRelationOnPerformances(name={self.name})"
 
 
 class _Intersection(AbstractHomogeneousBinaryRelationOnPerformances):

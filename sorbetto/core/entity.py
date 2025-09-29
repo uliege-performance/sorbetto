@@ -5,12 +5,13 @@ from typing import Any
 
 import numpy as np
 
+from sorbetto.core.named import Named
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
 
 
-class Entity:
+class Entity(Named):
     def __init__(
         self,
         performance: TwoClassClassificationPerformance,
@@ -25,15 +26,12 @@ class Entity:
             color (Any, optional): Color to use for the entity. Defaults to a random list of floats.
         """
 
-        self._name = name
         if color is None:
             color = list(np.random.random(3))
         self._color = color
         self._performance = performance
-
-    @property
-    def name(self) -> str:
-        return self._name
+        default_name = "Entity for performance {}".format(performance.name)
+        Named.__init__(self, default_name, name)
 
     @property
     def color(self) -> str | tuple[float] | list[float]:
@@ -50,5 +48,5 @@ class Entity:
         return self._performance
 
     def __str__(self):
-        txt = f"Entity `{self._name}` with performance \n {self._performance.__str__()}"
+        txt = f"Entity `{self.name}` with performance \n {self._performance.__str__()}"
         return txt

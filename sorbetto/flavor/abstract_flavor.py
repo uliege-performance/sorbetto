@@ -7,9 +7,10 @@ from typing import Any
 import numpy as np
 
 from sorbetto.core.importance import Importance
+from sorbetto.core.named import Named
 
 
-class AbstractFlavor(ABC):
+class AbstractFlavor(ABC, Named):
     """
     A flavor is a function of importance values.
     It can be represented graphically with Tiles.
@@ -21,11 +22,10 @@ class AbstractFlavor(ABC):
     #           - or a matplotlib.colors.Colormap object
     #           - or a name
 
-    def __init__(self, name: str = "Unnamed Flavor", colormap: Any = None):
-        assert isinstance(name, str)
-        self._name = name
+    def __init__(self, name: str | None = None, colormap: Any = None):
         self._colormap = colormap
         ABC.__init__(self)
+        Named.__init__(self, "unnamed Flavor", name)
 
     @property
     def colormap(self) -> Any:
@@ -54,14 +54,3 @@ class AbstractFlavor(ABC):
 
     @abstractmethod
     def getDefaultColormap(self) -> Any: ...
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @name.setter
-    def name(self, name: str) -> None:
-        self._name = name
-
-    def __str__(self):
-        return self.name
