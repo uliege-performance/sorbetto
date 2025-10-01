@@ -7,8 +7,17 @@ import matplotlib.colors
 import numpy as np
 
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
 from sorbetto.ranking.entity import Entity
 from sorbetto.ranking.importance import Importance
@@ -101,3 +110,60 @@ class EntityFlavor(AbstractSymbolicFlavor[Entity]):
                 key=lambda e: e.name,
             )
         return self._sorted_codomain
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        Checks if the performances of all entities used in the Flavor's definition
+        satisfy the given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True if the constraint is satisfied, and False otherwise.
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        for entity in self._entity_set:
+            performance = entity.performance
+            if not constraint(performance):
+                return False
+        return True
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        Checks if the performances of all entities used in the Flavor's definition
+        satisfy the given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True if the constraint is satisfied, and False otherwise.
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        for entity in self._entity_set:
+            performance = entity.performance
+            if not constraint(performance):
+                return False
+        return True

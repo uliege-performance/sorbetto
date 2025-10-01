@@ -6,8 +6,17 @@ from typing import Any
 import numpy as np
 
 from sorbetto.flavor.abstract_numeric_flavor import AbstractNumericFlavor
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
 from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
@@ -56,3 +65,52 @@ class ValueFlavor(AbstractNumericFlavor):
 
     def getUpperBound(self) -> float:
         return 1.0
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        Checks if the performance used in the Flavor's definition satisfy the
+        given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True if the constraint is satisfied, and False otherwise.
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return constraint(self._performance)
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        Checks if the performance used in the Flavor's definition satisfy the
+        given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True if the constraint is satisfied, and False otherwise.
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return constraint(self._performance)

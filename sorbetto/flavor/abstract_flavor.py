@@ -7,6 +7,15 @@ from typing import Any
 import numpy as np
 
 from sorbetto.core.named import Named
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
 from sorbetto.ranking.importance import Importance
 
 
@@ -54,3 +63,18 @@ class AbstractFlavor(ABC, Named):
 
     @abstractmethod
     def getDefaultColormap(self) -> Any: ...
+
+    @abstractmethod
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool: ...
+
+    @abstractmethod
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool: ...
+
+    @abstractmethod
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool: ...
