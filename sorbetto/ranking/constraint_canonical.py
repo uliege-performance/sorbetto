@@ -1,11 +1,20 @@
-from sorbetto.ranking import Importance
+from typing import TYPE_CHECKING
+
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
+
+if TYPE_CHECKING:
+    from sorbetto.ranking import Importance
 
 
-class ConstraintCanonical:
+class ConstraintCanonical(ConstraintRelativeImportanceSatisfyingUnsatisfying):
     def __init__(self):
-        pass
+        ConstraintRelativeImportanceSatisfyingUnsatisfying.__init__(self, 0.5, 0.5)
 
-    def __call__(self, importance):
+    def __call__(self, importance: "Importance") -> bool:
+        from sorbetto.ranking import Importance
+
         assert isinstance(importance, Importance)
         return importance.isCanonical()
 
