@@ -7,12 +7,24 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
-from sorbetto.core.importance import Importance
 from sorbetto.core.matplotlib_utils import (
     filter_properties_for_plot,
     filter_properties_for_text,
 )
 from sorbetto.geometry.point import Point
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.performance.performance_ordering_induced_by_one_score import (
+    PerformanceOrderingInducedByOneScore,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 if TYPE_CHECKING:
@@ -27,7 +39,10 @@ class AnnotationText(AbstractAnnotation):
 
     def __init__(
         self,
-        location: Importance | RankingScore | Point,
+        location: Importance
+        | RankingScore
+        | PerformanceOrderingInducedByOneScore
+        | Point,
         label: str | None = None,
         **plt_kwargs,
     ):
@@ -35,19 +50,35 @@ class AnnotationText(AbstractAnnotation):
         Initializes a new annotation for a text object.
 
         Args:
-            location (Importance | RankingScore | Point): where to write the label
+            location (Importance | RankingScore | PerformanceOrderingInducedByOneScore | Point): where to write the label
             label (str | None, optional): what text to write (if None, will
                 attempt to use the shortName of the location). Defaults to None.
+
+        Tip: 'color' affects both the text color and the marker color. You can
+        override the marker color using 'markerfacecolor' and 'markeredgecolor'.
         """
 
-        assert isinstance(location, (Importance, RankingScore, Point))
+        assert isinstance(
+            location,
+            (Importance, RankingScore, PerformanceOrderingInducedByOneScore, Point),
+        )
+        if isinstance(location, PerformanceOrderingInducedByOneScore):
+            assert isinstance(location.score, RankingScore)
         self._location = location
 
         if label is not None:
             if not isinstance(label, str):
                 label = str(label)
+        elif isinstance(location, Importance):
+            importance = location
+            label = importance.name
         elif isinstance(location, RankingScore):
-            label = location.shortLabel
+            rankingScore = location
+            label = rankingScore.shortLabel
+        elif isinstance(location, PerformanceOrderingInducedByOneScore):
+            ordering = location
+            score = ordering.score
+            label = "≲ with " + score.shortLabel
 
         self._plt_kwargs = plt_kwargs
 
@@ -58,6 +89,10 @@ class AnnotationText(AbstractAnnotation):
 
         parameterization = tile.parameterization
         location = self._location
+
+        if isinstance(location, PerformanceOrderingInducedByOneScore):
+            location = location.score
+
         if isinstance(location, Importance):
             importance = location
             rankingScore = RankingScore(importance)
@@ -66,6 +101,7 @@ class AnnotationText(AbstractAnnotation):
         elif isinstance(location, RankingScore):
             rankingScore = location
             constraint = rankingScore.constraint
+            # TODO: implement something more generic than this.
             if constraint is not None and isinstance(tile, ValueTile):
                 if not constraint(tile.performance):
                     raise RuntimeError(
@@ -127,3 +163,92 @@ class AnnotationText(AbstractAnnotation):
         dy *= 0.025 * (max_y - min_y)
 
         ax.text(x + dx, y + dy, label, ha=ha, va=va, **options_for_text)
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        Checks if this Annotation is compatible with the given constraint on importances. There
+        are compatibility issues to be checked when the annotation is placed at a location that
+        is either an Importance object or a RankingScore object. Note, however, that there is
+        no compatibility issue when the location is PerformanceOrderingInducedByOneScore object,
+        as the ordering is the same for a whole bunch of importances.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True if this Annotation is compatible with the given constraint, False otherwise.
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        location = self._location
+        if isinstance(location, Importance):
+            importance = location
+            return constraint(importance)
+        elif isinstance(location, RankingScore):
+            rankingScore = location
+            importance = rankingScore.importance
+            return constraint(importance)
+        elif isinstance(location, PerformanceOrderingInducedByOneScore):
+            return True
+        elif isinstance(location, Point):
+            return True
+        else:
+            assert False  # This should never happen
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return True
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return True
+
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
+        if isinstance(self._location, Point):
+            # TODO: take a look at the assumptions linked to the geometric object
+            raise NotImplementedError()
+        else:
+            return None
+
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
+        if isinstance(self._location, Point):
+            # TODO: take a look at the assumptions linked to the geometric object
+            raise NotImplementedError()
+        else:
+            return None
+
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None:
+        if isinstance(self._location, Point):
+            # TODO: take a look at the assumptions linked to the geometric object
+            raise NotImplementedError()
+        else:
+            return None

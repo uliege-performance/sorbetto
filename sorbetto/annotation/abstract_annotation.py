@@ -7,6 +7,16 @@ from typing import TYPE_CHECKING
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
+
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
 
@@ -31,6 +41,64 @@ class AbstractAnnotation(ABC, Named):
     @abstractmethod
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         pass
+
+    @abstractmethod
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        Checks if this Annotation is compatible with the given constraint on importances.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True if this Annotation is compatible with the given constraint, False otherwise.
+        """
+        ...
+
+    @abstractmethod
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        Checks if this Annotation is compatible with the given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True if this Annotation is compatible with the given constraint, False otherwise.
+        """
+        ...
+
+    @abstractmethod
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        Checks if this Annotation is compatible with the given constraint on performances.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True if this Annotation is compatible with the given constraint, False otherwise.
+        """
+        ...
+
+    @abstractmethod
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None: ...
+
+    @abstractmethod
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None: ...
+
+    @abstractmethod
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None: ...
 
     def __str__(self) -> str:
         return self.name

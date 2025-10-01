@@ -8,6 +8,15 @@ from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.geometry.abstract_geometric_object_2d import AbstractGeometricObject2D
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -49,3 +58,66 @@ class AnnotationGeometric(AbstractAnnotation):
         parameterization = tile.parameterization
         extent = parameterization.getExtent()
         self._geom.draw(fig, ax, extent, **self._plt_kwargs)
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return True
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return True
+
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
+        # TODO: take a look at the assumptions linked to the geometric object
+        raise NotImplementedError()
+
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
+        # TODO: take a look at the assumptions linked to the geometric object
+        raise NotImplementedError()
+
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None:
+        # TODO: take a look at the assumptions linked to the geometric object
+        raise NotImplementedError()

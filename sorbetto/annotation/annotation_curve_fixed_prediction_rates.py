@@ -9,8 +9,14 @@ from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.flavor.value_flavor import ValueFlavor
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
 from sorbetto.performance.constraint_fixed_prediction_rates import (
     ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
 
 if TYPE_CHECKING:
@@ -67,3 +73,54 @@ class AnnotationCurveFixedPredictionRates(AbstractAnnotation):
         )
 
         curve.draw(fig, ax, extent, **self._plt_kwargs)
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return True
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return math.isclose(constraint.getRatePos(), self._ratePos)
+
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
+        return None
+
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
+        return None
+
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None:
+        return ConstraintFixedPredictionRates(ratePos=self._ratePos)

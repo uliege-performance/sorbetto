@@ -7,6 +7,15 @@ from scipy.ndimage import generate_binary_structure, label
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.matplotlib_utils import filter_properties_for_text
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -99,3 +108,63 @@ class AnnotationSymbols(AbstractAnnotation):
                         fontsize=tiny,
                         **options_for_text,
                     )
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return True
+
+    def isCompatibleWithOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return True
+
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
+        return None
+
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
+        return None
+
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None:
+        return None
