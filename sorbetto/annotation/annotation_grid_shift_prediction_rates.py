@@ -26,14 +26,17 @@ class AnnotationGridShiftPredictionRates(AbstractAnnotation):
     This type of annotation can be used to place a grid on the Tile to show the
     effect of a target shift on the prediction rates :math:`P(\\hat{Y})`.
 
-    A target shift transforming the prediction rates :math:`(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))`
+    A target shift transforming the prediction rates
     from :math:`(\\tau_-, \\tau_+)` to :math:`(\\tau_-', \\tau_+')`, when applied
     to a performance :math:`P`, leads to a performance `P'` such that:
 
-    - :math:`P'(\\{tn\\}) = P(\\{tn\\}) \\frac{ \\tau_-' }{ \\tau_- }`
-    - :math:`P'(\\{fp\\}) = P(\\{fp\\}) \\frac{ \\tau_+' }{ \\tau_+ }`
-    - :math:`P'(\\{fn\\}) = P(\\{fn\\}) \\frac{ \\tau_-' }{ \\tau_- }`
-    - :math:`P'(\\{tp\\}) = P(\\{tp\\}) \\frac{ \\tau_+' }{ \\tau_+ }`
+    - :math:`P'(\\{tn\\}) \\propto P(\\{tn\\}) \\frac{ \\tau_-' }{ \\tau_- }`
+    - :math:`P'(\\{fp\\}) \\propto P(\\{fp\\}) \\frac{ \\tau_+' }{ \\tau_+ }`
+    - :math:`P'(\\{fn\\}) \\propto P(\\{fn\\}) \\frac{ \\tau_-' }{ \\tau_- }`
+    - :math:`P'(\\{tp\\}) \\propto P(\\{tp\\}) \\frac{ \\tau_+' }{ \\tau_+ }`
+
+    In the particular case in which :math:`(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(\\tau_-, \\tau_+)`,
+    we obtain :math:`(P'(\\hat{Y}=c_-), P'(\\hat{Y}=c_+))=(\\tau_-', \\tau_+')`.
 
     Tiles are distorted by such a shift: the information placed on it moves.
     The grid is intended to show the resulting displacements on the Tile.
