@@ -81,6 +81,30 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
     def ptp(self) -> np.ndarray:
         return self._ptp
 
+    def getMinPriorNeg(self) -> float:
+        return np.min(self._ptn + self._pfp)
+
+    def getMaxPriorNeg(self) -> float:
+        return np.max(self._ptn + self._pfp)
+
+    def getMinPriorPos(self) -> float:
+        return np.min(self._pfn + self._ptp)
+
+    def getMaxPriorPos(self) -> float:
+        return np.max(self._pfn + self._ptp)
+
+    def getMinRateNeg(self) -> float:
+        return np.min(self._ptn + self._pfn)
+
+    def getMaxRateNeg(self) -> float:
+        return np.max(self._ptn + self._pfn)
+
+    def getMinRatePos(self) -> float:
+        return np.min(self._pfp + self._ptp)
+
+    def getMaxRatePos(self) -> float:
+        return np.max(self._pfp + self._ptp)
+
     # NOTE: if we add or remove a performance, we must call this method
     def _update_probabilities(self):
         self._ptn = np.array([perf.ptn for perf in self._performance_list])
@@ -293,12 +317,12 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
                 label = self._performance_list[e].name
                 plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1, label=label)
 
-        max_elements_per_colums = 18
+        max_elements_per_column = 18
         ax.legend(
             bbox_to_anchor=(1.05, 0.5),
             loc="center left",
             borderaxespad=0,
-            ncols=1 + (num_performances - 1) / max_elements_per_colums,
+            ncols=1 + (num_performances - 1) / max_elements_per_column,
         )
 
         return fig, ax
