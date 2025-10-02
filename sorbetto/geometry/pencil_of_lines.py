@@ -17,7 +17,9 @@ class PencilOfLines(AbstractGeometricObject2D):
     See https://en.wikipedia.org/wiki/Pencil_(geometry)
     """
 
-    def __init__(self, line_1: Line, line_2: Line, name: str | None = None):
+    def __init__(
+        self, line_1: Line, line_2: Line, name: str | None = None, *assumptions
+    ):
         """
         Constructs a new pencil of lines on two lines.
 
@@ -31,7 +33,7 @@ class PencilOfLines(AbstractGeometricObject2D):
         assert isinstance(line_2, Line)
         self._line_1 = line_1
         self._line_2 = line_2
-        AbstractGeometricObject2D.__init__(self, name)
+        AbstractGeometricObject2D.__init__(self, name, *assumptions)
 
     @property
     def line_1(self) -> Line:
@@ -53,6 +55,16 @@ class PencilOfLines(AbstractGeometricObject2D):
         """
         return self._line_2
 
+    def _getAllAssumptions(self) -> set:
+        all_assumptions = set()
+        for assumption in self.assumptions:
+            all_assumptions.add(assumption)
+        for assumption in self._line_1.assumptions:
+            all_assumptions.add(assumption)
+        for assumption in self._line_2.assumptions:
+            all_assumptions.add(assumption)
+        return all_assumptions
+
     def getLine(self, lambda_1: float, lambda_2: float) -> Line:
         """
         The line corresponding to :math:`(\\lambda_1, \\lambda_2)`.
@@ -66,11 +78,14 @@ class PencilOfLines(AbstractGeometricObject2D):
         """
         assert isinstance(lambda_1, float)
         assert isinstance(lambda_2, float)
+
+        all_assumptions = self._getAllAssumptions()
+
         a = lambda_1 * self._line_1.a + lambda_2 * self._line_2.a
         b = lambda_1 * self._line_1.b + lambda_2 * self._line_2.b
         c = lambda_1 * self._line_1.c + lambda_2 * self._line_2.c
         name = "line ({:g},{:g}) of {}".format(lambda_1, lambda_2, self)
-        return Line(a, b, c, name=name)
+        return Line(a, b, c, name=name, *all_assumptions)
 
     def getVertex(self) -> Point:
         """

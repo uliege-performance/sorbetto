@@ -14,7 +14,7 @@ class Point(AbstractGeometricObject2D):
     See https://en.wikipedia.org/wiki/Point_(geometry)
     """
 
-    def __init__(self, x: float, y: float, name: str | None = None):
+    def __init__(self, x: float, y: float, name: str | None = None, *assumptions):
         """
         Constructs a new point :math:`(x,y)` based on its coordinates and an optional name.
 
@@ -27,7 +27,7 @@ class Point(AbstractGeometricObject2D):
         assert isinstance(y, float)
         self._x = x
         self._y = y
-        AbstractGeometricObject2D.__init__(self, name)
+        AbstractGeometricObject2D.__init__(self, name, *assumptions)
 
     @property
     def x(self) -> float:

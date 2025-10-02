@@ -18,14 +18,14 @@ class BilinearCurve(Conic):
     where :math:`a=0`, :math:`b=K_{xy}`, :math:`c=0`, :math:`d=K_x`, :math:`e=K_y`, and :math:`f=K`.
     """
 
-    def __init__(self, Kxy, Kx, Ky, K, name: str | None = None):
+    def __init__(self, Kxy, Kx, Ky, K, name: str | None = None, *assumptions):
         a = 0.0
         b = Kxy
         c = 0.0
         d = Kx
         e = Ky
         f = K
-        Conic.__init__(self, a, b, c, d, e, f, name)
+        Conic.__init__(self, a, b, c, d, e, f, name, *assumptions)
 
     def getY(self, x):
         """

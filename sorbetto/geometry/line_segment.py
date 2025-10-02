@@ -15,7 +15,7 @@ class LineSegment(AbstractGeometricObject2D):
     See https://en.wikipedia.org/wiki/Line_segment
     """
 
-    def __init__(self, p1: Point, p2: Point, name: str | None = None):
+    def __init__(self, p1: Point, p2: Point, name: str | None = None, *assumptions):
         """
         Constructs a new line segment based on the two endpoints.
 
@@ -28,7 +28,7 @@ class LineSegment(AbstractGeometricObject2D):
         assert isinstance(p2, Point)
         self._p1 = p1
         self._p2 = p2
-        AbstractGeometricObject2D.__init__(self, name)
+        AbstractGeometricObject2D.__init__(self, name, *assumptions)
 
     @property
     def p1(self) -> Point:

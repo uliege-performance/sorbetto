@@ -19,7 +19,9 @@ class Line(AbstractGeometricObject2D):
     See https://en.wikipedia.org/wiki/Line_(geometry)
     """
 
-    def __init__(self, a: float, b: float, c: float, name: str | None = None):
+    def __init__(
+        self, a: float, b: float, c: float, name: str | None = None, *assumptions
+    ):
         """
         Constructs a new line :math:`a x + b y + c = 0`.
 
@@ -40,7 +42,7 @@ class Line(AbstractGeometricObject2D):
             math.isclose(a, 0.0, abs_tol=1e-8) and math.isclose(b, 0.0, abs_tol=1e-8)
         )
 
-        AbstractGeometricObject2D.__init__(self, name)
+        AbstractGeometricObject2D.__init__(self, name, *assumptions)
 
     @property
     def a(self) -> float:
@@ -102,7 +104,7 @@ class Line(AbstractGeometricObject2D):
         c = self._c
 
         k = math.hypot(a, b)
-        return Line(a / k, b / k, c / k, self.name)
+        return Line(a / k, b / k, c / k, self.name, *self.assumptions)
 
     def getIntersectionWithLine(self, other: Self) -> Self | Point | None:
         """
@@ -115,8 +117,15 @@ class Line(AbstractGeometricObject2D):
             Self | Point | None: the intersection.
         """
 
-        # implementation of Cremer's rule
+        # implementation of Cramer's rule
         # see https://en.wikipedia.org/wiki/Cramer%27s_rule
+
+        all_assumptions = set()
+        for assumption in self.assumptions:
+            all_assumptions.add(assumption)
+        for assumption in other.assumptions:
+            all_assumptions.add(assumption)
+        name = "intersection between {} and {}".format(self, other)
 
         a1 = self._a
         b1 = self._b
@@ -134,17 +143,17 @@ class Line(AbstractGeometricObject2D):
                 d = math.fabs(l1._c - l2.c)  # distance between the two lines
             else:
                 d = math.fabs(l1._c + l2.c)  # distance between the two lines
-            if d < 1e-8:  # cparallel and onfounded lines
-                return self
+            if d < 1e-8:  # parallel and confounded lines
+                return Line(self._a, self._b, self._c, name, *all_assumptions)
             else:  # parallel and not confounded lines
+                # TODO: should be an "empty object" with the right assumptions
                 return None
         else:
             x = (b1 * c2 - c1 * b2) / den
             y = (c1 * a2 - a1 * c2) / den
             assert math.isclose(a1 * x + b1 * y + c1, 0.0, abs_tol=1e-6)
             assert math.isclose(a2 * x + b2 * y + c2, 0.0, abs_tol=1e-6)
-            name = "intersection between {} and {}".format(self, other)
-            return Point(x, y, name)
+            return Point(x, y, name, *all_assumptions)
 
     def getIntersectionWithAxisAlignedBox(self, extent) -> LineSegment | Point | None:
         """
@@ -194,16 +203,16 @@ class Line(AbstractGeometricObject2D):
                 points.append(point)
 
         if len(points) == 0:
-            return None
+            return None  # TODO: should be an "empty object" with the right assumptions
         elif len(points) == 1:
             p = points[0]
-            p = Point(p[0], p[1], self.name)
+            return Point(p[0], p[1], self.name, *self.assumptions)
         elif len(points) == 2:
             p1 = points[0]
             p1 = Point(p1[0], p1[1], "endpoint 1")
             p2 = points[-1]
             p2 = Point(p2[0], p2[1], "endpoint 2")
-            return LineSegment(p1, p2, self.name)
+            return LineSegment(p1, p2, self.name, *self.assumptions)
         else:
             # Find the two furthest points
             # Choose the point p1 arbitrarily
@@ -223,7 +232,7 @@ class Line(AbstractGeometricObject2D):
                     p1 = p0
             p1 = Point(p1[0], p1[1], "endpoint 1")
             p2 = Point(p2[0], p2[1], "endpoint 2")
-            return LineSegment(p1, p2, self.name)
+            return LineSegment(p1, p2, self.name, *self.assumptions)
 
     def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
         """

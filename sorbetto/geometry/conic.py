@@ -20,7 +20,7 @@ class Conic(AbstractGeometricObject2D):
     See https://en.wikipedia.org/wiki/Conic_section
     """
 
-    def __init__(self, a, b, c, d, e, f, name: str | None = None):
+    def __init__(self, a, b, c, d, e, f, name: str | None = None, *assumptions):
         assert isinstance(a, float)
         assert isinstance(b, float)
         assert isinstance(c, float)
@@ -42,7 +42,7 @@ class Conic(AbstractGeometricObject2D):
         self._d = d
         self._e = e
         self._f = f
-        AbstractGeometricObject2D.__init__(self, name)
+        AbstractGeometricObject2D.__init__(self, name, *assumptions)
 
     @property
     def a(self) -> float:

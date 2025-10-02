@@ -4,6 +4,7 @@
 from typing import Self
 
 
+# TODO: Should it be in module "geometry" or in a module "algebra"?
 class LinearFractionalTransformation:
     """
     This class is used to represent linear fractional transformations.

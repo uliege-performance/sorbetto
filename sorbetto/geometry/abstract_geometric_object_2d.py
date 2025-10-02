@@ -10,9 +10,14 @@ from sorbetto.core.named import Named
 
 
 class AbstractGeometricObject2D(ABC, Named):
-    def __init__(self, name: str | None = None):
+    def __init__(self, name: str | None = None, *assumptions):
+        self._assumptions = assumptions
         ABC.__init__(self)
         Named.__init__(self, "unnamed geometric object", name)
 
     @abstractmethod
     def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs) -> None: ...
+
+    @property
+    def assumptions(self) -> tuple:
+        return self._assumptions
