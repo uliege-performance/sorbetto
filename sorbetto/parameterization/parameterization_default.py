@@ -6,6 +6,12 @@ import numpy as np
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.line import Line
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
+)
 from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
@@ -130,7 +136,8 @@ class ParameterizationDefault(AbstractParameterization):
         name = "locus of performance orderings putting all no-skill performances with the class priors ({:g}, {:g}) on an equal footing".format(
             priorNeg, priorPos
         )
-        return BilinearCurve(Kab, Ka, Kb, K, name)
+        assumption = ConstraintFixedClassPriors(priorPos=priorPos)
+        return BilinearCurve(Kab, Ka, Kb, K, name, assumption)
 
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
         self, ratePos: float
@@ -171,7 +178,8 @@ class ParameterizationDefault(AbstractParameterization):
         name = "locus of performance orderings putting all no-skill performances with the prediction rates ({:g}, {:g}) on an equal footing".format(
             rateNeg, ratePos
         )
-        return BilinearCurve(Kab, Ka, Kb, K, name)
+        assumption = ConstraintFixedPredictionRates(ratePos=ratePos)
+        return BilinearCurve(Kab, Ka, Kb, K, name, assumption)
 
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Line:
         # Solution:

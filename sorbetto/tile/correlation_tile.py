@@ -8,6 +8,7 @@ import numpy as np
 
 from sorbetto.flavor.correlation_flavor import CorrelationFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
+from sorbetto.ranking.constraint_canonical import ConstraintCanonical
 from sorbetto.tile.numeric_tile import NumericTile
 
 
@@ -26,12 +27,18 @@ class CorrelationTile(NumericTile):
         assert isinstance(resolution, int)
         assert resolution > 0
 
+        if flavor.correlation_coefficient == "pearson_r":
+            base_constraint_on_importances = ConstraintCanonical()
+        else:
+            base_constraint_on_importances = None
+
         super().__init__(
             parameterization=parameterization,
             flavor=flavor,
             name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
+            base_constraint_on_importances=base_constraint_on_importances,
         )
 
         # self._score = self.flavor.score

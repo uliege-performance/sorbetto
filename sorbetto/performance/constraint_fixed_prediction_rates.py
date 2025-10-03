@@ -15,13 +15,13 @@ class ConstraintFixedPredictionRates:
         assert ratePos <= 1.0
         self._ratePos = ratePos
 
-    def __call__(self, performance):
+    def __call__(self, performance: TwoClassClassificationPerformance) -> bool:
         assert isinstance(performance, TwoClassClassificationPerformance)
-        value = performance.pfp + performance.ptp
+        value = performance._rate_pos()
         return math.isclose(value, self._ratePos, abs_tol=1e-8)
 
     def getRateNeg(self):
-        return 1 - self._ratePos
+        return 1.0 - self._ratePos
 
     def getRatePos(self):
         return self._ratePos
@@ -32,3 +32,9 @@ class ConstraintFixedPredictionRates:
         return "constraint: fixed prediction rates for (neg,pos)=({:g},{:g})".format(
             rateNeg, ratePos
         )
+
+    def __eq__(self, other):
+        if not isinstance(other, ConstraintFixedPredictionRates):
+            return NotImplemented
+        else:
+            return math.isclose(self._ratePos, other._ratePos)

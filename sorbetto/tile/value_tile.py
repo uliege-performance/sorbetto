@@ -14,6 +14,7 @@ from sorbetto.parameterization.parameterization_default import ParameterizationD
 from sorbetto.performance.two_class_classification_performance import (
     TwoClassClassificationPerformance,
 )
+from sorbetto.ranking.constraint_canonical import ConstraintCanonical
 from sorbetto.ranking.ranking_score import RankingScore
 from sorbetto.tile.numeric_tile import NumericTile
 
@@ -75,6 +76,7 @@ class ValueTile(NumericTile):
             name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
+            base_constraint_on_importances=ConstraintCanonical(),
         )
         self._performance = self.flavor.performance
 

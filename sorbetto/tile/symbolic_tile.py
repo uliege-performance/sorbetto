@@ -1,12 +1,15 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Any
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 
+from sorbetto.core.named import Named
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.tile.tile import Tile
@@ -24,6 +27,7 @@ class SymbolicTile(Tile):
         name: str = "Symbolic Tile",
         resolution: int = 1001,
         disable_legend: bool = False,
+        base_constraint_on_importances: Any = None,
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, AbstractSymbolicFlavor)
@@ -38,6 +42,7 @@ class SymbolicTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            base_constraint_on_importances=base_constraint_on_importances,
         )
 
         self._disable_legend = disable_legend
@@ -91,7 +96,10 @@ class SymbolicTile(Tile):
 
             def getLegendElement(symbol):
                 max_label_size = 30  # >= 4
-                label = str(symbol)
+                if isinstance(symbol, Named):
+                    label = symbol.name
+                else:
+                    label = str(symbol)
                 if len(label) > max_label_size:
                     label = label[: max_label_size - 4] + " ..."
                 value = self.flavor.mapper(symbol)

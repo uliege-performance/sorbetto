@@ -3,7 +3,7 @@
 
 import logging
 import math
-from typing import cast
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,6 +31,7 @@ class NumericTile(Tile):
         name: str = "Numeric Tile",
         resolution: int = 1001,
         disable_colorbar: bool = False,
+        base_constraint_on_importances: Any = None,
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, AbstractNumericFlavor)
@@ -45,6 +46,7 @@ class NumericTile(Tile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            base_constraint_on_importances=base_constraint_on_importances,
         )
 
         self._disable_colorbar = disable_colorbar

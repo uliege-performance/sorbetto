@@ -9,6 +9,7 @@ from sorbetto.parameterization.abstract_parameterization import AbstractParamete
 from sorbetto.performance.finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
+from sorbetto.ranking.constraint_canonical import ConstraintCanonical
 from sorbetto.ranking.ranking_score import RankingScore
 from sorbetto.tile.numeric_tile import NumericTile
 
@@ -36,6 +37,7 @@ class WorstValueTile(NumericTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            base_constraint_on_importances=ConstraintCanonical(),
         )
 
     @property

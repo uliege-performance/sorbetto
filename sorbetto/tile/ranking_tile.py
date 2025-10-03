@@ -35,6 +35,7 @@ class RankingTile(NumericTile):
             name=name,
             resolution=resolution,
             disable_colorbar=disable_colorbar,
+            base_constraint_on_importances=None,
         )
 
         self._entities = self.flavor.entity_list

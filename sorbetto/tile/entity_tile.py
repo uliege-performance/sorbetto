@@ -34,6 +34,7 @@ class EntityTile(SymbolicTile):
             name=name,
             resolution=resolution,
             disable_legend=disable_legend,
+            base_constraint_on_importances=None,
         )
         self._rank = self.flavor.rank
         self._entities = self.flavor.entity_set

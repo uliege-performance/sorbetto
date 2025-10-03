@@ -46,3 +46,11 @@ class ConstraintRelativeImportanceSatisfyingUnsatisfying:
 
     def __str__(self):
         return "constraint: relative importance of satisfying vs. unsatisfying"
+
+    def __eq__(self, other):
+        if not isinstance(other, ConstraintRelativeImportanceSatisfyingUnsatisfying):
+            return NotImplemented
+        else:
+            return math.isclose(
+                self._relativeImportanceSatisfying, other._relativeImportanceSatisfying
+            )
