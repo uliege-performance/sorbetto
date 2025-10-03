@@ -78,13 +78,13 @@ class AnnotationText(AbstractAnnotation):
         elif isinstance(location, PerformanceOrderingInducedByOneScore):
             ordering = location
             score = ordering.score
-            label = "≲ with " + score.shortLabel
+            label = "≲[" + score.shortLabel + "]"
 
         self._plt_kwargs = plt_kwargs
 
         AbstractAnnotation.__init__(self, label)
 
-    def _whatShouldWeDraw(self, tile: "Tile") -> tuple[float, float, str]:
+    def getLocationAsPoint(self, tile: "Tile") -> Point:
         from sorbetto.tile.value_tile import ValueTile
 
         parameterization = tile.parameterization
@@ -116,7 +116,15 @@ class AnnotationText(AbstractAnnotation):
         else:
             assert False  # This should never happen
 
-        return x, y, self.name
+        return Point(x, y)
+
+    def getLabel(self) -> str:
+        return self.name
+
+    def _whatShouldWeDraw(self, tile: "Tile") -> tuple[float, float, str]:
+        point = self.getLocationAsPoint(tile)
+        label = self.getLabel()
+        return point.x, point.y, label
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile.tile import Tile
