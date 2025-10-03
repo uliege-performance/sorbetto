@@ -949,6 +949,80 @@ class RankingScore(AbstractScore):
         abbreviation = "A"
         return RankingScore(importance, name=name, abbreviation=abbreviation)
 
+    @staticmethod
+    def getSimilarityCoefficientsS(theta: float) -> "RankingScore":
+        """
+        Similarity coefficients of the family :math:`S_\\theta`, with :math:`\\theta \\ge 0`
+        were defined in :cite:t:`Gower1986Metric` as
+
+        .. math::
+            S_\\theta = \\frac{ P(\\{tn,tp\\}) }{ P(\\{tn,tp\\}) + \\theta P(\\{fp,fn\\}) }
+
+        These scores are a particular case of (non-canonical, unless :math:`\\theta=1`,
+        in which case it is the accuracy) ranking score with the importance proportional to
+
+        * :math:`I(tn)=1`,
+        * :math:`I(fp)=\\theta`,
+        * :math:`I(fn)=\\theta`,
+        * and :math:`I(tp)=1`.
+
+        See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+
+        Args:
+            theta (float): the parameter :math:`\\theta \\ge 0`
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
+        assert isinstance(theta, float)
+        assert theta >= 0.0
+
+        itn = 1.0
+        ifp = theta
+        ifn = theta
+        itp = 1.0
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+        name = "Similarity Coefficients S({:g})".format(theta)
+        abbreviation = "$S_{" + "{:g}".format(theta) + "}$"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
+
+    @staticmethod
+    def getSimilarityCoefficientsT(theta: float) -> "RankingScore":
+        """
+        Similarity coefficients of the family :math:`T_\\theta`, with :math:`\\theta \\ge 0`
+        were defined in :cite:t:`Gower1986Metric` as
+
+        .. math::
+            T_\\theta = \\frac{ P(\\{tp\\}) }{ P(\\{tp\\}) + \\theta P(\\{fp,fn\\}) }
+
+        These scores are a particular case of (non-canonical, unless :math:`\\theta=\\frac12`,
+        in which case it is the F1 score) ranking score with the importance proportional to
+
+        * :math:`I(tn)=0`,
+        * :math:`I(fp)=\\theta`,
+        * :math:`I(fn)=\\theta`,
+        * and :math:`I(tp)=1`.
+
+        See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+
+        Args:
+            theta (float): the parameter :math:`\\theta \\ge 0`
+
+        Returns:
+            RankingScore: the score as a RankingScore object
+        """
+        assert isinstance(theta, float)
+        assert theta >= 0.0
+
+        itn = 0.0
+        ifp = theta
+        ifn = theta
+        itp = 1.0
+        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+        name = "Similarity Coefficients T({:g})".format(theta)
+        abbreviation = "$T_{" + "{:g}".format(theta) + "}$"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
+
     # @staticmethod
     # def getMatchingCoefficient() -> "RankingScore":
     #     # SimpleMatchingCoefficient ??? Same as Jaccard ???
@@ -974,8 +1048,8 @@ class RankingScore(AbstractScore):
 
         When used on performances with the class priors, for the negative and positive
         classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
-        this score becomes a particular case of (non-canonical) ranking score with the
-        importance proportional to
+        this score becomes a particular case of (non-canonical, unless :math:`\\pi_- = \\pi_+`,
+        in which case it is the F1 score) ranking score with the importance proportional to
 
         * :math:`I(tn)=0`,
         * :math:`I(fp)=\\pi_+`,
