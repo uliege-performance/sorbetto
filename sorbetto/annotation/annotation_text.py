@@ -228,19 +228,56 @@ class AnnotationText(AbstractAnnotation):
         assert isinstance(constraint, ConstraintFixedPredictionRates)
         return True
 
+    def _unionOfConstraints(self, constraint1, constraint2):
+        if constraint1 is None:
+            if constraint2 is None:
+                return None
+            else:
+                return constraint2
+        else:
+            if constraint2 is None:
+                return constraint1
+            else:
+                if constraint1 == constraint2:
+                    return constraint1
+                else:
+                    raise NotImplementedError(
+                        "Sorbetto does not support yet the union of different constraints"
+                    )
+
     def getConstraintOnImportances(
         self,
     ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
-        if isinstance(self._location, Point):
-            # TODO: take a look at the assumptions linked to the geometric object
-            raise NotImplementedError()
+        if isinstance(self._location, RankingScore):
+            rankingScore = self._location
+            importance = rankingScore.importance
+            relativeImportanceSatisfying = importance.itn + importance.itp
+            relativeImportanceUnsatisfying = importance.ifp + importance.ifn
+            constraint = ConstraintRelativeImportanceSatisfyingUnsatisfying(
+                relativeImportanceSatisfying=relativeImportanceSatisfying,
+                relativeImportanceUnsatisfying=relativeImportanceUnsatisfying,
+            )
+            return constraint
+        elif isinstance(self._location, Point):
+            point = self._location
+            constraint = None
+            for assumption in point:
+                if isinstance(
+                    assumption, ConstraintRelativeImportanceSatisfyingUnsatisfying
+                ):
+                    constraint = self._unionOfConstraints(constraint, assumption)
+            return constraint
         else:
             return None
 
     def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
         if isinstance(self._location, Point):
-            # TODO: take a look at the assumptions linked to the geometric object
-            raise NotImplementedError()
+            point = self._location
+            constraint = None
+            for assumption in point:
+                if isinstance(assumption, ConstraintFixedClassPriors):
+                    constraint = self._unionOfConstraints(constraint, assumption)
+            return constraint
         else:
             return None
 
@@ -248,7 +285,11 @@ class AnnotationText(AbstractAnnotation):
         self,
     ) -> ConstraintFixedPredictionRates | None:
         if isinstance(self._location, Point):
-            # TODO: take a look at the assumptions linked to the geometric object
-            raise NotImplementedError()
+            point = self._location
+            constraint = None
+            for assumption in point:
+                if isinstance(assumption, ConstraintFixedPredictionRates):
+                    constraint = self._unionOfConstraints(constraint, assumption)
+            return constraint
         else:
             return None

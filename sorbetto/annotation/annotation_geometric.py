@@ -106,18 +106,46 @@ class AnnotationGeometric(AbstractAnnotation):
         assert isinstance(constraint, ConstraintFixedPredictionRates)
         return True
 
+    def _unionOfConstraints(self, constraint1, constraint2):
+        if constraint1 is None:
+            if constraint2 is None:
+                return None
+            else:
+                return constraint2
+        else:
+            if constraint2 is None:
+                return constraint1
+            else:
+                if constraint1 == constraint2:
+                    return constraint1
+                else:
+                    raise NotImplementedError(
+                        "Sorbetto does not support yet the union of different constraints"
+                    )
+
     def getConstraintOnImportances(
         self,
     ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
-        # TODO: take a look at the assumptions linked to the geometric object
-        raise NotImplementedError()
+        constraint = None
+        for assumption in self._geom.assumptions:
+            if isinstance(
+                assumption, ConstraintRelativeImportanceSatisfyingUnsatisfying
+            ):
+                constraint = self._unionOfConstraints(constraint, assumption)
+        return constraint
 
     def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
-        # TODO: take a look at the assumptions linked to the geometric object
-        raise NotImplementedError()
+        constraint = None
+        for assumption in self._geom.assumptions:
+            if isinstance(assumption, ConstraintFixedClassPriors):
+                constraint = self._unionOfConstraints(constraint, assumption)
+        return constraint
 
     def getConstraintOnPredictionRates(
         self,
     ) -> ConstraintFixedPredictionRates | None:
-        # TODO: take a look at the assumptions linked to the geometric object
-        raise NotImplementedError()
+        constraint = None
+        for assumption in self._geom.assumptions:
+            if isinstance(assumption, ConstraintFixedPredictionRates):
+                constraint = self._unionOfConstraints(constraint, assumption)
+        return constraint
