@@ -3,6 +3,7 @@
 
 import io
 import logging
+import math
 from typing import Any, Iterator, SupportsIndex, cast
 
 import matplotlib.pyplot as plt
@@ -11,6 +12,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
+from sorbetto.annotation.annotation_text import AnnotationText
 from sorbetto.core.named import Named
 from sorbetto.core.types import Extent
 from sorbetto.flavor.abstract_flavor import AbstractFlavor
@@ -279,6 +281,39 @@ class Tile(Named):
     def clearAnnotations(self):
         self._annotations.clear()
 
+    def _genAnnotationsWithMergedTexts(self):
+        n = len(self._annotations)
+        for i in range(n):
+            annotation = self._annotations[i]
+            if isinstance(annotation, AnnotationText):
+                point = annotation.getLocationAsPoint(self)
+                merged_label = None
+                before = False
+                after = False
+                for j in range(n):
+                    other_annotation = self._annotations[j]
+                    if not isinstance(other_annotation, AnnotationText):
+                        continue
+                    other_point = other_annotation.getLocationAsPoint(self)
+                    if not math.isclose(point.x, other_point.x):
+                        continue
+                    if not math.isclose(point.y, other_point.y):
+                        continue
+                    if merged_label is None:
+                        merged_label = other_annotation.getLabel()
+                    else:
+                        merged_label += ",\n" + other_annotation.getLabel()
+                    if j < i:
+                        before = True
+                    if j > i:
+                        after = True
+                if (not before) and after:
+                    yield AnnotationText(point, merged_label, **annotation._plt_kwargs)
+                elif (not before) and (not after):
+                    yield annotation
+            else:
+                yield annotation
+
     def draw(
         self,
         fig: Figure | None = None,
@@ -306,7 +341,7 @@ class Tile(Named):
 
         # Draw all annotations
 
-        for annotation in self.genAnnotations():
+        for annotation in self._genAnnotationsWithMergedTexts():
             assert isinstance(annotation, AbstractAnnotation)
             tile = self
             try:
