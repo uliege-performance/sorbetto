@@ -1,21 +1,14 @@
+from sorbetto.performance.constraint_fixed_class_priors import (
+    ConstraintFixedClassPriors,
+)
 from sorbetto.performance.performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
 )
+from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 
 class PerformanceOrderingsInducedByRankingScores:
-    @staticmethod
-    def getCohenCorrected(
-        rankingScore: RankingScore,
-    ) -> "PerformanceOrderingInducedByOneScore":
-        """
-        Returns the performance ordering induced by the Cohen-corrected version of the provided ranking score.
-        See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
-        """
-        assert isinstance(rankingScore, RankingScore)
-        raise NotImplementedError()  # TODO
-
     @staticmethod
     def getTrueNegativeRate() -> "PerformanceOrderingInducedByOneScore":
         """
@@ -240,7 +233,7 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Reference: :cite:t:`Warrens2012TheEffect`.
         """
-        return PerformanceOrderingInducedByOneScore.getAccuracy()
+        return PerformanceOrderingsInducedByRankingScores.getAccuracy()
 
     @staticmethod
     def getSimilarityCoefficientsT() -> "PerformanceOrderingInducedByOneScore":
@@ -249,7 +242,7 @@ class PerformanceOrderingsInducedByRankingScores:
         Similarity coefficients of the family :math:`T_\\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        return PerformanceOrderingsInducedByRankingScores.getJaccard()
 
     @staticmethod
     def getSimilarityCoefficientsS() -> "PerformanceOrderingInducedByOneScore":
@@ -258,7 +251,7 @@ class PerformanceOrderingsInducedByRankingScores:
         Similarity coefficients of the family :math:`S_\\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        return PerformanceOrderingsInducedByRankingScores.getAccuracy()
 
     # @staticmethod
     # def getSimilarityCoefficients() -> Conic:
@@ -282,7 +275,8 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        # TODO: add constraint to the result
+        return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
 
     @staticmethod
     def getStandardizedPositivePredictiveValue(
@@ -297,7 +291,8 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        # TODO: add constraint to the result
+        return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
 
     @staticmethod
     def getNegativeLikelihoodRatioComplement(
@@ -309,7 +304,8 @@ class PerformanceOrderingsInducedByRankingScores:
         References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        # TODO: add constraint to the result
+        return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
 
     @staticmethod
     def getPositiveLikelihoodRatio(priorPos) -> "PerformanceOrderingInducedByOneScore":
@@ -319,10 +315,11 @@ class PerformanceOrderingsInducedByRankingScores:
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        # TODO: add constraint to the result
+        return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
 
     @staticmethod
-    def getSkewInsensitiveVersionOfF(
+    def getSkewInsensitiveVersionOfF1(
         priorPos,
     ) -> "PerformanceOrderingInducedByOneScore":
         """
@@ -330,9 +327,8 @@ class PerformanceOrderingsInducedByRankingScores:
         The skew-insensitive version of :math:`F_1`.
         Defined in cite:t:`Flach2003TheGeometry`.
         """
-        return PerformanceOrderingInducedByOneScore(
-            RankingScore.getSkewInsensitiveVersionOfF1()
-        )
+        score = RankingScore.getSkewInsensitiveVersionOfF1(priorPos)
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getWeightedAccuracy(
@@ -396,6 +392,59 @@ class PerformanceOrderingsInducedByRankingScores:
         raise NotImplementedError()  # TODO: Implement this!
 
     @staticmethod
+    def getCohenCorrected(
+        rankingScore: RankingScore, priorPos: float
+    ) -> "PerformanceOrderingInducedByOneScore":
+        """
+        When correcting a ranking score :math:`R_I` in the same way as Cohen did with
+        the accuracy in :cite:t:`Cohen1960ACoefficient`, we obtain the score
+
+        .. math::
+            X = \\frac{ R_I - R_I \\circ noskill }{ 1 - R_I \\circ noskill }
+
+        where :math:`noskill` denotes the operation that transforms a performance
+        :math:`P` into :math:`P'` such that :math:`P'(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`.
+
+        The score :math:`X` is not a ranking score. However, when
+        used on performances with the class priors, for the negative and positive
+        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        the performance ordering induced by :math:`X` is the same as the one
+        induced by the ranking score :math:`R_{I'}` with the importance
+        :math:`I'` proportional to
+
+        * :math:`I'(tn) = \\pi_+^2 I(fn)`,
+        * :math:`I'(fp) = I(fp)`,
+        * :math:`I'(fn) = I(fn)`,
+        * and :math:`I'(tp) = \\pi_-^2 I(fp)`.
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
+
+        Args:
+            rankingScore (RankingScore): a ranking score :math:`R_I`
+            priorPos (float): the prior of the positive class, :math:`\\pi_+ \\in [0, 1]`
+
+        Returns:
+            PerformanceOrderingInducedByOneScore: the performance ordering induced by the Cohen-corrected version of :math:`R_I`, :math:`X`.
+        """
+        # TODO: Implement Cohen's correction also in the case of fixed prediction rates
+        assert isinstance(rankingScore, RankingScore)
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+        priorNeg = 1.0 - priorPos
+
+        importance = rankingScore.importance
+        ifp = importance.ifp
+        ifn = importance.ifn
+
+        itn_corrected = priorPos * priorPos * ifn
+        itp_corrected = priorNeg * priorNeg * ifp
+        importance = Importance(itn_corrected, ifp, ifn, itp_corrected)
+        score = RankingScore(importance)
+
+        return PerformanceOrderingInducedByOneScore(score)
+
+    @staticmethod
     def getCohenKappa(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Cohen Kappa*.
@@ -407,7 +456,25 @@ class PerformanceOrderingsInducedByRankingScores:
         Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+        priorNeg = 1.0 - priorPos
+
+        itn = priorPos * priorPos
+        ifp = 1.0
+        ifn = 1.0
+        itp = priorNeg * priorNeg
+        importance = Importance(itn, ifp, ifn, itp)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+        score = RankingScore(
+            importance,
+            constraint=constraint,
+            name="Cohen's kappa",
+            abbreviation="Cohen",
+            symbol="$\\kappa$",
+        )
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getHeidkeSkillScore(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
@@ -454,13 +521,13 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getNegativePredictiveValue()
+                return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getTrueNegativeRate()
+                return PerformanceOrderingsInducedByRankingScores.getTrueNegativeRate()
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -472,7 +539,7 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Rejection Rate".
         See :meth:`getProbabilityTrueNegative`.
         """
-        return PerformanceOrderingInducedByOneScore.getProbabilityTrueNegative(
+        return PerformanceOrderingsInducedByRankingScores.getProbabilityTrueNegative(
             priorPos=priorPos, ratePos=ratePos
         )
 
@@ -513,13 +580,13 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getPositivePredictiveValue()
+                return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getTrueNegativeRate()
+                return PerformanceOrderingsInducedByRankingScores.getTrueNegativeRate()
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -560,13 +627,13 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getNegativePredictiveValue()
+                return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getTruePositiveRate()
+                return PerformanceOrderingsInducedByRankingScores.getTruePositiveRate()
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -608,13 +675,13 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getPositivePredictiveValue()
+                return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingInducedByOneScore.getTruePositiveRate()
+                return PerformanceOrderingsInducedByRankingScores.getTruePositiveRate()
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -626,7 +693,7 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Detection Rate".
         See :meth:`getProbabilityTruePositive`.
         """
-        return PerformanceOrderingInducedByOneScore.getProbabilityTruePositive(
+        return PerformanceOrderingsInducedByRankingScores.getProbabilityTruePositive(
             priorPos=priorPos, ratePos=ratePos
         )
 
@@ -652,9 +719,8 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score *(Arithmetically) Macro-Averaged Precision*.
         See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
         """
-        return PerformanceOrderingInducedByOneScore(
-            RankingScore.getMacroAveragedPrecision(ratePos)
-        )
+        score = RankingScore.getMacroAveragedPrecision(ratePos)
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getMarkedness(ratePos: float) -> "PerformanceOrderingInducedByOneScore":
@@ -664,9 +730,8 @@ class PerformanceOrderingsInducedByRankingScores:
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as :math:`NPV+ PPV -1`.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        return PerformanceOrderingInducedByOneScore(
-            RankingScore.getMacroAveragedPrecision(ratePos)
-        )
+        score = RankingScore.getMacroAveragedPrecision(ratePos)
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getClaytonSkillScore(ratePos: float) -> "PerformanceOrderingInducedByOneScore":
@@ -674,6 +739,5 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Clayton Skill Score".
         See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
         """
-        return PerformanceOrderingInducedByOneScore(
-            RankingScore.getMacroAveragedPrecision(ratePos)
-        )
+        score = RankingScore.getMacroAveragedPrecision(ratePos)
+        return PerformanceOrderingInducedByOneScore(score)
