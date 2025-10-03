@@ -8,6 +8,9 @@ from .constraint_relative_importance_satisfying_unsatisfying import (
 )
 from .entity import Entity
 from .importance import Importance
+from .performance_orderings_induced_by_ranking_scores import (
+    PerformanceOrderingsInducedByRankingScores,
+)
 from .ranking_induced_by_score import RankingInducedByScore
 from .ranking_score import RankingScore
 
@@ -17,6 +20,7 @@ __all__ = [
     "ConstraintRelativeImportanceSatisfyingUnsatisfying",
     "Entity",
     "Importance",
+    "PerformanceOrderingsInducedByRankingScores",
     "RankingInducedByScore",
     "RankingScore",
 ]
