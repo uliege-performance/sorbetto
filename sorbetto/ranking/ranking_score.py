@@ -812,7 +812,7 @@ class RankingScore(AbstractScore):
         * and :math:`I(tp)=1 + beta**2`.
 
         Args:
-            beta (float, optional): :math:`\\beta`. Defaults to 1.0.
+            beta (float, optional): :math:`\\beta \\ge 0`. Defaults to 1.0.
 
         Returns:
             RankingScore: the score as a RankingScore object
@@ -822,14 +822,24 @@ class RankingScore(AbstractScore):
         if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
         # See :cite:t:`Pierard2025Foundations`, Section A.7.3
-        itn = 0
-        ifp = 1
-        ifn = beta**2
-        itp = 1 + beta**2
-        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        name = "F-score for β={:g}".format(beta)
-        abbreviation = "F{:g}".format(beta)
-        symbol = "$F_{" + "{:g}".format(beta) + "}$"
+        if math.isinf(beta):
+            itn = 0
+            ifp = 0
+            ifn = 1
+            itp = 1
+            importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+            name = "F-score for β=∞"
+            abbreviation = "F∞"
+            symbol = "$F_{\\infty}$"
+        else:
+            itn = 0
+            ifp = 1
+            ifn = beta**2
+            itp = 1 + beta**2
+            importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+            name = "F-score for β={:g}".format(beta)
+            abbreviation = "F{:g}".format(beta)
+            symbol = "$F_{" + "{:g}".format(beta) + "}$"
         return RankingScore(
             importance, name=name, abbreviation=abbreviation, symbol=symbol
         )
@@ -888,14 +898,24 @@ class RankingScore(AbstractScore):
         if math.isnan(beta) or beta < 0:
             raise ValueError(f"beta must be positive, got {beta}")
 
-        itn = 1 + beta**2
-        ifp = beta**2
-        ifn = 1
-        itp = 0
-        importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
-        name = "Inverse F-score for β={:g}".format(beta)
-        abbreviation = "F{:g}-Inv".format(beta)
-        symbol = "$F_{" + "{:g}".format(beta) + "}$-Inv"
+        if math.isinf(beta):
+            itn = 1
+            ifp = 1
+            ifn = 0
+            itp = 0
+            importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+            name = "Inverse F-score for β=∞"
+            abbreviation = "F∞-Inv"
+            symbol = "$F_{\\infty}$-Inv"
+        else:
+            itn = 1 + beta**2
+            ifp = beta**2
+            ifn = 1
+            itp = 0
+            importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
+            name = "Inverse F-score for β={:g}".format(beta)
+            abbreviation = "F{:g}-Inv".format(beta)
+            symbol = "$F_{" + "{:g}".format(beta) + "}$-Inv"
         return RankingScore(
             importance, name=name, abbreviation=abbreviation, symbol=symbol
         )
