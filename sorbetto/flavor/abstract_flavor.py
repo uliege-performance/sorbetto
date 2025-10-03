@@ -75,6 +75,6 @@ class AbstractFlavor(ABC, Named):
     ) -> bool: ...
 
     @abstractmethod
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool: ...

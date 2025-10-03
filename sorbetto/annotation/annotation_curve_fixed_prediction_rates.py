@@ -106,7 +106,7 @@ class AnnotationCurveFixedPredictionRates(AbstractAnnotation):
         assert isinstance(constraint, ConstraintFixedClassPriors)
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         assert isinstance(constraint, ConstraintFixedPredictionRates)

@@ -118,7 +118,7 @@ class BestValueFlavor(AbstractNumericFlavor):
 
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

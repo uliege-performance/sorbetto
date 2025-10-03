@@ -230,7 +230,7 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
         assert isinstance(constraint, ConstraintFixedClassPriors)
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

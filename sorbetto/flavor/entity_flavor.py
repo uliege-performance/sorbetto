@@ -148,7 +148,7 @@ class EntityFlavor(AbstractSymbolicFlavor[Entity]):
                 return False
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

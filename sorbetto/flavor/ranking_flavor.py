@@ -139,7 +139,7 @@ class RankingFlavor(AbstractNumericFlavor):
                 return False
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

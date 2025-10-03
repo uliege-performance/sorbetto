@@ -108,7 +108,7 @@ class AnnotationFrontiersBetweenRankings(AbstractAnnotation):
 
         return True
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

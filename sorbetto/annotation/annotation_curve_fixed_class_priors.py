@@ -97,7 +97,7 @@ class AnnotationCurveFixedClassPriors(AbstractAnnotation):
         assert isinstance(constraint, ConstraintFixedClassPriors)
         return math.isclose(constraint.getPriorPos(), self._priorPos)
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

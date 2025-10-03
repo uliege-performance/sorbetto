@@ -73,7 +73,7 @@ class AbstractAnnotation(ABC, Named):
         ...
 
     @abstractmethod
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """

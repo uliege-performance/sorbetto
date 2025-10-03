@@ -99,7 +99,7 @@ class ValueFlavor(AbstractNumericFlavor):
         assert isinstance(constraint, ConstraintFixedClassPriors)
         return constraint(self._performance)
 
-    def isCompatibleWithOnPredictionRates(
+    def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
         """
