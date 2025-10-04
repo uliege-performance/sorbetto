@@ -1,5 +1,10 @@
+from typing import Any
+
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
+)
+from sorbetto.performance.constraint_fixed_prediction_rates import (
+    ConstraintFixedPredictionRates,
 )
 from sorbetto.performance.performance_ordering_induced_by_one_score import (
     PerformanceOrderingInducedByOneScore,
@@ -9,6 +14,40 @@ from sorbetto.ranking.ranking_score import RankingScore
 
 
 class PerformanceOrderingsInducedByRankingScores:
+    @staticmethod
+    def _copyPerformanceOrdering(
+        to_mimic: PerformanceOrderingInducedByOneScore | RankingScore,
+        name: str | None,
+        abbreviation: str | None,
+        symbol: str | None,
+        additional_constraint: Any = None,
+    ) -> PerformanceOrderingInducedByOneScore:
+        if isinstance(to_mimic, PerformanceOrderingInducedByOneScore):
+            score = to_mimic.score
+        elif isinstance(to_mimic, RankingScore):
+            score = to_mimic
+        else:
+            assert False
+        importance = score.importance
+        constraint = score.constraint
+        if constraint is None:
+            if additional_constraint is None:
+                pass  # nothing to do
+            else:
+                constraint = additional_constraint
+        else:
+            if additional_constraint is None:
+                pass  # nothing to do
+            else:
+                assert False  # not supported !
+        new_score = RankingScore(importance=importance, constraint=constraint)
+        # FIXME: We have a ranking score that leads to the same performance ordering
+        # as the score we want. This is far from the best idea, but we just lie here
+        # and rename the ranking score. This is risky because the library user can
+        # retrieve this score: he would then be mistaken if he used it to obtain values!
+        new_score.rename(name, abbreviation, symbol)
+        return PerformanceOrderingInducedByOneScore(new_score)
+
     @staticmethod
     def getTrueNegativeRate() -> "PerformanceOrderingInducedByOneScore":
         """
@@ -233,25 +272,43 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Reference: :cite:t:`Warrens2012TheEffect`.
         """
-        return PerformanceOrderingsInducedByRankingScores.getAccuracy()
-
-    @staticmethod
-    def getSimilarityCoefficientsT() -> "PerformanceOrderingInducedByOneScore":
-        """
-        Returns the performance ordering induced by the scores *Similarity Coefficients T*.
-        Similarity coefficients of the family :math:`T_\\theta`, as defined in :cite:t:`Gower1986Metric`.
-        See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
-        """
-        return PerformanceOrderingsInducedByRankingScores.getJaccard()
+        to_mimic = RankingScore.getAccuracy()
+        name = "Bennett S"
+        abbreviation = None
+        symbol = "$B_S$"
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getSimilarityCoefficientsS() -> "PerformanceOrderingInducedByOneScore":
         """
-        Returns the performance ordering induced by the scores *Similarity Coefficients S*.
+        Returns the performance ordering induced by all the scores *Similarity Coefficients S*.
         Similarity coefficients of the family :math:`S_\\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
-        return PerformanceOrderingsInducedByRankingScores.getAccuracy()
+        to_mimic = RankingScore.getAccuracy()
+        name = "Similarity Coefficients S"
+        abbreviation = None
+        symbol = "$S_\\theta$"
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+
+    @staticmethod
+    def getSimilarityCoefficientsT() -> "PerformanceOrderingInducedByOneScore":
+        """
+        Returns the performance ordering induced by all the scores *Similarity Coefficients T*.
+        Similarity coefficients of the family :math:`T_\\theta`, as defined in :cite:t:`Gower1986Metric`.
+        See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
+        """
+        to_mimic = RankingScore.getJaccard()
+        name = "Similarity Coefficients T"
+        abbreviation = None
+        symbol = "$T_\\theta$"
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     # @staticmethod
     # def getSimilarityCoefficients() -> Conic:
@@ -275,8 +332,20 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        # TODO: add constraint to the result
-        return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+
+        to_mimic = RankingScore.getNegativePredictiveValue()
+        name = "Standardized Negative Predictive Value"
+        abbreviation = "SNPV"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+        # FIXME: We should add a constraint to the result: this is correct if and
+        # only if the priors are fixed, but no matter what these priors are. But,
+        # we do not have yet any mechanism to encode it in the library ...
 
     @staticmethod
     def getStandardizedPositivePredictiveValue(
@@ -291,8 +360,20 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        # TODO: add constraint to the result
-        return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+
+        to_mimic = RankingScore.getPositivePredictiveValue()
+        name = "Standardized Positive Predictive Value"
+        abbreviation = "SPPV"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+        # FIXME: We should add a constraint to the result: this is correct if and
+        # only if the priors are fixed, but no matter what these priors are. But,
+        # we do not have yet any mechanism to encode it in the library ...
 
     @staticmethod
     def getNegativeLikelihoodRatioComplement(
@@ -304,8 +385,20 @@ class PerformanceOrderingsInducedByRankingScores:
         References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        # TODO: add constraint to the result
-        return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+
+        to_mimic = RankingScore.getNegativePredictiveValue()
+        name = "Complement of the Negative Likelihood Ratio"
+        abbreviation = "-NLR"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+        # FIXME: We should add a constraint to the result: this is correct if and
+        # only if the priors are fixed, but no matter what these priors are. But,
+        # we do not have yet any mechanism to encode it in the library ...
 
     @staticmethod
     def getPositiveLikelihoodRatio(priorPos) -> "PerformanceOrderingInducedByOneScore":
@@ -315,8 +408,20 @@ class PerformanceOrderingsInducedByRankingScores:
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        # TODO: add constraint to the result
-        return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+
+        to_mimic = RankingScore.getPositivePredictiveValue()
+        name = "Positive Likelihood Ratio"
+        abbreviation = "PLR"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+        # FIXME: We should add a constraint to the result: this is correct if and
+        # only if the priors are fixed, but no matter what these priors are. But,
+        # we do not have yet any mechanism to encode it in the library ...
 
     @staticmethod
     def getSkewInsensitiveVersionOfF1(
@@ -368,28 +473,45 @@ class PerformanceOrderingsInducedByRankingScores:
         Youden's index or Youden's :math:` Y_J ` statistic.
         Defined in :cite:t:`Youden1950Index`
         References: :cite:t:`Fluss2005Estimation`.
-        Related to the balanced accuracy by :math:` Y_J =TNR+ TPR -1=2 BA -1`.
+        Related to the balanced accuracy by :math:` Y_J = TNR + TPR - 1 = 2 BA - 1`.
         Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        to_mimic = RankingScore.getBalancedAccuracy(priorPos)
+        name = "Youden J"
+        abbreviation = None
+        symbol = "$Y_J$"
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getPeirceSkillScore(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Peirce Skill Score*.
+        See :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        to_mimic = RankingScore.getBalancedAccuracy(priorPos)
+        name = "Peirce Skill Score"
+        abbreviation = "PSS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getInformedness(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Informedness*.
-        """
-        """
         See :cite:t:`Pierard2025Foundations`, Section A.7.4
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        to_mimic = RankingScore.getBalancedAccuracy(priorPos)
+        name = "Informedness"
+        abbreviation = "INFO"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getCohenCorrected(
@@ -440,22 +562,43 @@ class PerformanceOrderingsInducedByRankingScores:
         itn_corrected = priorPos * priorPos * ifn
         itp_corrected = priorNeg * priorNeg * ifp
         importance = Importance(itn_corrected, ifp, ifn, itp_corrected)
-        score = RankingScore(importance)
+        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+        score = RankingScore(importance, constraint=constraint)
 
         return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getCohenKappa(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
-        Returns the performance ordering induced by the score *Cohen Kappa*.
-        """
-        """
-        Cohen's :math:`\\scoreCohenKappa` statistic.
-        Defined in :cite:t:`Cohen1960ACoefficient`
+        Returns the performance ordering induced by the score *Cohen Kappa*
+        (:math:`\\kappa`), also called *Kappa statistic*. It is defined in
+        :cite:t:`Cohen1960ACoefficient` as
+
+        .. math::
+            \\kappa = \\frac{ A - A \\circ noskill }{ 1 - A \\circ noskill }
+
+        where :math:`noskill` denotes the operation that transforms a performance
+        :math:`P` into :math:`P'` such that :math:`P'(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`.
+
+        The score :math:`\\kappa` is not a ranking score. However, when
+        used on performances with the class priors, for the negative and positive
+        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        the performance ordering induced by :math:`\\kappa` is the same as the one
+        induced by the ranking score :math:`R_{I}` with the importance
+        :math:`I` proportional to
+
+        * :math:`I(tn) = \\pi_+^2`,
+        * :math:`I(fp) = 1`,
+        * :math:`I(fn) = 1`,
+        * and :math:`I(tp) = \\pi_-^2`.
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
+
         References: :cite:t:`Kaymak2012TheAUK`
         Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
         """
+        # TODO: Implement Cohen's kappa also in the case of fixed prediction rates
         assert isinstance(priorPos, float)
         assert priorPos >= 0.0
         assert priorPos <= 1.0
@@ -467,21 +610,27 @@ class PerformanceOrderingsInducedByRankingScores:
         itp = priorNeg * priorNeg
         importance = Importance(itn, ifp, ifn, itp)
         constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        score = RankingScore(
-            importance,
-            constraint=constraint,
-            name="Cohen's kappa",
-            abbreviation="Cohen",
-            symbol="$\\kappa$",
+        to_mimic = RankingScore(importance, constraint=constraint)
+        name = "Cohen's kappa"
+        abbreviation = "Cohen"
+        symbol = "$\\kappa$"
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
         )
-        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getHeidkeSkillScore(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score "Heidke Skill Score".
+        See :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        raise NotImplementedError()  # TODO: Implement this!
+        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(priorPos)
+        name = "Heidke Skill Score"
+        abbreviation = "HSS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getProbabilityTrueNegative(
@@ -521,13 +670,31 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
+                to_mimic = RankingScore.getNegativePredictiveValue()
+                name = "Probability of a True Negative"
+                abbreviation = "PTN"
+                symbol = None
+                additional_constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getTrueNegativeRate()
+                to_mimic = RankingScore.getTrueNegativeRate()
+                name = "Probability of a True Negative"
+                abbreviation = "PTN"
+                symbol = None
+                additional_constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -539,8 +706,16 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Rejection Rate".
         See :meth:`getProbabilityTrueNegative`.
         """
-        return PerformanceOrderingsInducedByRankingScores.getProbabilityTrueNegative(
-            priorPos=priorPos, ratePos=ratePos
+        to_mimic = (
+            PerformanceOrderingsInducedByRankingScores.getProbabilityTrueNegative(
+                priorPos=priorPos, ratePos=ratePos
+            )
+        )
+        name = "Rejection Rate"
+        abbreviation = "RR"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
         )
 
     @staticmethod
@@ -580,13 +755,31 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
+                to_mimic = RankingScore.getPositivePredictiveValue()
+                name = "Complement of the Probability of a False Positive"
+                abbreviation = "-PFP"
+                symbol = None
+                additional_constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getTrueNegativeRate()
+                to_mimic = RankingScore.getTrueNegativeRate()
+                name = "Complement of the Probability of a False Positive"
+                abbreviation = "-PFP"
+                symbol = None
+                additional_constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -627,13 +820,31 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getNegativePredictiveValue()
+                to_mimic = RankingScore.getNegativePredictiveValue()
+                name = "Complement of the Probability of a False Negative"
+                abbreviation = "-PFN"
+                symbol = None
+                additional_constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getTruePositiveRate()
+                to_mimic = RankingScore.getTruePositiveRate()
+                name = "Complement of the Probability of a False Negative"
+                abbreviation = "-PFN"
+                symbol = None
+                additional_constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -675,13 +886,31 @@ class PerformanceOrderingsInducedByRankingScores:
                 assert isinstance(ratePos, float)
                 assert ratePos > 0.0  # not >=, see doc here-above
                 assert ratePos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getPositivePredictiveValue()
+                to_mimic = RankingScore.getPositivePredictiveValue()
+                name = "Probability of a True Positive"
+                abbreviation = "PTP"
+                symbol = None
+                additional_constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
         else:
             if ratePos is None:
                 assert isinstance(priorPos, float)
                 assert priorPos > 0.0  # not >=, see doc here-above
                 assert priorPos < 1.0  # not <=, see doc here-above
-                return PerformanceOrderingsInducedByRankingScores.getTruePositiveRate()
+                to_mimic = RankingScore.getTruePositiveRate()
+                name = "Probability of a True Positive"
+                abbreviation = "PTP"
+                symbol = None
+                additional_constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol, additional_constraint
+                    )
+                )
             else:
                 raise RuntimeError("You should not specify both ratePos and priorPos.")
 
@@ -693,23 +922,17 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Detection Rate".
         See :meth:`getProbabilityTruePositive`.
         """
-        return PerformanceOrderingsInducedByRankingScores.getProbabilityTruePositive(
-            priorPos=priorPos, ratePos=ratePos
+        to_mimic = (
+            PerformanceOrderingsInducedByRankingScores.getProbabilityTruePositive(
+                priorPos=priorPos, ratePos=ratePos
+            )
         )
-
-    @staticmethod
-    def getNormalizedConfusionMatrixDeterminant(
-        priorPos: float,
-    ) -> "PerformanceOrderingInducedByOneScore":
-        """
-        Returns the performance ordering induced by the determinant of the normalized
-        confusion matrix is :math:`|\\mathcal{C}|= \\pi_-  \\pi_+  Y_J `.
-        Some works using this score: :cite:t:`Wimmer2006APerson`.
-
-        See https://en.wikipedia.org/wiki/Confusion_matrix
-        See https://en.wikipedia.org/wiki/Determinant
-        """
-        raise NotImplementedError()  # TODO: Implement this!
+        name = "Detection Rate"
+        abbreviation = "DR"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getMacroAveragedPrecision(
@@ -730,8 +953,13 @@ class PerformanceOrderingsInducedByRankingScores:
         Defined in :cite:t:`Powers2020Evaluation-arxiv` as :math:`NPV+ PPV -1`.
         Synonyms: Clayton Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        score = RankingScore.getMacroAveragedPrecision(ratePos)
-        return PerformanceOrderingInducedByOneScore(score)
+        to_mimic = RankingScore.getMacroAveragedPrecision(ratePos)
+        name = "Markedness"
+        abbreviation = "MARK"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
 
     @staticmethod
     def getClaytonSkillScore(ratePos: float) -> "PerformanceOrderingInducedByOneScore":
@@ -739,5 +967,71 @@ class PerformanceOrderingsInducedByRankingScores:
         Returns the performance ordering induced by the score "Clayton Skill Score".
         See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedPrecision`
         """
-        score = RankingScore.getMacroAveragedPrecision(ratePos)
-        return PerformanceOrderingInducedByOneScore(score)
+        to_mimic = RankingScore.getMacroAveragedPrecision(ratePos)
+        name = "Clayton Skill Score"
+        abbreviation = "CSS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+
+    @staticmethod
+    def getNormalizedConfusionMatrixDeterminant(
+        *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> "PerformanceOrderingInducedByOneScore":
+        """
+        Returns the performance ordering induced by the determinant of the normalized
+        confusion matrix.
+
+        .. math::
+            |\\mathcal{C}| = PTN \, PTP - PFP \, PFN
+
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
+        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have
+
+        .. math::
+            |\\mathcal{C}| = \\pi_- \\pi_+ ( TNR + TPR - 1 )
+
+        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
+        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have
+
+        .. math::
+            |\\mathcal{C}| = \\tau_- \\tau_+ ( NPV + PPV - 1 )
+
+        Some works using this score: :cite:t:`Wimmer2006APerson`.
+
+        See https://en.wikipedia.org/wiki/Confusion_matrix
+        See https://en.wikipedia.org/wiki/Determinant
+        """
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos > 0.0  # not >=, see doc here-above
+                assert ratePos < 1.0  # not <=, see doc here-above
+                to_mimic = RankingScore.getMacroAveragedPrecision(ratePos=ratePos)
+                name = "Normalized Confusion Matrix Determinant"
+                abbreviation = None
+                symbol = "$|\\mathcal{C}|$"
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol
+                    )
+                )
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos > 0.0  # not >=, see doc here-above
+                assert priorPos < 1.0  # not <=, see doc here-above
+                to_mimic = RankingScore.getMacroAveragedRecall(priorPos=priorPos)
+                name = "Normalized Confusion Matrix Determinant"
+                abbreviation = None
+                symbol = "$|\\mathcal{C}|$"
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol
+                    )
+                )
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
