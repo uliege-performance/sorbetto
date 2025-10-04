@@ -96,7 +96,15 @@ class AnnotationMin(AbstractAnnotation):
             dy, va = -1.0, "top"
         dy *= 0.025 * (max_y - min_y)
 
-        ax.text(x + dx, y + dy, label, ha=ha, va=va, **options_for_text)
+        ax.text(
+            x + dx,
+            y + dy,
+            label,
+            ha=ha,
+            va=va,
+            backgroundcolor=[1.0, 1.0, 1.0, 0.5],
+            **options_for_text,
+        )
 
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
