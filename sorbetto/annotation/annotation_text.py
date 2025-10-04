@@ -170,7 +170,15 @@ class AnnotationText(AbstractAnnotation):
             dy, va = -1.0, "top"
         dy *= 0.025 * (max_y - min_y)
 
-        ax.text(x + dx, y + dy, label, ha=ha, va=va, **options_for_text)
+        ax.text(
+            x + dx,
+            y + dy,
+            label,
+            ha=ha,
+            va=va,
+            backgroundcolor=[1.0, 1.0, 1.0, 0.5],
+            **options_for_text,
+        )
 
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
@@ -279,7 +287,19 @@ class AnnotationText(AbstractAnnotation):
             return None
 
     def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
-        if isinstance(self._location, Point):
+        if isinstance(self._location, RankingScore):
+            rankingScore = self._location
+            constraint = rankingScore.constraint
+            if isinstance(constraint, ConstraintFixedClassPriors):
+                return constraint
+        elif isinstance(self._location, PerformanceOrderingInducedByOneScore):
+            ordering = self._location
+            score = ordering.score
+            if isinstance(score, RankingScore):
+                constraint = score.constraint
+                if isinstance(constraint, ConstraintFixedClassPriors):
+                    return constraint
+        elif isinstance(self._location, Point):
             point = self._location
             constraint = None
             for assumption in point:
@@ -292,7 +312,19 @@ class AnnotationText(AbstractAnnotation):
     def getConstraintOnPredictionRates(
         self,
     ) -> ConstraintFixedPredictionRates | None:
-        if isinstance(self._location, Point):
+        if isinstance(self._location, RankingScore):
+            rankingScore = self._location
+            constraint = rankingScore.constraint
+            if isinstance(constraint, ConstraintFixedPredictionRates):
+                return constraint
+        elif isinstance(self._location, PerformanceOrderingInducedByOneScore):
+            ordering = self._location
+            score = ordering.score
+            if isinstance(score, RankingScore):
+                constraint = score.constraint
+                if isinstance(constraint, ConstraintFixedPredictionRates):
+                    return constraint
+        elif isinstance(self._location, Point):
             point = self._location
             constraint = None
             for assumption in point:
