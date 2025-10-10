@@ -4,7 +4,19 @@ from sorbetto.performance import TwoClassClassificationPerformance
 from sorbetto.performance.distribution import (
     UniformDistributionOfTwoClassClassificationPerformances,
 )
-from sorbetto.ranking import RankingScore
+from sorbetto.ranking import Importance, RankingScore
+
+
+def test_equality():
+    importance_a = Importance(1.0, 2.0, 3.0, 4.0)
+    importance_b = Importance(2, 4, 6, 8)
+    importance_c = Importance(1.0, 2.0, 3.0, 5.0)
+    score_a = RankingScore(importance_a)
+    score_b = RankingScore(importance_b)
+    score_c = RankingScore(importance_c)
+
+    assert score_a == score_b
+    assert not (score_a == score_c)
 
 
 def test_SkewInsensitiveVersionOfF1():
