@@ -8,7 +8,7 @@ from sorbetto.ranking.entity import Entity
 
 
 def test_properties():
-    perf = TwoClassClassificationPerformance(ptn=0.9, pfp=0.1, pfn=0.05, ptp=0.95)
+    perf = TwoClassClassificationPerformance(ptn=0.45, pfp=0.05, pfn=0.025, ptp=0.475)
 
     entity = Entity(performance=perf, name="TestEntity", color="red")
 
