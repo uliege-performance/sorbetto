@@ -16,6 +16,9 @@ class Entity(Named):
     # one could add the "cost" of using this entity. This information could be
     # propagated on Tiles through specific flavors. For example, one could observe
     # the "cost" of using a state-of-the-art method. This is an idea from Jérôme Pierre.
+    """
+    An entity is an object that has a performance and a name associated to it.
+    """
 
     def __init__(
         self,
@@ -23,11 +26,10 @@ class Entity(Named):
         name: str = "ε",
         color: Any = None,
     ):
-        """Entity class
-
+        """
         Args:
             performance (TwoClassClassificationPerformance): Performance score for the entity
-            name (str): Name of the entity. Defaults to "ε"
+            name (str, optional): Name of the entity. Defaults to "ε"
             color (Any, optional): Color to use for the entity. Defaults to a random list of floats.
         """
 
@@ -40,15 +42,13 @@ class Entity(Named):
 
     @property
     def color(self) -> str | tuple[float] | list[float]:
+        """The color associated to the entity."""
         return self._color
 
     @property
     def performance(self) -> TwoClassClassificationPerformance:
         """
         The result of the evaluation of the entity, that is its performance.
-
-        Returns:
-            TwoClassClassificationPerformance: The entity's performance
         """
         return self._performance
 
