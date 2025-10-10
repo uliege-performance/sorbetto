@@ -29,7 +29,7 @@ class UniformDistributionOfTwoClassClassificationPerformances(
     See https://en.wikipedia.org/wiki/Dirichlet_distribution
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str | None = None):
         super().__init__(name)
 
     def drawOneAtRandom(self) -> TwoClassClassificationPerformance:
