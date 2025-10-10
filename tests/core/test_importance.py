@@ -30,6 +30,14 @@ def test_inequality():
     assert importance1 != "not an Importance object"
 
 
+def test_canonical():
+    importance_canonical = Importance(1.0, 0.7, 0.8, 0.5)
+    assert importance_canonical.isCanonical()
+
+    importance_non_canonical = Importance(1.0, 0.5, 0.2, 0.8)
+    assert not importance_non_canonical.isCanonical()
+
+
 def test_invalid_values():
     with pytest.raises(ValueError):
         Importance(-1.0, 0.5, 0.2, 0.8)
