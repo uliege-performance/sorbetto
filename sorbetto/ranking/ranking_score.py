@@ -1179,6 +1179,8 @@ class RankingScore(AbstractScore):
         # But the check performed over there allows priors to be zero.
         # So we need more checks.
         priorNeg = 1.0 - priorPos
+
+        # FIXME return NaN or raise ValueError if one of the priors is zero?
         assert priorNeg != 0.0
         assert priorPos != 0.0
 
