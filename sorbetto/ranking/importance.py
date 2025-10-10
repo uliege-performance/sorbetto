@@ -16,7 +16,8 @@ class Importance(Named):
     See :cite:t:`Pierard2025Foundations` for more information on this topic.
     """
 
-    tol = 1e-10
+    TOL: float = 1e-10
+    """Tolerance used for floating  comparisons."""
 
     def __init__(
         self,
@@ -26,6 +27,18 @@ class Importance(Named):
         itp: float | int,
         name: str | None = None,
     ):
+        """
+        Args:
+            itn (float | int): importance of the true negatives
+            ifp (float | int): importance of the false positives
+            ifn (float | int): importance of the false negatives
+            itp (float | int): importance of the true positives
+            name (str | None, optional): name of this Importance. Defaults to None.
+
+        Raises:
+            ValueError: if one of the importance values is negative, or if all
+                importance values are zero.
+        """
         assert isinstance(itn, (float, int))
         assert isinstance(ifp, (float, int))
         assert isinstance(ifn, (float, int))
@@ -36,7 +49,7 @@ class Importance(Named):
                 f"Importance values must be non-negative. Received [TN:{itn}, FP:{ifp}, FN:{ifn}, TP:{itp}]"
             )
 
-        if math.isclose(itn + ifp + ifn + itp, 0.0, abs_tol=self.tol):
+        if math.isclose(itn + ifp + ifn + itp, 0.0, abs_tol=self.TOL):
             raise ValueError(
                 f"At least one importance value must be positive. Received [TN:{itn}, FP:{ifp}, FN:{ifn}, TP:{itp}]"
             )
@@ -50,18 +63,30 @@ class Importance(Named):
 
     @property
     def itn(self) -> float:
+        """
+        The importance of true negatives.
+        """
         return self._itn
 
     @property
     def ifp(self) -> float:
+        """
+        The importance of false positives.
+        """
         return self._ifp
 
     @property
     def ifn(self) -> float:
+        """
+        The importance of false negatives.
+        """
         return self._ifn
 
     @property
     def itp(self) -> float:
+        """
+        The importance of true positives.
+        """
         return self._itp
 
     def isCanonical(self, abs_tol: float = 1e-8) -> bool:
@@ -89,10 +114,10 @@ class Importance(Named):
             return False
 
         return (  # TODO: would math.fabs be better than abs?
-            abs(self.itn - other.itn) <= self.tol
-            and abs(self.ifp - other.ifp) <= self.tol
-            and abs(self.ifn - other.ifn) <= self.tol
-            and abs(self.itp - other.itp) <= self.tol
+            abs(self.itn - other.itn) <= self.TOL
+            and abs(self.ifp - other.ifp) <= self.TOL
+            and abs(self.ifn - other.ifn) <= self.TOL
+            and abs(self.itp - other.itp) <= self.TOL
         )
 
     def __str__(self):
