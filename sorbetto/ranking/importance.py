@@ -89,6 +89,7 @@ class Importance(Named):
         """
         return self._itp
 
+    # TODO should we use self.TOL instead here?
     def isCanonical(self, abs_tol: float = 1e-8) -> bool:
         """
         Tests if
