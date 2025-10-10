@@ -17,7 +17,7 @@ class Importance(Named):
     """
 
     TOL: float = 1e-10
-    """Tolerance used for floating  comparisons."""
+    """Tolerance used for floating  comparisons, 1e-10 by default."""
 
     def __init__(
         self,

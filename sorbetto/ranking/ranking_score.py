@@ -69,11 +69,16 @@ class RankingScore(AbstractScore):
     ):
         """
         Args:
-            importance (Importance): _description_
-            constraint (_type_, optional): _description_. Defaults to None.
-            name (str | None, optional): _description_. Defaults to None.
-            abbreviation (str | None, optional): _description_. Defaults to None.
-            symbol (str | None, optional): _description_. Defaults to None.
+            importance (Importance): Importance defining the application
+                preferences that induce the ranking score.
+            constraint (callable, optional): TODO. Must take a
+                TwoClassClassificationPerformance as input, and return a bool.
+                Defaults to None.
+            name (str | None, optional): full name of the score. Defaults to None.
+            abbreviation (str | None, optional): short name of the score.
+                Defaults to None.
+            symbol (str | None, optional): symbol used to represent the score.
+                Defaults to None.
 
         Raises:
             TypeError: _description_
@@ -112,14 +117,14 @@ class RankingScore(AbstractScore):
         """
         A random variable Importance corresponding to this ranking score. The
         importance is defined up to a positive scaling.
-
-        Returns:
-            Importance: A random variable Importance corresponding to this ranking score.
         """
         return self._importance
 
     @property
     def constraint(self) -> Callable[[TwoClassClassificationPerformance], bool] | None:
+        """
+        The constraint over the performances for which this ranking score is.
+        """
         return self._constraint
 
     # TODO: this method might not be in the right class. Should we move it in ParameterizationDefault ?
@@ -133,11 +138,11 @@ class RankingScore(AbstractScore):
         the performances `p1` and `p2` are equivalent. This locus is a curve, a conic section.
 
         Args:
-            p1 (TwoClassClassificationPerformance): _description_
-            p2 (TwoClassClassificationPerformance): _description_
+            p1 (TwoClassClassificationPerformance): the first performance to compare
+            p2 (TwoClassClassificationPerformance): the second performance to compare
 
         Returns:
-            Conic: the conic section.
+            BilinearCurve: the conic section where p1 and p2 are equivalent.
         """
 
         # ( itn ptn1 + itp ptp1 ) / ( itn ptn1 + ifp pfp1 + ifn pfn1 + itp ptp1 ) = ( itn ptn2 + itp ptp2 ) / ( itn ptn2 + ifp pfp2 + ifn pfn2 + itp ptp2 )
@@ -193,7 +198,7 @@ class RankingScore(AbstractScore):
         Returns:
             bool: True if the Ranking Score is canonical, False otherwise.
         """
-        return self._importance.isCanonical()
+        return self._importance.isCanonical(abs_tol=abs_tol)
 
     def drawInROC(
         self,
@@ -217,13 +222,13 @@ class RankingScore(AbstractScore):
             fig (Figure): The matplotlib.pyplot Figure to use for drawing.
             ax (Axes): The matplotlib.pyplot Axes to use for drawing.
             priorPos (float): prior of the positive class :math:`\\pi_+ \\in (0,1)`
-            show_values_map (bool, optional): _description_. Defaults to True.
-            show_iso_value_lines (bool, optional): _description_. Defaults to True.
-            show_colorbar (bool, optional): _description_. Defaults to True.
-            show_no_skills (bool, optional): _description_. Defaults to True.
-            show_priors (bool, optional): _description_. Defaults to True.
-            show_unbiased (bool, optional): _description_. Defaults to True.
-            show_opposite_unbiased (bool, optional): _description_. Defaults to True.
+            show_values_map (bool, optional): show values map. Defaults to True.
+            show_iso_value_lines (bool, optional): show iso value lines. Defaults to True.
+            show_colorbar (bool, optional): show the colorbar. Defaults to True.
+            show_no_skills (bool, optional): show the no-skills diagonal. Defaults to True.
+            show_priors (bool, optional): show the priors point in ROC. Defaults to True.
+            show_unbiased (bool, optional): show unbiased point in ROC. Defaults to True.
+            show_opposite_unbiased (bool, optional): show opposite unbiased point in ROC. Defaults to True.
         """
 
         assert isinstance(fig, Figure)
@@ -408,7 +413,7 @@ class RankingScore(AbstractScore):
         locus of performances for which the ranking score takes the value :math:`v`.
 
         Args:
-            priorPos (_type_): the prior of the positive class, :math:`pi_+\\in[0.0,1.0]`
+            priorPos (float): the prior of the positive class, :math:`pi_+\\in[0.0,1.0]`
 
         Returns:
             PencilOfLines: The pencil of lines.
@@ -1412,39 +1417,25 @@ class RankingScore(AbstractScore):
         associated to both are proportional.
         """
         if isinstance(other, RankingScore):
-            self_itn = self._importance.itn
-            self_ifp = self._importance.ifp
-            self_ifn = self._importance.ifn
-            self_itp = self._importance.itp
-            sum = self_itn + self_ifp + self_ifn + self_itp
-            self_itn /= sum
-            self_ifp /= sum
-            self_ifn /= sum
-            self_itp /= sum
+            self_itn = self.importance.itn
+            self_ifp = self.importance.ifp
+            self_ifn = self.importance.ifn
+            self_itp = self.importance.itp
+            self_i_sum = self_itn + self_ifp + self_ifn + self_itp
 
-            other_itn = other._importance.itn
-            other_ifp = other._importance.ifp
-            other_ifn = other._importance.ifn
-            other_itp = other._importance.itp
-            sum = other_itn + other_ifp + other_ifn + other_itp
-            other_itn /= sum
-            other_ifp /= sum
-            other_ifn /= sum
-            other_itp /= sum
+            other_itn = other.importance.itn
+            other_ifp = other.importance.ifp
+            other_ifn = other.importance.ifn
+            other_itp = other.importance.itp
+            i_sum = other_itn + other_ifp + other_ifn + other_itp
+            other_itn *= self_i_sum / i_sum
+            other_ifp *= self_i_sum / i_sum
+            other_ifn *= self_i_sum / i_sum
+            other_itp *= self_i_sum / i_sum
 
-            if not math.isclose(self_itn, other_itn, abs_tol=1e-8):
-                return False
+            comparison = Importance(other_itn, other_ifp, other_ifn, other_itp)
 
-            if not math.isclose(self_ifp, other_ifp, abs_tol=1e-8):
-                return False
-
-            if not math.isclose(self_ifn, other_ifn, abs_tol=1e-8):
-                return False
-
-            if not math.isclose(self_itp, other_itp, abs_tol=1e-8):
-                return False
-
-            return True
+            return self._importance == comparison
 
         else:
             return NotImplemented
