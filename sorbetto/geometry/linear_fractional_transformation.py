@@ -1,10 +1,14 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import math
 from typing import Self
 
 
 # TODO: Should it be in module "geometry" or in a module "algebra"?
+# TODO: We will need the particular case of one variable for the change of parameterization
+# TODO: We will need the particular case of one variable for functions in ROC (e.g., ranking scores)
+# TODO: So, do we code several classes, or only one?
 class LinearFractionalTransformation:
     """
     This class is used to represent linear fractional transformations.
@@ -17,10 +21,10 @@ class LinearFractionalTransformation:
         Initializes a new LinearFractionalTransformation object.
 
         Args:
-            a (float): the paramater :math:`a` of the linear fractional transformation
-            b (float): the paramater :math:`b` of the linear fractional transformation
-            c (float): the paramater :math:`c` of the linear fractional transformation
-            d (float): the paramater :math:`d` of the linear fractional transformation
+            a (float): the parameter :math:`a` of the linear fractional transformation
+            b (float): the parameter :math:`b` of the linear fractional transformation
+            c (float): the parameter :math:`c` of the linear fractional transformation
+            d (float): the parameter :math:`d` of the linear fractional transformation
         """
         assert isinstance(a, float)
         assert isinstance(b, float)
@@ -37,7 +41,7 @@ class LinearFractionalTransformation:
         The coefficient :math:`a`.
 
         Returns:
-            float: The paramater :math:`a` of the linear fractional transformation.
+            float: The parameter :math:`a` of the linear fractional transformation.
         """
         return self._a
 
@@ -47,7 +51,7 @@ class LinearFractionalTransformation:
         The coefficient :math:`b`.
 
         Returns:
-            float: The paramater :math:`b` of the linear fractional transformation.
+            float: The parameter :math:`b` of the linear fractional transformation.
         """
         return self._b
 
@@ -57,7 +61,7 @@ class LinearFractionalTransformation:
         The coefficient :math:`c`.
 
         Returns:
-            float: The paramater :math:`c` of the linear fractional transformation.
+            float: The parameter :math:`c` of the linear fractional transformation.
         """
         return self._c
 
@@ -67,7 +71,7 @@ class LinearFractionalTransformation:
         The coefficient :math:`d`.
 
         Returns:
-            float: The paramater :math:`d` of the linear fractional transformation.
+            float: The parameter :math:`d` of the linear fractional transformation.
         """
         return self._d
 
@@ -89,7 +93,9 @@ class LinearFractionalTransformation:
         b = self._b
         c = self._c
         d = self._d
-        return LinearFractionalTransformation(d, -b, c, -a)
+        if math.isclose(a * d, b * c):
+            raise RuntimeError("The invertibility condition is not satisfied.")
+        return LinearFractionalTransformation(d, -b, -c, a)
 
     def __str__(self):
         a = self._a
