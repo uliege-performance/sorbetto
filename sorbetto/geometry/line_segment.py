@@ -71,3 +71,15 @@ class LineSegment(AbstractGeometricObject2D):
         p1 = self._p1
         p2 = self._p2
         return "line segment between {} and {}".format(p1, p2)
+
+    def __eq__(self, other) -> bool:
+        # TDOO: in this implementation, we ignore the assumptions. We should check that
+        # this is really what we want to do.
+
+        if not isinstance(other, LineSegment):
+            return NotImplemented
+        if self._p1 == other._p1 and self._p2 == other._p2:
+            return True
+        if self._p1 == other._p2 and self._p2 == other._p1:
+            return True
+        return False

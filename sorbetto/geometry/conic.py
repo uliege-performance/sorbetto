@@ -50,7 +50,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`a` that multiplies :math:`x^2 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`a` of the conic section.
+            float: The parameter :math:`a` of the conic section.
         """
         return self._a
 
@@ -60,7 +60,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`b` that multiplies :math:`x^1 y^1` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`b` of the conic section.
+            float: The parameter :math:`b` of the conic section.
         """
         return self._b
 
@@ -70,7 +70,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`c` that multiplies :math:`x^0 y^2` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`c` of the conic section.
+            float: The parameter :math:`c` of the conic section.
         """
         return self._c
 
@@ -80,7 +80,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`d` that multiplies :math:`x^1 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`d` of the conic section.
+            float: The parameter :math:`d` of the conic section.
         """
         return self._d
 
@@ -90,7 +90,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`e` that multiplies :math:`x^0 y^1` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`e` of the conic section.
+            float: The parameter :math:`e` of the conic section.
         """
         return self._e
 
@@ -100,7 +100,7 @@ class Conic(AbstractGeometricObject2D):
         The coefficient :math:`a` that multiplies :math:`x^0 y^0` in the equation of the conic section.
 
         Returns:
-            float: The paramater :math:`f` of the conic section.
+            float: The parameter :math:`f` of the conic section.
         """
         return self._f
 
@@ -258,9 +258,9 @@ class Conic(AbstractGeometricObject2D):
         :math:`a x^2 + b x^1 + c x^0 = 0`.
 
         Args:
-            a (_type_): paramater :math:`a`
-            b (_type_): paramater :math:`b`
-            c (_type_): paramater :math:`c`
+            a (_type_): parameter :math:`a`
+            b (_type_): parameter :math:`b`
+            c (_type_): parameter :math:`c`
 
         Returns:
             _type_: The lowest solution.
@@ -278,9 +278,9 @@ class Conic(AbstractGeometricObject2D):
         :math:`a x^2 + b x^1 + c x^0 = 0`.
 
         Args:
-            a (_type_): paramater :math:`a`
-            b (_type_): paramater :math:`b`
-            c (_type_): paramater :math:`c`
+            a (_type_): parameter :math:`a`
+            b (_type_): parameter :math:`b`
+            c (_type_): parameter :math:`c`
 
         Returns:
             _type_: The highest solution.
@@ -458,3 +458,32 @@ class Conic(AbstractGeometricObject2D):
         return (
             "{} ({:g}) x^2 + ({:g}) x y + ({:g}) y^2 + ({:g}) x + ({:g}) y + ({:g}) = 0"
         ).format(self.classify(), self.a, self.b, self.c, self.d, self.e, self.f)
+
+    def __eq__(self, other) -> bool:
+        # TDOO: in this implementation, we ignore the assumptions. We should check that
+        # this is really what we want to do.
+
+        if not isinstance(other, Conic):
+            return NotImplemented
+
+        # We test if the vectors of parameters (a,b,c,d,e,f) of the two conics are proportional.
+        # This is the case if and only if the angle between the two vectors is pi or -pi.
+
+        def dot(conic1, conic2):
+            return (
+                conic1._a * conic2._a
+                + conic1._b * conic2._b
+                + conic1._c * conic2._c
+                + conic1._d * conic2._d
+                + conic1._e * conic2._e
+                + conic1._f * conic2._f
+            )
+
+        norm_self = math.sqrt(dot(self, self))
+        norm_other = math.sqrt(dot(other, other))
+        cos_theta = dot(self, other) / norm_self / norm_other
+        if math.isclose(cos_theta, -1.0):
+            return True
+        if math.isclose(cos_theta, 1.0):
+            return True
+        return False

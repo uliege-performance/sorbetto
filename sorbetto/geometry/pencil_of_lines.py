@@ -1,6 +1,8 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import math
+
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -108,7 +110,7 @@ class PencilOfLines(AbstractGeometricObject2D):
             )
         return vertex
 
-    def draw(self, fig: Figure, ax: Axes, extent, **plt_kwargs):
+    def draw(self, fig: Figure, ax: Axes, extent, lambdas=None, **plt_kwargs):
         """
         Draws the part of the pencil of lines that is within some axis-aligned box in some given Pyplot axes.
 
@@ -116,30 +118,36 @@ class PencilOfLines(AbstractGeometricObject2D):
             fig (_type_): a Pyplot Figure object
             ax (_type_): a Pyplot Axes object
             extent (_type_): the axis-aligned box :math:`(x_{min}, x_{max}, y_{min}, y_{max})`
+            lambdas:
             plt_kwargs: options for Pyplot's plot command.
         """
 
-        n = 11
-        for theta in np.linspace(0.5 * np.pi, 1.0 * np.pi, n):
-            sin = np.sin(theta)
-            cos = np.cos(theta)
-            line = self.getLine(sin, cos)
-            if plt_kwargs is None:
-                plt_kwargs_bis = dict()
-            else:
-                plt_kwargs_bis = plt_kwargs.copy()
-            plt_kwargs_bis["linestyle"] = ":"  # dashed line
-            line.draw(fig, ax, extent, **plt_kwargs_bis)
-        for theta in np.linspace(0.0 * np.pi, 0.5 * np.pi, n):
-            sin = np.sin(theta)
-            cos = np.cos(theta)
-            line = self.getLine(sin, cos)
-            if plt_kwargs is None:
-                plt_kwargs_bis = dict()
-            else:
-                plt_kwargs_bis = plt_kwargs.copy()
-            plt_kwargs_bis["linestyle"] = "-"  # solid line
-            line.draw(fig, ax, extent, **plt_kwargs_bis)
+        if lambdas is None:
+            n = 11
+            for theta in np.linspace(0.5 * np.pi, 1.0 * np.pi, n):
+                sin = np.sin(theta)
+                cos = np.cos(theta)
+                line = self.getLine(sin, cos)
+                if plt_kwargs is None:
+                    plt_kwargs_bis = dict()
+                else:
+                    plt_kwargs_bis = plt_kwargs.copy()
+                plt_kwargs_bis["linestyle"] = ":"  # dashed line
+                line.draw(fig, ax, extent, **plt_kwargs_bis)
+            for theta in np.linspace(0.0 * np.pi, 0.5 * np.pi, n):
+                sin = np.sin(theta)
+                cos = np.cos(theta)
+                line = self.getLine(sin, cos)
+                if plt_kwargs is None:
+                    plt_kwargs_bis = dict()
+                else:
+                    plt_kwargs_bis = plt_kwargs.copy()
+                plt_kwargs_bis["linestyle"] = "-"  # solid line
+                line.draw(fig, ax, extent, **plt_kwargs_bis)
+        else:
+            for lambda_1, lambda_2 in lambdas:
+                line = self.getLine(lambda_1, lambda_2)
+                line.draw(fig, ax, extent, **plt_kwargs)
         vertex = self.getVertex()
         vertex.draw(fig, ax, extent, **plt_kwargs)
 
@@ -149,3 +157,34 @@ class PencilOfLines(AbstractGeometricObject2D):
         return "pencil of lines lambda_1 ({}) + lambda_2 ({}) = 0".format(
             line_1, line_2
         )
+
+    def __eq__(self, other) -> bool:
+        # TDOO: in this implementation, we ignore the assumptions. We should check that
+        # this is really what we want to do.
+
+        if not isinstance(other, PencilOfLines):
+            return NotImplemented
+
+        # We test if the vectors of parameters (a1,b1,c1,a2,b2,c2) of the two pencils are proportional.
+        # This is the case if and only if the angle between the two vectors is pi or -pi.
+        #
+        # WARNING: It would NOT be correct to check the equality of the two line objects between the two pencils!
+
+        def dot(pencil1, pencil2):
+            return (
+                pencil1._line1.a * pencil2._line1.a
+                + pencil1._line1.b * pencil2._line1.b
+                + pencil1._line1.c * pencil2._line1.c
+                + pencil1._line2.a * pencil2._line2.a
+                + pencil1._line2.b * pencil2._line2.b
+                + pencil1._line2.c * pencil2._line2.c
+            )
+
+        norm_self = math.sqrt(dot(self, self))
+        norm_other = math.sqrt(dot(other, other))
+        cos_theta = dot(self, other) / norm_self / norm_other
+        if math.isclose(cos_theta, -1.0):
+            return True
+        if math.isclose(cos_theta, 1.0):
+            return True
+        return False

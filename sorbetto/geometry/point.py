@@ -1,6 +1,8 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
+import math
+
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -76,7 +78,19 @@ class Point(AbstractGeometricObject2D):
             return
 
         options_for_plot = filter_properties_for_plot(plt_kwargs)
-        ax.plot(x, y, **options_for_plot)
+        ax.plot(x, y, "o", **options_for_plot)
 
     def __str__(self) -> str:
         return "point ({:g}, {:g})".format(self.x, self.y)
+
+    def __eq__(self, other) -> bool:
+        # TDOO: in this implementation, we ignore the assumptions. We should check that
+        # this is really what we want to do.
+
+        if not isinstance(other, Point):
+            return NotImplemented
+        if not math.isclose(self._x, other._x):
+            return False
+        if not math.isclose(self._y, other._y):
+            return False
+        return True

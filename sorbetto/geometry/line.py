@@ -12,6 +12,7 @@ from sorbetto.geometry.line_segment import LineSegment
 from sorbetto.geometry.point import Point
 
 
+# TODO: should Line inherit from BilinearCurve ?
 class Line(AbstractGeometricObject2D):
     """
     This class is used to represent a line.
@@ -254,3 +255,25 @@ class Line(AbstractGeometricObject2D):
         b = self._b
         c = self._c
         return "line ({}) x + ({}) y + ({}) = 0".format(a, b, c)
+
+    def __eq__(self, other) -> bool:
+        # TDOO: in this implementation, we ignore the assumptions. We should check that
+        # this is really what we want to do.
+
+        if not isinstance(other, Line):
+            return NotImplemented
+
+        # We test if the vectors of parameters (a,b,c) of the two lines are proportional.
+        # This is the case if and only if the angle between the two vectors is pi or -pi.
+
+        def dot(line1, line2):
+            return line1._a * line2._a + line1._b * line2._b + line1._c * line2._c
+
+        norm_self = math.sqrt(dot(self, self))
+        norm_other = math.sqrt(dot(other, other))
+        cos_theta = dot(self, other) / norm_self / norm_other
+        if math.isclose(cos_theta, -1.0):
+            return True
+        if math.isclose(cos_theta, 1.0):
+            return True
+        return False

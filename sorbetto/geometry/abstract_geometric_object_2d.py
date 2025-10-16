@@ -21,3 +21,8 @@ class AbstractGeometricObject2D(ABC, Named):
     @property
     def assumptions(self) -> tuple:
         return self._assumptions
+
+    @abstractmethod
+    def __eq__(self, other) -> bool:
+        # TODO: should we ignore the assumptions in these tests or take them into account?
+        ...
