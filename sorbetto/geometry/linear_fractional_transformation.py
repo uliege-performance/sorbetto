@@ -12,8 +12,11 @@ from typing import Self
 class LinearFractionalTransformation:
     """
     This class is used to represent linear fractional transformations.
-    :math:`x \\mapsto \\frac{ a x + b }{ c x + d }`
-    https://en.wikipedia.org/wiki/Linear_fractional_transformation
+
+    .. math::
+        f : \\mathbb{R} \\rightarrow \\mathbb{R} : x \\mapsto \\frac{ a x + b }{ c x + d }
+
+    See https://en.wikipedia.org/wiki/Linear_fractional_transformation
     """
 
     def __init__(self, a: float, b: float, c: float, d: float):
@@ -75,7 +78,9 @@ class LinearFractionalTransformation:
         """
         return self._d
 
-    def __call__(self, x):
+    def __call__(self, x: float):
+        assert isinstance(x, float)
+
         a = self._a
         b = self._b
         c = self._c
@@ -97,7 +102,7 @@ class LinearFractionalTransformation:
             raise RuntimeError("The invertibility condition is not satisfied.")
         return LinearFractionalTransformation(d, -b, -c, a)
 
-    def __str__(self):
+    def __str__(self) -> str:
         a = self._a
         b = self._b
         c = self._c
