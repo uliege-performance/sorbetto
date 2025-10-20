@@ -7,6 +7,9 @@ from .conic import Conic
 from .line import Line
 from .line_segment import LineSegment
 from .linear_fractional_transformation import LinearFractionalTransformation
+from .linear_fractional_transformation_two_variables import (
+    LinearFractionalTransformationTwoVariables,
+)
 from .pencil_of_lines import PencilOfLines
 from .point import Point
 
@@ -17,6 +20,7 @@ __all__ = [
     "Line",
     "LineSegment",
     "LinearFractionalTransformation",
+    "LinearFractionalTransformationTwoVariables",
     "PencilOfLines",
     "Point",
 ]
