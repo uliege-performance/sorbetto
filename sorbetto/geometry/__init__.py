@@ -12,6 +12,7 @@ from .linear_fractional_transformation_two_variables import (
 )
 from .pencil_of_lines import PencilOfLines
 from .point import Point
+from .ruler import Ruler
 
 __all__ = [
     "AbstractGeometricObject2D",
@@ -23,4 +24,5 @@ __all__ = [
     "LinearFractionalTransformationTwoVariables",
     "PencilOfLines",
     "Point",
+    "Ruler",
 ]
