@@ -17,7 +17,7 @@ class PerformanceOrderingInducedByOneScore(
 
         super().__init__(name)
 
-    # TODO warning if score is not a RankingScore.
+    # TODO warning if score is not a RankingScore. But ranking score is at a higher level in the modules :-(
 
     @property
     def score(self):

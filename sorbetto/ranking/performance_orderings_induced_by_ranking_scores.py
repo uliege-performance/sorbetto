@@ -12,6 +12,8 @@ from sorbetto.performance.performance_ordering_induced_by_one_score import (
 from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
+# FIXME: for many of the scores listed here, the behavior is different from ranking scores !!!!
+
 
 class PerformanceOrderingsInducedByRankingScores:
     @staticmethod
@@ -267,7 +269,7 @@ class PerformanceOrderingsInducedByRankingScores:
     @staticmethod
     def getBennettS() -> "PerformanceOrderingInducedByOneScore":
         """
-        Returns the performance ordering induced by the score *Bennett's :math:`S`*.
+        Returns the performance ordering induced by the score Bennett's :math:`S`.
         This score is related to the accuracy :math:`A` by :math:`S=2A-1`.
 
         Reference: :cite:t:`Warrens2012TheEffect`.
@@ -470,10 +472,10 @@ class PerformanceOrderingsInducedByRankingScores:
     def getYoudenJ(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Youden*.
-        Youden's index or Youden's :math:` Y_J ` statistic.
+        Youden's index or Youden's :math:`Y_J` statistic.
         Defined in :cite:t:`Youden1950Index`
         References: :cite:t:`Fluss2005Estimation`.
-        Related to the balanced accuracy by :math:` Y_J = TNR + TPR - 1 = 2 BA - 1`.
+        Related to the balanced accuracy by :math:`Y_J = TNR + TPR - 1 = 2 BA - 1`.
         Synonyms: informedness and Peirce Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
@@ -656,7 +658,7 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Args:
             priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1) `. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -741,7 +743,7 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Args:
             priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -806,7 +808,7 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Args:
             priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -872,7 +874,7 @@ class PerformanceOrderingsInducedByRankingScores:
 
         Args:
             priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ \\in (0,1) `. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -984,23 +986,41 @@ class PerformanceOrderingsInducedByRankingScores:
         confusion matrix.
 
         .. math::
-            |\\mathcal{C}| = PTN \, PTP - PFP \, PFN
+            |\\mathcal{C}| = PTN \\, PTP - PFP \\, PFN
 
-        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
-        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have
+        This score is a skill score in the sense that:
+
+        * it takes the zero value for all no-skill performances
+         (:math:`P(Y,\\hat{Y}) = P(Y) P(\\hat{Y}) \\Rightarrow |\\mathcal{C}| = 0`);
+        * a negative value for the worst performances
+         (:math:`P(S=0)=1 \\Rightarrow |\\mathcal{C}|<0`);
+        * and a positive value for the best performances
+         (:math:`P(S=1)=1 \\Rightarrow |\\mathcal{C}|>0`).
+
+        Denoting the class priors by :math:`\\pi_- = P(Y=c_-)` and :math:`\\pi_+ = P(Y=c_+)`,
+        and assuming none of these two quantities is zero, we have
 
         .. math::
-            |\\mathcal{C}| = \\pi_- \\pi_+ ( TNR + TPR - 1 )
+            |\\mathcal{C}| = \\pi_- \\pi_+ ( TNR + TPR - 1 ) = \\pi_- \\pi_+ ( 2 mRe - 1 )
 
-        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
-        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have
+        Thus, when the class priors are fixed, the performance ordering induced
+        by the determinant of the confusion matrix is the same as the one induced
+        by the macro-averaged recall :math:`mRe` (a.k.a. Peirce Skill Score).
+
+        Denoting the prediction rates by :math:`\\tau_- = P(\\hat{Y}=c_-)` and :math:`\\tau_+ = P(\\hat{Y}=c_+)`,
+        and assuming none of these two quantities is zero, we have
 
         .. math::
-            |\\mathcal{C}| = \\tau_- \\tau_+ ( NPV + PPV - 1 )
+            |\\mathcal{C}| = \\tau_- \\tau_+ ( NPV + PPV - 1 ) = \\tau_- \\tau_+ ( 2 mPr - 1 )
+
+        Thus, when the prediction rates are fixed, the performance ordering induced
+        by the determinant of the confusion matrix is the same as the one induced
+        by the macro-averaged precision :math:`mPr` (a.k.a. Clayton Skill Score).
 
         Some works using this score: :cite:t:`Wimmer2006APerson`.
 
         See https://en.wikipedia.org/wiki/Confusion_matrix
+
         See https://en.wikipedia.org/wiki/Determinant
         """
         if priorPos is None:

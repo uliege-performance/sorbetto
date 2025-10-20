@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib.colors import hsv_to_rgb
 
 
+# TODO: this is used only in RankingTile. It should be moved there.
 def get_colors(num_colors):
     x = np.linspace(0.0, 1.0, num_colors)
     a = np.floor(x * x * np.sqrt(num_colors))

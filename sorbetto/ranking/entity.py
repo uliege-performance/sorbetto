@@ -12,6 +12,11 @@ from sorbetto.performance.two_class_classification_performance import (
 
 
 class Entity(Named):
+    # TODO: In the future, we could add properties to the entities. For example,
+    # one could add the "cost" of using this entity. This information could be
+    # propagated on Tiles through specific flavors. For example, one could observe
+    # the "cost" of using a state-of-the-art method. This is an idea from Jérôme Pierre.
+
     def __init__(
         self,
         performance: TwoClassClassificationPerformance,
