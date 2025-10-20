@@ -5,6 +5,10 @@ import numpy as np
 
 from sorbetto.geometry.bilinear_curve import BilinearCurve
 from sorbetto.geometry.line import Line
+from sorbetto.geometry.linear_fractional_transformation_two_variables import (
+    LinearFractionalTransformationTwoVariables,
+)
+from sorbetto.geometry.pencil_of_lines import PencilOfLines
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
@@ -232,6 +236,240 @@ class ParameterizationDefault(AbstractParameterization):
         c = ifn / (ifp + ifn)
         name = "relative importance of unsatisfying"
         return Line(a, b, c, name=name)
+
+    @staticmethod
+    def getParameter1ForValueZeroInROC(
+        priorPos: float,
+    ) -> LinearFractionalTransformationTwoVariables:
+        """
+        Returns the function :math:`f : \\mathbb{R}^2 \\rightarrow [0,1] : (fpr, tpr) \\mapsto a(I)`,
+        under the assumptions that :math:`R_I(P)=0`, :math:`P(Y=c_+)=\\pi_+`, :math:`FPR(P)=fpr`, and
+        :math:`TPR(P)=tpr`. Note that this function is extended to allow :math:`fpr` and :math:`tpr`
+        to be out of the :math:`[0,1]` range.
+
+        It turns out that all ranking scores :math:`R_I` achieve their minimal value (:math:`0`) when
+
+        .. math::
+            R_I ( P ) = 0
+            \\Leftrightarrow
+            I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) = 0
+
+        so that
+
+        .. math::
+            \\underbrace{
+                \\frac{
+                    I(tp)
+                }{
+                    I(tn) + I(tp)
+                }
+            }_{=a(I)}
+            = \\underbrace{
+                \\frac{
+                    P(\\{tn\\})
+                }{
+                    P(\\{tn\\}) - P(\\{tp\\})
+                }
+            }_{=f(P)}
+
+        Note that the left hand side depends only on the importance :math:`I`
+        and the right hand side depends only on the performance :math:`P` and
+        is an expected value ratio score.
+
+        When the class priors are fixed and given by :math:`(\\pi_-, \\pi_+)`,
+
+        .. math::
+            f(P) = \\frac{ (1-fpr) \\, \\pi_- }{ (1-fpr) \\, \\pi_- - tpr \\, \\pi_+}
+
+        which is the returned function. When :math:`a` is known, one can use this
+        function to retrieve the line in ROC where :math:`R_I(P)=0`.
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+
+        Returns:
+            LinearFractionalTransformationTwoVariables: The function :math:`f`.
+        """
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        a = -priorNeg
+        b = 0.0
+        c = priorNeg
+        d = -priorNeg
+        e = -priorPos
+        f = priorNeg
+
+        return LinearFractionalTransformationTwoVariables(a, b, c, d, e, f)
+
+    def getPencilParameter1ForValueZeroInROC(
+        self,
+        priorPos: float,
+    ) -> PencilOfLines:
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        parameter_name = self.getNameParameter1()
+
+        # Let us take a look at the case in which the score takes the value 0:
+        #     itn ptn + itp ptp = 0
+        # <=> itn ( (1-fpr) priorNeg ) + itp ( tpr priorPos ) = 0
+        # <=> fpr ( - itn priorNeg ) + tpr ( itp priorPos ) + ( itn priorNeg ) = 0
+        # The coefficients of this line depend only on the importance values
+        # given to the true negatives and to the true positives. So, only the
+        # first parameter (i.e., a) is responsible for moving this line.
+
+        # When the first parameter (a) takes the value 0, it means that
+        # itn = 1 and itp = 0:
+        # => fpr ( - priorNeg ) + tpr ( 0 ) + ( priorNeg ) = 0
+        a = -priorNeg
+        b = 0.0
+        c = priorNeg
+        line_0 = Line(a, b, c, "line for value {}=0".format(parameter_name))
+
+        # When the first parameter (a) takes the value 1, it means that
+        # itn = 0 and itp = 1:
+        # => fpr ( 0 ) + tpr ( priorPos ) + ( 0 ) = 0
+        a = 0.0
+        b = priorPos
+        c = 0.0
+        line_1 = Line(a, b, c, "line for value {}=1".format(parameter_name))
+
+        # For canonical ranking scores, itn=1-a and itp=a. Thus,
+        #     fpr ( - itn priorNeg ) + tpr ( itp priorPos ) + ( itn priorNeg ) = 0
+        #  => fpr ( - (1-a) priorNeg ) + tpr ( a priorPos ) + ( (1-a) priorNeg ) = 0
+        # <=> (1-a) [ fpr ( - priorNeg ) + tpr ( 0 ) + ( priorNeg ) ] + a [ fpr ( 0 ) + tpr ( priorPos ) + ( 0 ) ] = 0
+        # <=> (1-a) line_0 + a line_1 = 0
+        # This gives the meaning of the pencil's parameters: (1-a) and a for,
+        # respectively, line_0 and line_1.
+
+        name = (
+            "pencil in ROC for parameter {} and a prior of positive class of {}".format(
+                parameter_name, priorPos
+            )
+        )
+        return PencilOfLines(line_0, line_1, name)
+
+    @staticmethod
+    def getParameter2ForValueOneInROC(
+        priorPos: float,
+    ) -> LinearFractionalTransformationTwoVariables:
+        """
+        Returns the function :math:`f : \\mathbb{R}^2 \\rightarrow [0,1] : (fpr, tpr) \\mapsto b(I)`,
+        under the assumptions that :math:`R_I(P)=1`, :math:`P(Y=c_+)=\\pi_+`, :math:`FPR(P)=fpr`, and
+        :math:`TPR(P)=tpr`. Note that this function is extended to allow :math:`fpr` and :math:`tpr`
+        to be out of the :math:`[0,1]` range.
+
+        It turns out that all ranking scores :math:`R_I` achieve their maximal value (:math:`1`) when
+
+        .. math::
+            R_I ( P ) = 1
+            \\Leftrightarrow
+            I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) = 0
+
+        so that
+
+        .. math::
+            \\underbrace{
+                \\frac{
+                    I(fn)
+                }{
+                    I(fp) + I(fn)
+                }
+            }_{=b(I)}
+            = \\underbrace{
+                \\frac{
+                    P(\\{fp\\})
+                }{
+                    P(\\{fp\\}) - P(\\{fn\\})
+                }
+            }_{=f(P)}
+
+        Note that the left hand side depends only on the importance :math:`I`
+        and the right hand side depends only on the performance :math:`P` and
+        is an expected value ratio score.
+
+        When the class priors are fixed and given by :math:`(\\pi_-, \\pi_+)`,
+
+        .. math::
+            f(P) = \\frac{ fpr \\, \\pi_- }{ fpr \\, \\pi_- - (1-tpr) \\, \\pi_+}
+
+        which is the returned function. When :math:`b` is known, one can use this
+        function to retrieve the line in ROC where :math:`R_I(P)=1`.
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+
+        Returns:
+            LinearFractionalTransformationTwoVariables: The function :math:`f`.
+        """
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        a = priorNeg
+        b = 0.0
+        c = 0.0
+        d = priorNeg
+        e = priorPos
+        f = -priorPos
+
+        return LinearFractionalTransformationTwoVariables(a, b, c, d, e, f)
+
+    def getPencilParameter2ForValueOneInROC(
+        self,
+        priorPos: float,
+    ) -> PencilOfLines:
+        assert isinstance(priorPos, float)
+        assert priorPos > 0.0
+        assert priorPos < 1.0
+        priorNeg = 1.0 - priorPos
+
+        parameter_name = self.getNameParameter2()
+
+        # Let us take a look at the case in which the score takes the value 1:
+        #     ifp pfp + ifn pfn = 0
+        # <=> ifp ( fpr priorNeg ) + ifn ( (1-tpr) priorPos ) = 0
+        # <=> fpr ( ifp priorNeg ) + tpr ( - ifn priorPos ) + ( ifn priorPos ) = 0
+        # The coefficients of this line depend only on the importance values
+        # given to the false positives and to the false negatives. So, only the
+        # second parameter (i.e., b) is responsible for moving this line.
+
+        # When the second parameter (b) takes the value 0, it means that
+        # ifp = 1 and ifn = 0:
+        # => fpr ( priorNeg ) + tpr ( 0 ) + ( 0 ) = 0
+        a = priorNeg
+        b = 0.0
+        c = 0.0
+        line_0 = Line(a, b, c, "line for value {}=0".format(parameter_name))
+
+        # When the second parameter (b) takes the value 1, it means that
+        # ifp = 0 and ifn = 1:
+        # => fpr ( 0 ) + tpr ( - priorPos ) + ( priorPos ) = 0
+        a = 0.0
+        b = -priorPos
+        c = priorPos
+        line_1 = Line(a, b, c, "line for value {}=1".format(parameter_name))
+
+        # For canonical ranking scores, ifp=1-b and ifn=b. Thus,
+        #     fpr ( ifp priorNeg ) + tpr ( - ifn priorPos ) + ( ifn priorPos ) = 0
+        #  => fpr ( (1-b) priorNeg ) + tpr ( - b priorPos ) + ( b priorPos ) = 0
+        # <=> (1-b) [ fpr ( priorNeg ) + tpr ( 0 ) + ( 0 ) ] + b [ fpr ( 0 ) + tpr ( - priorPos ) + ( priorPos ) ] = 0
+        # <=> (1-b) line_0 + b line_1 = 0
+        # This gives the meaning of the pencil's parameters: (1-b) and b for,
+        # respectively, line_0 and line_1.
+
+        name = (
+            "pencil in ROC for parameter {} and a prior of positive class of {}".format(
+                parameter_name, priorPos
+            )
+        )
+        return PencilOfLines(line_0, line_1, name)
 
     def getName(self):
         return "default"
