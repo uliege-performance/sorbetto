@@ -7,6 +7,7 @@ from scipy.ndimage import generate_binary_structure, label
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
 from sorbetto.core.matplotlib_utils import filter_properties_for_text
+from sorbetto.core.named import Named
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
 )
@@ -97,11 +98,15 @@ class AnnotationSymbols(AbstractAnnotation):
                         # by "pushing" the point inside the zone.
                     x = np.interp(mean_j, vec_j, vec_x)
                     y = np.interp(mean_i, vec_i, vec_y)
+                    if isinstance(symbol, Named):
+                        text = symbol.name
+                    else:
+                        text = str(symbol)
                     tiny = 6
                     ax.text(
                         x,
                         y,
-                        symbol,
+                        text,
                         ha="center",
                         va="center",
                         color="black",
