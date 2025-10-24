@@ -23,6 +23,8 @@ from sorbetto.ranking.importance import Importance
 from sorbetto.ranking.ranking_score import RankingScore
 
 
+# TODO: This seems to be a very particular case of a "MinimumFlavor" that
+# could be implemented in such a way to operate on a list of AbstractNumericFlavor.
 class WorstValueFlavor(AbstractNumericFlavor):
     """
     TODO actual description

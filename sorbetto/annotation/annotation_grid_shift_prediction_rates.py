@@ -52,6 +52,8 @@ class AnnotationGridShiftPredictionRates(AbstractAnnotation):
     For more information, see :cite:t:`Pierard2024TheTile-arxiv`, Section A.2.2.
     """
 
+    # TODO: It should be possible to automatically retrieve the prediction rates
+    # from the flavor of the tile on which this annotation should be placed.
     def __init__(
         self,
         rate_pos_old: float | ConstraintFixedPredictionRates,

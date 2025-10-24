@@ -24,6 +24,8 @@ if TYPE_CHECKING:
 
 
 class AnnotationCurveFixedPredictionRates(AbstractAnnotation):
+    # TODO: It should be possible to automatically retrieve the prediction rates
+    # from the flavor of the tile on which this annotation should be placed.
     def __init__(
         self,
         ratePos: float | ConstraintFixedPredictionRates,

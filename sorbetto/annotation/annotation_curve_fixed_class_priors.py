@@ -24,6 +24,8 @@ if TYPE_CHECKING:
 
 
 class AnnotationCurveFixedClassPriors(AbstractAnnotation):
+    # TODO: It should be possible to automatically retrieve the class priors
+    # from the flavor of the tile on which this annotation should be placed.
     def __init__(
         self,
         priorPos: float | ConstraintFixedClassPriors,
