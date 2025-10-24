@@ -39,12 +39,18 @@ class EntityFlavor(AbstractSymbolicFlavor[Entity]):
         name: str = "Unnamed Entity Flavor",
         colormap: Any = None,
     ):
-        super().__init__(name=name, colormap=colormap)
+        assert isinstance(rank, int)
+        assert rank >= 1
+        assert rank <= len(entity_list)
 
         self._rank = rank
+
         self._entity_set = set(entity_list)
         self._nb_entities = len(entity_list)
+
         self._performances: FiniteSetOfTwoClassClassificationPerformances | None = None
+
+        super().__init__(name=name, colormap=colormap)
 
     @property
     def rank(self) -> int:
