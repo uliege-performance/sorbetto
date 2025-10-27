@@ -32,7 +32,7 @@ class AbstractRanking(ABC, Named):
         self._performance_ordering = performance_ordering
 
         ABC.__init__(self)
-        default_name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.getName()}"
+        default_name = f"ranking of {len(entities)} entities induced by the ordering {performance_ordering.name}"
         Named.__init__(self, default_name, name)
 
     @property
