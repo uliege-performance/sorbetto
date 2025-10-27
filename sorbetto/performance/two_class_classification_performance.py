@@ -292,6 +292,10 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         color_classifier_opp: str | np.ndarray | None = "black",
         color_classifier_neg: str | np.ndarray | None = "black",
         color_classifier_pos: str | np.ndarray | None = "black",
+        show_no_skills: bool = True,
+        show_priors: bool = True,
+        show_unbiased: bool = True,
+        show_opposite_unbiased: bool = True,
     ) -> tuple[Figure, Axes]:
         """
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
@@ -341,10 +345,10 @@ class TwoClassClassificationPerformance(AbstractPerformance):
             fig,
             ax,
             priorPos=priorPos,
-            show_no_skills=True,
-            show_priors=True,
-            show_unbiased=True,
-            show_opposite_unbiased=True,
+            show_no_skills=show_no_skills,
+            show_priors=show_priors,
+            show_unbiased=show_unbiased,
+            show_opposite_unbiased=show_opposite_unbiased,
         )
 
         def drawPointAndLabel(x, y, label, color):
