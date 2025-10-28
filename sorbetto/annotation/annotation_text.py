@@ -277,7 +277,7 @@ class AnnotationText(AbstractAnnotation):
         elif isinstance(self._location, Point):
             point = self._location
             constraint = None
-            for assumption in point:
+            for assumption in point.assumptions:
                 if isinstance(
                     assumption, ConstraintRelativeImportanceSatisfyingUnsatisfying
                 ):
@@ -302,7 +302,7 @@ class AnnotationText(AbstractAnnotation):
         elif isinstance(self._location, Point):
             point = self._location
             constraint = None
-            for assumption in point:
+            for assumption in point.assumptions:
                 if isinstance(assumption, ConstraintFixedClassPriors):
                     constraint = self._unionOfConstraints(constraint, assumption)
             return constraint
@@ -327,7 +327,7 @@ class AnnotationText(AbstractAnnotation):
         elif isinstance(self._location, Point):
             point = self._location
             constraint = None
-            for assumption in point:
+            for assumption in point.assumptions:
                 if isinstance(assumption, ConstraintFixedPredictionRates):
                     constraint = self._unionOfConstraints(constraint, assumption)
             return constraint
