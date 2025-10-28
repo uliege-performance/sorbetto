@@ -74,7 +74,7 @@ def _setupROC(
         ax.text(
             x,
             y,
-            "unbiased: $P(\\{fp\\}) = P(\\{fn\\})$",
+            "unbiased\n$P(\\{fp\\}) = P(\\{fn\\})$",
             ha="center",
             va="top" if priorPos >= 0.5 else "baseline",
             rotation=a,
@@ -93,9 +93,9 @@ def _setupROC(
         ax.text(
             x,
             y,
-            "opposite unbiased: $P(\\{tn\\}) = P(\\{tp\\})$",
+            "opposite unbiased\n$P(\\{tn\\}) = P(\\{tp\\})$",
             ha="center",
-            va="top" if priorPos >= 0.5 else "baseline",
+            va="top" if priorPos < 0.5 else "baseline",
             rotation=a,
             c="palevioletred",
             rotation_mode="anchor",

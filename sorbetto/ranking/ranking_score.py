@@ -200,6 +200,7 @@ class RankingScore(AbstractScore):
         fig: Figure,
         ax: Axes,
         priorPos: float,
+        resolution: int = 1001,
         show_values_map: bool = True,
         show_iso_value_lines: bool = True,
         show_colorbar: bool = True,
@@ -243,7 +244,10 @@ class RankingScore(AbstractScore):
         priorNeg = 1.0 - priorPos
 
         # TNR, FPR, FNR, TPR
-        grid_size = 1001
+        assert isinstance(resolution, int)
+        assert resolution > 0
+        assert resolution <= 10000
+        grid_size = resolution
         vec_fpr = vec_tpr = np.linspace(0, 1, num=grid_size)
         mat_fpr, mat_tpr = np.meshgrid(vec_fpr, vec_tpr, indexing="xy")
         mat_tnr = 1 - mat_fpr

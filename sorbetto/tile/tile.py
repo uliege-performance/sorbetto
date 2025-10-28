@@ -319,6 +319,7 @@ class Tile(Named):
         fig: Figure | None = None,
         ax: Axes | None = None,
         print_traceback_on_annotation_exception: bool = False,
+        merge_text_annotations: bool = True,
     ) -> tuple[Figure, Axes]:
         """Draws the Tile in the given figure and axes.
 
@@ -341,7 +342,17 @@ class Tile(Named):
 
         # Draw all annotations
 
-        for annotation in self._genAnnotationsWithMergedTexts():
+        if merge_text_annotations:
+            # In most cases, we would like to place only a single marker on the
+            # tile when several text annotations are located exactly at the same
+            # point.
+            annotations = self._genAnnotationsWithMergedTexts()
+        else:
+            # But sometimes, we would like to keep them separate. For example,
+            # in interactive demonstrations in which a point is moved on the
+            # Tile are could be superimposed with some deeper annotation.
+            annotations = self._annotations
+        for annotation in annotations:
             assert isinstance(annotation, AbstractAnnotation)
             tile = self
             try:
