@@ -26,7 +26,7 @@ class SymbolicTile(Tile):
         flavor: AbstractSymbolicFlavor,
         name: str = "Symbolic Tile",
         resolution: int = 1001,
-        disable_legend: bool = False,
+        legend_mode: str = "default",  # legend is outside, on the right, and the labels are cut at 30 characters.
         base_constraint_on_importances: Any = None,
     ):
         assert isinstance(parameterization, AbstractParameterization)
@@ -34,7 +34,7 @@ class SymbolicTile(Tile):
         assert isinstance(name, str)
         assert isinstance(resolution, int)
         assert resolution > 0
-        assert isinstance(disable_legend, bool)
+        assert isinstance(legend_mode, str)
 
         Tile.__init__(
             self,
@@ -45,7 +45,7 @@ class SymbolicTile(Tile):
             base_constraint_on_importances=base_constraint_on_importances,
         )
 
-        self._disable_legend = disable_legend
+        self._legend_mode = legend_mode
 
     @property
     def flavor(self) -> AbstractSymbolicFlavor:
@@ -55,14 +55,14 @@ class SymbolicTile(Tile):
         return flavor
 
     @property
-    def disable_legend(self) -> bool:
-        return self._disable_legend
+    def legend_mode(self) -> str:
+        return self._legend_mode
 
-    @disable_legend.setter
-    def disable_legend(self, value: bool):
-        if not isinstance(value, bool):
-            raise TypeError(f"disable_legend must be a bool, got {type(value)}")
-        self._disable_legend = value
+    @legend_mode.setter
+    def legend_mode(self, value: str):
+        if not isinstance(value, str):
+            raise TypeError(f"legend_mode must be a str, got {type(value)}")
+        self._legend_mode = value
 
     def draw(
         self, fig: Figure | None = None, ax: Axes | None = None
@@ -92,7 +92,7 @@ class SymbolicTile(Tile):
         # im = ax.images[-1]
         # im.colorbar.set_ticks(range(min_value, max_value + 1))  # type: ignore
 
-        if not self.disable_legend:
+        if self.legend_mode != "off":
 
             def getLegendElement(symbol):
                 max_label_size = 30  # >= 4

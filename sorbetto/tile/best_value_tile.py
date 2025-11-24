@@ -25,6 +25,7 @@ class BestValueTile(NumericTile):
         flavor: BestValueFlavor,
         name: str = "Best Value Tile",
         resolution: int = 1001,
+        colorbar_mode: str = "default",
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, BestValueFlavor)
@@ -37,6 +38,7 @@ class BestValueTile(NumericTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
+            colorbar_mode=colorbar_mode,
             base_constraint_on_importances=ConstraintCanonical(),
         )
 

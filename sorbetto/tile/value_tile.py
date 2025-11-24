@@ -62,7 +62,7 @@ class ValueTile(NumericTile):
         flavor: ValueFlavor,
         name: str = "Value Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        colorbar_mode: str = "default",
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, ValueFlavor)
@@ -75,7 +75,7 @@ class ValueTile(NumericTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
+            colorbar_mode=colorbar_mode,
             base_constraint_on_importances=ConstraintCanonical(),
         )
         self._performance = self.flavor.performance

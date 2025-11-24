@@ -30,7 +30,7 @@ class NumericTile(Tile):
         flavor: AbstractNumericFlavor,
         name: str = "Numeric Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        colorbar_mode: str = "default",
         base_constraint_on_importances: Any = None,
     ):
         assert isinstance(parameterization, AbstractParameterization)
@@ -38,7 +38,7 @@ class NumericTile(Tile):
         assert isinstance(name, str)
         assert isinstance(resolution, int)
         assert resolution > 0
-        assert isinstance(disable_colorbar, bool)
+        assert isinstance(colorbar_mode, str)
 
         Tile.__init__(
             self,
@@ -49,7 +49,7 @@ class NumericTile(Tile):
             base_constraint_on_importances=base_constraint_on_importances,
         )
 
-        self._disable_colorbar = disable_colorbar
+        self._colorbar_mode = colorbar_mode
 
         self._min: float | int | None = None
         self._max: float | int | None = None
@@ -82,14 +82,14 @@ class NumericTile(Tile):
         return cast(float, self._max)
 
     @property
-    def disable_colorbar(self) -> bool:
-        return self._disable_colorbar
+    def colorbar_mode(self) -> str:
+        return self._colorbar_mode
 
-    @disable_colorbar.setter
-    def disable_colorbar(self, value: bool):
-        if not isinstance(value, bool):
-            raise TypeError(f"disable_colorbar must be a bool, got {type(value)}")
-        self._disable_colorbar = value
+    @colorbar_mode.setter
+    def colorbar_mode(self, value: str):
+        if not isinstance(value, str):
+            raise TypeError(f"colorbar_mode must be a str, got {type(value)}")
+        self._colorbar_mode = value
 
     def _optimize(
         self, scale: float, precision: float = 1e-6
@@ -245,42 +245,54 @@ class NumericTile(Tile):
         min_val = self.flavor.getLowerBound()
         max_val = self.flavor.getUpperBound()
 
-        try:
-            # Compute bounds for the value:
-            # [self.min, self.max] is obtained on a grid
-            # [self.minimize(), self.maximize()] is obtained by optimization
-            _, _, minimized_value = self.minimize()
-            _, _, maximized_value = self.maximize()
-            clamped_min_val = min(self.min, minimized_value)
-            clamped_max_val = max(self.max, maximized_value)
-        except Exception as e:
-            logging.warning(
-                f"Impossible to determine the range of values to clamp the colormap: {e}"
+        if self._colorbar_mode == "default":
+            try:
+                # Compute bounds for the value:
+                # [self.min, self.max] is obtained on a grid
+                # [self.minimize(), self.maximize()] is obtained by optimization
+                _, _, minimized_value = self.minimize()
+                _, _, maximized_value = self.maximize()
+                clamped_min_val = min(self.min, minimized_value)
+                clamped_max_val = max(self.max, maximized_value)
+            except Exception as e:
+                logging.warning(
+                    f"Impossible to determine the range of values to clamp the colormap: {e}"
+                )
+                # Do not clamp.
+                clamped_min_val = min_val
+                clamped_max_val = max_val
+
+            colormap = self._clampColormap(
+                colormap=self.flavor.colormap,
+                min_val=min_val,
+                max_val=max_val,
+                clamped_min_val=clamped_min_val,
+                clamped_max_val=clamped_max_val,
             )
-            # Do not clamp.
-            clamped_min_val = min_val
-            clamped_max_val = max_val
+        else:
+            colormap = self.flavor.colormap
 
-        colormap = self._clampColormap(
-            colormap=self.flavor.colormap,
-            min_val=min_val,
-            max_val=max_val,
-            clamped_min_val=clamped_min_val,
-            clamped_max_val=clamped_max_val,
-        )
-
-        ax.imshow(
-            self.mat_value,
-            origin="lower",
-            extent=self._zoom,  # extent is (left, right, bottom, top)
-            interpolation="bilinear",
-            cmap=colormap,
-            vmin=min_val,
-            vmax=max_val,
-        )
+        if self._colorbar_mode == "pyplot_default":
+            ax.imshow(
+                self.mat_value,
+                origin="lower",
+                extent=self._zoom,  # extent is (left, right, bottom, top)
+                interpolation="bilinear",
+                cmap=colormap,
+                vmin=min_val,
+                vmax=max_val,
+            )
+        else:
+            ax.imshow(
+                self.mat_value,
+                origin="lower",
+                extent=self._zoom,  # extent is (left, right, bottom, top)
+                interpolation="bilinear",
+                cmap=colormap,
+            )
         Tile.draw(self, fig, ax)
 
-        if not self.disable_colorbar:
+        if self._colorbar_mode != "off":
             # Create a subdivision of the axis to add a colorbar of same height
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="5%", pad="5%")
@@ -291,4 +303,4 @@ class NumericTile(Tile):
         return fig, ax
 
     def getExplanation(self) -> str:
-        return "Sorry, we cannont provide yet an explanation for this Tile."
+        return "Sorry, we cannot provide yet an explanation for this Tile."

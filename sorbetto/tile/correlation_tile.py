@@ -19,7 +19,7 @@ class CorrelationTile(NumericTile):
         flavor: CorrelationFlavor,
         name: str = "Correlation Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        colorbar_mode: str = "default",
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, CorrelationFlavor)
@@ -37,7 +37,7 @@ class CorrelationTile(NumericTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
+            colorbar_mode=colorbar_mode,
             base_constraint_on_importances=base_constraint_on_importances,
         )
 

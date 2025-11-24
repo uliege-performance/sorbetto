@@ -21,7 +21,7 @@ class RankingTile(NumericTile):
         flavor: RankingFlavor,
         name: str = "Ranking Tile",
         resolution: int = 1001,
-        disable_colorbar: bool = False,
+        colorbar_mode: str = "default",
     ):
         assert isinstance(parameterization, AbstractParameterization)
         assert isinstance(flavor, RankingFlavor)
@@ -34,7 +34,7 @@ class RankingTile(NumericTile):
             flavor=flavor,
             name=name,
             resolution=resolution,
-            disable_colorbar=disable_colorbar,
+            colorbar_mode=colorbar_mode,
             base_constraint_on_importances=None,
         )
 
