@@ -39,7 +39,7 @@ class AnnotationSymbols(AbstractAnnotation):
 
         self._plt_kwargs = plt_kwargs
 
-        AbstractAnnotation.__init__(self, "importance compass")
+        AbstractAnnotation.__init__(self, "symbols")
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile.tile import Tile
@@ -55,6 +55,14 @@ class AnnotationSymbols(AbstractAnnotation):
             raise RuntimeError(message)
 
         options_for_text = filter_properties_for_text(self._plt_kwargs)
+
+        options_for_text_bis = dict()
+        options_for_text_bis["ha"] = "center"
+        options_for_text_bis["va"] = "center"
+        options_for_text_bis["fontsize"] = 6
+        options_for_text_bis["color"] = "black"
+        if options_for_text is not None:
+            options_for_text_bis.update(options_for_text)
 
         # parameterization = tile.parameterization
         # min_x, max_x = parameterization.getBoundsParameter1()
@@ -102,17 +110,7 @@ class AnnotationSymbols(AbstractAnnotation):
                         text = symbol.name
                     else:
                         text = str(symbol)
-                    tiny = 6
-                    ax.text(
-                        x,
-                        y,
-                        text,
-                        ha="center",
-                        va="center",
-                        color="black",
-                        fontsize=tiny,
-                        **options_for_text,
-                    )
+                    ax.text(x, y, text, **options_for_text_bis)
 
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
