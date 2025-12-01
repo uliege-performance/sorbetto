@@ -8,10 +8,12 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
+from skimage.measure import find_contours
 
 from sorbetto.core.named import Named
 from sorbetto.flavor.abstract_symbolic_flavor import AbstractSymbolicFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
+from sorbetto.ranking.importance import Importance
 from sorbetto.tile.tile import Tile
 
 
@@ -65,7 +67,7 @@ class SymbolicTile(Tile):
         self._legend_mode = value
 
     def draw(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self, fig: Figure | None = None, ax: Axes | None = None, **kwargs
     ) -> tuple[Figure, Axes]:
         if fig is None:
             fig = plt.figure()
@@ -87,7 +89,7 @@ class SymbolicTile(Tile):
             vmin=min_value - 0.5,
             vmax=max_value + 0.5,
         )
-        Tile.draw(self, fig, ax)
+        Tile.draw(self, fig, ax, **kwargs)
 
         # im = ax.images[-1]
         # im.colorbar.set_ticks(range(min_value, max_value + 1))  # type: ignore
@@ -142,6 +144,44 @@ class SymbolicTile(Tile):
         assert symbol in flavor.getCodomain()
         value = flavor.mapper(symbol)
         return np.mean(self.mat_value == value)
+
+    def getCanonicalImportancesForContours(self, symbol) -> list[list[Importance]]:
+        canonical_importance_contours = list()
+
+        mat_value = self.mat_value
+        vec_x = self._vec_x
+        vec_y = self._vec_y
+
+        w = np.size(vec_x)
+        h = np.size(vec_y)
+
+        vec_col = np.linspace(0, w - 1, w)
+        vec_row = np.linspace(0, h - 1, h)
+
+        flavor = self.flavor
+        assert symbol in flavor.getCodomain()
+        value = flavor.mapper(symbol)
+        bininarized = mat_value == value
+        contours = find_contours(bininarized, level=0.5)
+        for contour in contours:
+            canonical_importance_contour = list()
+            assert isinstance(contour, np.ndarray)
+            assert np.ndim(contour == 2)
+            shape = np.shape(contour)
+            num_verticies = shape[0]
+            assert shape[1] == 2
+            for vertex_idx in range(num_verticies):
+                row = contour[vertex_idx, 0]
+                col = contour[vertex_idx, 1]
+                x = np.interp(col, vec_col, vec_x)
+                y = np.interp(row, vec_row, vec_y)
+                canonical_importance = self.parameterization.getCanonicalImportance(
+                    x, y
+                )
+                canonical_importance_contour.append(canonical_importance)
+            canonical_importance_contours.append(canonical_importance_contour)
+
+        return canonical_importance_contours
 
     def getExplanation(self) -> str:
         flavor_name = self.flavor.name

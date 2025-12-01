@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from .abstract_annotation import AbstractAnnotation
+from .annotation_contour import AnnotationContour
 from .annotation_curve_fixed_class_priors import AnnotationCurveFixedClassPriors
 from .annotation_curve_fixed_prediction_rates import AnnotationCurveFixedPredictionRates
 from .annotation_frontiers_between_rankings import AnnotationFrontiersBetweenRankings
@@ -17,6 +18,7 @@ from .annotation_text import AnnotationText
 
 __all__ = [
     "AbstractAnnotation",
+    "AnnotationContour",
     "AnnotationCurveFixedClassPriors",
     "AnnotationCurveFixedPredictionRates",
     "AnnotationFrontiersBetweenRankings",
