@@ -234,7 +234,7 @@ class NumericTile(Tile):
         return clamped_colormap
 
     def draw(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self, fig: Figure | None = None, ax: Axes | None = None, **kwargs
     ) -> tuple[Figure, Axes]:
         if fig is None:
             fig = plt.figure()
@@ -279,8 +279,6 @@ class NumericTile(Tile):
                 extent=self._zoom,  # extent is (left, right, bottom, top)
                 interpolation="bilinear",
                 cmap=colormap,
-                vmin=min_val,
-                vmax=max_val,
             )
         else:
             ax.imshow(
@@ -289,8 +287,10 @@ class NumericTile(Tile):
                 extent=self._zoom,  # extent is (left, right, bottom, top)
                 interpolation="bilinear",
                 cmap=colormap,
+                vmin=min_val,
+                vmax=max_val,
             )
-        Tile.draw(self, fig, ax)
+        Tile.draw(self, fig, ax, **kwargs)
 
         if self._colorbar_mode != "off":
             # Create a subdivision of the axis to add a colorbar of same height

@@ -46,6 +46,7 @@ class Tile(Named):
         name: str = "Tile",
         resolution: int = 1001,
         base_constraint_on_importances: Any = None,
+        # TODO : should we have a parameter "axis_mode" ?
     ):
         """
         Args:

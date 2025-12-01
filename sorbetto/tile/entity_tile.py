@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import numpy as np
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
 
 from sorbetto.flavor.entity_flavor import EntityFlavor
 from sorbetto.parameterization.abstract_parameterization import AbstractParameterization
@@ -69,13 +67,6 @@ class EntityTile(SymbolicTile):
     @property
     def performance(self) -> FiniteSetOfTwoClassClassificationPerformances:
         return self._performance
-
-    def draw(
-        self, fig: Figure | None = None, ax: Axes | None = None
-    ) -> tuple[Figure, Axes]:
-        fig, ax = super().draw(fig, ax)
-
-        return fig, ax
 
     def getExplanation(self):
         return super().getExplanation()

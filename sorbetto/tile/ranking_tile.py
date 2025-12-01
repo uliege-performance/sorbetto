@@ -71,9 +71,9 @@ class RankingTile(NumericTile):
         return self._performance
 
     def draw(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self, fig: Figure | None = None, ax: Axes | None = None, **kwargs
     ) -> tuple[Figure, Axes]:
-        fig, ax = super().draw(fig, ax)
+        fig, ax = super().draw(fig, ax, **kwargs)
 
         im = ax.images[-1]
         im.set_clim(0.5, self.flavor.nb_entities + 0.5)
