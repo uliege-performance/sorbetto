@@ -1318,6 +1318,9 @@ class RankingScore(AbstractScore):
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
               on performances satisfying the constraint of fixed priors.
+
+        References:
+            :cite:t:`Brodersen2010TheBalanced`
         """
         # See :cite:t:`Pierard2025Foundations`, Section A.7.4
         rs = RankingScore.getMacroAveragedRecall(priorPos, weightClassPos=0.5)
