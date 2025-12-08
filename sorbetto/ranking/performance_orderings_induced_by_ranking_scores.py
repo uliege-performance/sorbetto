@@ -488,6 +488,22 @@ class PerformanceOrderingsInducedByRankingScores:
         )
 
     @staticmethod
+    def getTrueSkillStatistic(
+        priorPos: float,
+    ) -> "PerformanceOrderingInducedByOneScore":
+        """
+        Returns the performance ordering induced by the score *True Skill Statistic*.
+        See :cite:t:`Armistead2013Wagner`.
+        """
+        to_mimic = RankingScore.getBalancedAccuracy(priorPos)
+        name = "True Skill Statistic"
+        abbreviation = "TSS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+
+    @staticmethod
     def getPeirceSkillScore(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Peirce Skill Score*.
