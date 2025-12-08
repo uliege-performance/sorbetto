@@ -65,7 +65,13 @@ class LineSegment(AbstractGeometricObject2D):
         p2 = self._p2
 
         options_for_plot = filter_properties_for_plot(plt_kwargs)
-        ax.plot([p1.x, p2.x], [p1.y, p2.y], "-", **options_for_plot)
+
+        options_for_plot_bis = dict()
+        options_for_plot_bis["linestyle"] = "-"
+        if options_for_plot is not None:
+            options_for_plot_bis.update(options_for_plot)
+
+        ax.plot([p1.x, p2.x], [p1.y, p2.y], **options_for_plot_bis)
 
     def __str__(self) -> str:
         p1 = self._p1

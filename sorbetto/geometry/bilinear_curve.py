@@ -101,6 +101,11 @@ class BilinearCurve(Conic):
 
         options_for_plot = filter_properties_for_plot(plt_kwargs)
 
+        options_for_plot_bis = dict()
+        options_for_plot_bis["linestyle"] = "-"
+        if options_for_plot is not None:
+            options_for_plot_bis.update(options_for_plot)
+
         if Kx != 0.0 or Kxy != 0.0:
             # Let's plot x = - ( Ky y + K ) / ( Kxy y + Kx )
             # where -1 <= dx/dy <= 1
@@ -115,7 +120,7 @@ class BilinearCurve(Conic):
             bad = np.logical_or(np.abs(d_x_d_y) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
-            ax.plot(x, y, "-", **options_for_plot)
+            ax.plot(x, y, **options_for_plot_bis)
 
         if Ky != 0.0 or Kxy != 0.0:
             # Let's plot y = - ( Kx x + K ) / ( Kxy x + Ky )
@@ -131,7 +136,7 @@ class BilinearCurve(Conic):
             bad = np.logical_or(np.abs(d_y_d_x) >= 1.0 + 1e-8, out_of_bounds)
             x[bad] = np.nan  # slope is too high
             y[bad] = np.nan  # slope is too high
-            ax.plot(x, y, "-", **options_for_plot)
+            ax.plot(x, y, **options_for_plot_bis)
 
     def __str__(self) -> str:
         assert self._a == 0.0
