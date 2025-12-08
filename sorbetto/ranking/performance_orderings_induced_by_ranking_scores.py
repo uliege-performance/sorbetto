@@ -586,7 +586,9 @@ class PerformanceOrderingsInducedByRankingScores:
         return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
-    def getCohenKappa(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
+    def getCohenKappa(
+        *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score *Cohen Kappa*
         (:math:`\\kappa`), also called *Kappa statistic*. It is defined in
@@ -616,33 +618,66 @@ class PerformanceOrderingsInducedByRankingScores:
         Synonyms: Heidke Skill Score :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.3.
         """
-        # TODO: Implement Cohen's kappa also in the case of fixed prediction rates
-        assert isinstance(priorPos, float)
-        assert priorPos >= 0.0
-        assert priorPos <= 1.0
-        priorNeg = 1.0 - priorPos
+        if priorPos is None:
+            if ratePos is None:
+                raise RuntimeError("You should specify either ratePos or priorPos.")
+            else:
+                assert isinstance(ratePos, float)
+                assert ratePos >= 0.0
+                assert ratePos <= 1.0
+                rateNeg = 1.0 - ratePos
 
-        itn = priorPos * priorPos
-        ifp = 1.0
-        ifn = 1.0
-        itp = priorNeg * priorNeg
-        importance = Importance(itn, ifp, ifn, itp)
-        constraint = ConstraintFixedClassPriors(priorPos=priorPos)
-        to_mimic = RankingScore(importance, constraint=constraint)
-        name = "Cohen's kappa"
-        abbreviation = "Cohen"
-        symbol = "$\\kappa$"
-        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
-            to_mimic, name, abbreviation, symbol
-        )
+                itn = ratePos * ratePos
+                ifp = 1.0
+                ifn = 1.0
+                itp = rateNeg * rateNeg
+                importance = Importance(itn, ifp, ifn, itp)
+                constraint = ConstraintFixedPredictionRates(ratePos=ratePos)
+                to_mimic = RankingScore(importance, constraint=constraint)
+                name = "Cohen's kappa"
+                abbreviation = "Cohen"
+                symbol = "$\\kappa$"
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol
+                    )
+                )
+        else:
+            if ratePos is None:
+                assert isinstance(priorPos, float)
+                assert priorPos >= 0.0
+                assert priorPos <= 1.0
+                priorNeg = 1.0 - priorPos
+
+                itn = priorPos * priorPos
+                ifp = 1.0
+                ifn = 1.0
+                itp = priorNeg * priorNeg
+                importance = Importance(itn, ifp, ifn, itp)
+                constraint = ConstraintFixedClassPriors(priorPos=priorPos)
+                to_mimic = RankingScore(importance, constraint=constraint)
+                name = "Cohen's kappa"
+                abbreviation = "Cohen"
+                symbol = "$\\kappa$"
+                return (
+                    PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+                        to_mimic, name, abbreviation, symbol
+                    )
+                )
+            else:
+                raise RuntimeError("You should not specify both ratePos and priorPos.")
 
     @staticmethod
-    def getHeidkeSkillScore(priorPos: float) -> "PerformanceOrderingInducedByOneScore":
+    def getHeidkeSkillScore(
+        *, priorPos: float | None = None, ratePos: float | None = None
+    ) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the score "Heidke Skill Score".
         See :cite:t:`Canbek2017Binary,Wilks2020Statistical`.
         """
-        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(priorPos)
+        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(
+            priorPos=priorPos, ratePos=ratePos
+        )
         name = "Heidke Skill Score"
         abbreviation = "HSS"
         symbol = None
@@ -652,13 +687,15 @@ class PerformanceOrderingsInducedByRankingScores:
 
     @staticmethod
     def getEquitableThreatScore(
-        priorPos: float,
+        *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
         """
         Returns the performance ordering induced by the Equitable Threat Score (ETS).
         :math:`ETS = \\frac{\\kappa}{2-\\kappa}`
         """
-        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(priorPos)
+        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(
+            priorPos=priorPos, ratePos=ratePos
+        )
         name = "Equitable Threat Score"
         abbreviation = "ETS"
         symbol = None
@@ -668,13 +705,13 @@ class PerformanceOrderingsInducedByRankingScores:
 
     @staticmethod
     def getGilbertSkillScore(
-        priorPos: float,
+        *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
         """
         Synonym of Equitable Threat Score (ETS).
         """
         to_mimic = PerformanceOrderingsInducedByRankingScores.getEquitableThreatScore(
-            priorPos
+            priorPos=priorPos, ratePos=ratePos
         )
         name = "Gilbert Skill Score"
         abbreviation = "GSS"
