@@ -651,6 +651,22 @@ class PerformanceOrderingsInducedByRankingScores:
         )
 
     @staticmethod
+    def getEquitableThreatScore(
+        priorPos: float,
+    ) -> "PerformanceOrderingInducedByOneScore":
+        """
+        Returns the performance ordering induced by the Equitable Threat Score (ETS).
+        :math:`ETS = \\frac{\\kappa}{2-\\kappa}`
+        """
+        to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(priorPos)
+        name = "Equitable Threat Score"
+        abbreviation = "ETS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+
+    @staticmethod
     def getProbabilityTrueNegative(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
