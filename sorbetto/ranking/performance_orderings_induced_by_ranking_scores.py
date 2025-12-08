@@ -667,6 +667,23 @@ class PerformanceOrderingsInducedByRankingScores:
         )
 
     @staticmethod
+    def getGilbertSkillScore(
+        priorPos: float,
+    ) -> "PerformanceOrderingInducedByOneScore":
+        """
+        Synonym of Equitable Threat Score (ETS).
+        """
+        to_mimic = PerformanceOrderingsInducedByRankingScores.getEquitableThreatScore(
+            priorPos
+        )
+        name = "Gilbert Skill Score"
+        abbreviation = "GSS"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+
+    @staticmethod
     def getProbabilityTrueNegative(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
