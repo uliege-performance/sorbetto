@@ -198,11 +198,37 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
         return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
 
-    def toNoSkill(self) -> Self:
+    def toNoSkillCohen(self) -> Self:
+        """
+        Returns the no-skill performance that is considered as achievable by
+        chance by Cohen in his definition of the score kappa.
+
+        Returns:
+            Self: the computed no-skill performance.
+        """
         ptn = self._prior_neg() * self._rate_neg()
         pfp = self._prior_neg() * self._rate_pos()
         pfn = self._prior_pos() * self._rate_neg()
         ptp = self._prior_pos() * self._rate_pos()
+
+        return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, "no-skill")
+
+    def toNoSkillScottFleiss(self) -> Self:
+        """
+        Returns the no-skill performance that is considered as achievable by
+        chance by Scott in his definition of the score pi as well as by Fleiss
+        in his definition of the score kappa.
+
+        Returns:
+            Self: the computed no-skill performance.
+        """
+        proba_neg = 0.5 * (self._prior_neg() + self._rate_neg())
+        proba_pos = 0.5 * (self._prior_pos() + self._rate_pos())
+
+        ptn = proba_neg * proba_neg
+        pfp = proba_neg * proba_pos
+        pfn = proba_pos * proba_neg
+        ptp = proba_pos * proba_pos
 
         return TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, "no-skill")
 
