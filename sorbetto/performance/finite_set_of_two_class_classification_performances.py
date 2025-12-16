@@ -149,7 +149,9 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
 
         return (min_val, max_val)
 
-    def _plotBestPerformancesInROC(fpr: np.ndarray, tpr: np.ndarray, style: str) -> set:
+    def _plotBestPerformancesInROC(
+        self, fpr: np.ndarray, tpr: np.ndarray, style: str
+    ) -> set:
         """
         This method assumes that all performances are for fixed priors.
         This function draws a broken line corresponding to the supremum of
@@ -191,7 +193,7 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
         return best_entities_idx
 
     def _plotWorstPerformancesInROC(
-        fpr: np.ndarray, tpr: np.ndarray, style: str
+        self, fpr: np.ndarray, tpr: np.ndarray, style: str
     ) -> set:
         """
         This method assumes that all performances are for fixed priors.
@@ -280,7 +282,6 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
                 message += "It is too low to produce a ROC plot."
                 logging.warning(message)
                 return fig, ax
-            priorPos = self._prior_pos()
             if prior_pos < 1e-8:
                 message = "The prior of the positive class is {:g}".format(prior_pos)
                 message += "It is too low to produce a ROC plot."
@@ -290,7 +291,7 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
             _setupROC(
                 fig,
                 ax,
-                priorPos=priorPos,
+                priorPos=prior_pos,
                 show_no_skills=True,
                 show_priors=True,
                 show_unbiased=True,
@@ -304,18 +305,18 @@ class FiniteSetOfTwoClassClassificationPerformances(Named):
             for e in range(num_performances):
                 label = self._performance_list[e].name
                 if e in worst_entities_idx:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="d", s=10, label=label)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="d", s=20, label=label)
                 elif e in best_entities_idx:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="*", s=10, label=label)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="*", s=20, label=label)
                 else:
-                    plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1, label=label)
+                    plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=5, label=label)
 
         else:
             _setupROC(fig, ax, priorPos=None, show_no_skills=True)
             # ax.plot(all_fpr, all_tpr, "o", color="blue")
             for e in range(num_performances):
                 label = self._performance_list[e].name
-                plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=1, label=label)
+                plt.scatter(all_fpr[e], all_tpr[e], marker="o", s=5, label=label)
 
         max_elements_per_column = 18
         ax.legend(
