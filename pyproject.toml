@@ -45,11 +45,24 @@ include = ["sorbetto*"]
 version = { attr = "sorbetto.__version__" }
 readme = { file = ["README.md"] }
 
+# TODO remove when pip supports dependency groups
 [project.optional-dependencies]
 dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
-
 dist = ["build", "twine"]
+doc = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinxcontrib-bibtex",
+    "nbsphinx",
+    "sphinx-gallery",
 
+    # TODO remove when nbsphinx supports Sphinx 8.2
+    "sphinxcontrib-apidoc",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
+dist = ["build", "twine"]
 doc = [
     "sphinx",
     "sphinx-rtd-theme",
