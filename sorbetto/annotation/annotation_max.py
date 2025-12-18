@@ -7,10 +7,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from sorbetto.annotation.abstract_annotation import AbstractAnnotation
-from sorbetto.core.matplotlib_utils import (
-    filter_properties_for_plot,
-    filter_properties_for_text,
-)
+from sorbetto.geometry.point import Point
 from sorbetto.performance.constraint_fixed_class_priors import (
     ConstraintFixedClassPriors,
 )
@@ -20,6 +17,8 @@ from sorbetto.performance.constraint_fixed_prediction_rates import (
 from sorbetto.ranking.constraint_relative_importance_satisfying_unsatisfying import (
     ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
+
+from .annotation_text import AnnotationText
 
 if TYPE_CHECKING:
     from sorbetto.tile.tile import Tile
@@ -62,9 +61,6 @@ class AnnotationMax(AbstractAnnotation):
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
-        options_for_text = filter_properties_for_text(self._plt_kwargs)
-        options_for_plot = filter_properties_for_plot(self._plt_kwargs)
-
         x, y, label = self._whatShouldWeDraw(tile)
 
         parameterization = tile.parameterization
@@ -78,28 +74,9 @@ class AnnotationMax(AbstractAnnotation):
                 "Trying to place a marker on the Tile outside the parameterization limits."
             )
 
-        ax.plot(x, y, "o", **options_for_plot)
-
-        if x < (2.0 * min_x + 1.0 * max_x) / 3.0:
-            dx, ha = 1.0, "left"
-        elif x <= (1.0 * min_x + 2.0 * max_x) / 3.0:
-            dx, ha = 0.0, "center"
-        else:
-            dx, ha = -1.0, "right"
-        dx *= 0.025 * (max_x - min_x)
-
-        if y < (2.0 * min_y + 1.0 * max_y) / 3.0:
-            dy, va = 1.0, "baseline"
-        elif y <= (1.0 * min_y + 2.0 * max_y) / 3.0:
-            if dx == 0.0:
-                dy, va = -1.0, "top"
-            else:
-                dy, va = 0.0, "center_baseline"
-        else:
-            dy, va = -1.0, "top"
-        dy *= 0.025 * (max_y - min_y)
-
-        ax.text(x + dx, y + dy, label, ha=ha, va=va, **options_for_text)
+        loc = Point(x, y)
+        annotation_text = AnnotationText(loc, label, **self._plt_kwargs)
+        annotation_text.draw(tile, fig, ax)
 
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
