@@ -15,6 +15,8 @@ descriptions.
 
 Feel free to check out the source code on `GitHub
 <https://github.com/uliege-performance/sorbetto>`__!
+If you want to contribute to the project, check out our :ref:`contributing
+guide <Contributing>` to get started.
 
 
 Contact and support

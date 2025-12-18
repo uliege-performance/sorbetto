@@ -1,3 +1,5 @@
+.. _Contributing:
+
 Contributing
 ============
 
@@ -31,15 +33,75 @@ the pre-commit hooks:
     pip install -e ".[dev]"
     pre-commit install
 
-This will enable ruff formatting and linting before each commit, in order to
-ensure that the whole codebase stays consistent. If your files are not correctly
-formatted, the commit will be rejected and the corresponding files will be
-automatically reformatted. You can then add these new changes before committing.
+The pre-commit hooks will ensure that your code is compliant with our automatic
+requirements checked by the GitHub actions. These include formatting, linting,
+and license headers.
+
+If you attempt to commit non-compliant code, the pre-commit hooks will warn you
+and fix the issues automatically if possible. After the fix, simply add the
+modified files and commit again. 
+
+If you push non-compliant commits, the GitHub actions will flag them and prevent
+merging any pull requests until the issues are fixed. You will receive an email
+notification with the details of the errors.
 
 If you are using VS Code, you can install the `Ruff
 <https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff>`__
 extension and configure it to format your code (and sort imports) automatically.
 This will ensure that you are compliant with the pre-commit format requirements.
+
+
+Coding guidelines
+-----------------
+
+In order to keep the codebase consistent and clear, please follow these
+guidelines when contributing code:
+
+
+Formatting
+^^^^^^^^^^
+
+We use Ruff to automatically format the code. We recommend that you enable the
+pre-commit hooks (see `Setting up the development environment`_) to ensure that
+your code is correctly formatted before committing. Compliance with this
+formatting is also enforced by GitHub actions.
+
+
+Licensing
+^^^^^^^^^
+
+All code files must include the Sorbetto license header at the top of the file.
+The header is as follows::
+
+    Copyright (c) {year_start}-{year_end}, Sebastien Pierard et al.
+    SPDX-License-Identifier: Apache-2.0
+
+If you configured the pre-commit hooks (see `Setting up the development
+environment`_), the license header will be automatically updated in any committed
+files. Compliance with this requirement is also enforced by GitHub actions.
+
+
+Using git
+^^^^^^^^^
+
+We use git for version control. Pushing directly to the main repository is not
+allowed.  Instead, we you must create a branch for any new feature or bug
+fix, and then submit a `pull request
+<https://github.com/uliege-performance/sorbetto/pulls>`__ when the work is
+complete.
+
+When creating a branch, please base it on the latest version of the ``dev``
+branch.  The ``dev`` branch contains the latest development changes, while the
+``main`` gets updated only for releases or major fixes. Use a descriptive name
+for your branch.
+
+Before submitting a pull request to the ``dev`` branch, please sync your branch
+with the latest changes from ``dev``. Preferably, use rebasing instead of
+merging to keep a clean history when appropriate. See this `tutorial by
+Atlassian <https://www.atlassian.com/git/tutorials/merging-vs-rebasing>`__ to
+understand the difference between the two, and in which situations each option
+is preferable.
+
 
 Documentation
 -------------
