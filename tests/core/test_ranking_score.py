@@ -4,7 +4,7 @@
 import math
 
 from sorbetto.performance import TwoClassClassificationPerformance
-from sorbetto.performance.distribution import (
+from sorbetto.performance_distribution import (
     UniformDistributionOfTwoClassClassificationPerformances,
 )
 from sorbetto.ranking import Importance, RankingScore

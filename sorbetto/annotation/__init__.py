@@ -1,20 +1,22 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
-from .abstract_annotation import AbstractAnnotation
-from .annotation_contour import AnnotationContour
-from .annotation_curve_fixed_class_priors import AnnotationCurveFixedClassPriors
-from .annotation_curve_fixed_prediction_rates import AnnotationCurveFixedPredictionRates
-from .annotation_frontiers_between_rankings import AnnotationFrontiersBetweenRankings
-from .annotation_geometric import AnnotationGeometric
-from .annotation_grid_shift_class_priors import AnnotationGridShiftClassPriors
-from .annotation_grid_shift_prediction_rates import AnnotationGridShiftPredictionRates
-from .annotation_importance_compass import AnnotationImportanceCompass
-from .annotation_isovalue_curves import AnnotationIsovalueCurves
-from .annotation_max import AnnotationMax
-from .annotation_min import AnnotationMin
-from .annotation_symbols import AnnotationSymbols
-from .annotation_text import AnnotationText
+from ._abstract_annotation import AbstractAnnotation
+from ._annotation_contour import AnnotationContour
+from ._annotation_curve_fixed_class_priors import AnnotationCurveFixedClassPriors
+from ._annotation_curve_fixed_prediction_rates import (
+    AnnotationCurveFixedPredictionRates,
+)
+from ._annotation_frontiers_between_rankings import AnnotationFrontiersBetweenRankings
+from ._annotation_geometric import AnnotationGeometric
+from ._annotation_grid_shift_class_priors import AnnotationGridShiftClassPriors
+from ._annotation_grid_shift_prediction_rates import AnnotationGridShiftPredictionRates
+from ._annotation_importance_compass import AnnotationImportanceCompass
+from ._annotation_isovalue_curves import AnnotationIsovalueCurves
+from ._annotation_max import AnnotationMax
+from ._annotation_min import AnnotationMin
+from ._annotation_symbols import AnnotationSymbols
+from ._annotation_text import AnnotationText
 
 __all__ = [
     "AbstractAnnotation",
