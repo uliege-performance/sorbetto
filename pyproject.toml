@@ -78,6 +78,9 @@ doc = [
     "sphinxcontrib-apidoc",
 ]
 
+[tool.ruff.lint.isort]
+known-first-party = ["sorbetto"]
+
 [project.urls]
 Documentation = "https://sorbetto.readthedocs.io/en/latest/"
 Source = "https://github.com/uliege-performance/sorbetto"
