@@ -74,3 +74,4 @@ html_theme = "furo"
 # html_static_path = ["_static"]
 html_logo = "images/sorbetto_banner.svg"
 html_favicon = "images/sorbetto_logo.svg"
+html_show_sourcelink = False
