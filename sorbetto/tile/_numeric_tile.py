@@ -131,6 +131,8 @@ class NumericTile(Tile):
         i = parameterization.getCanonicalImportance(x, y)
         v = self._flavor(i)
 
+        # FIXME v can be np.ndarray for a ranking flavor
+
         assert isinstance(x, float)
         assert isinstance(y, float)
         assert isinstance(v, float)
@@ -258,8 +260,9 @@ class NumericTile(Tile):
                 clamped_min_val = min(self.min, minimized_value)
                 clamped_max_val = max(self.max, maximized_value)
             except Exception as e:
+                logging.exception(e)
                 logging.warning(
-                    f"Impossible to determine the range of values to clamp the colormap: {e}"
+                    "Impossible to determine the range of values to clamp the colormap"
                 )
                 # Do not clamp.
                 clamped_min_val = min_val
