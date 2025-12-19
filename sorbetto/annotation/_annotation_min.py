@@ -74,7 +74,7 @@ class AnnotationMin(AbstractAnnotation):
 
         loc = Point(x, y)
         annotation_text = AnnotationText(loc, label, **self._plt_kwargs)
-        annotation_text.draw(fig, ax)
+        annotation_text.draw(tile, fig, ax)
 
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
