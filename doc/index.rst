@@ -30,9 +30,11 @@ If you want to chat with us directly, you can send an email to our
 directly (see :ref:`Authors`).
 
 
+Contents
+--------
+
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
 
    src/install
    src/tutorial

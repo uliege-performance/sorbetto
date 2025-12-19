@@ -70,12 +70,7 @@ bibtex_default_style = "plain"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 # html_static_path = ["_static"]
 html_logo = "images/sorbetto_banner.svg"
 html_favicon = "images/sorbetto_logo.svg"
-html_theme_options = {
-    "logo_only": True,
-    "collapse_navigation": False,
-    "titles_only": True,
-}

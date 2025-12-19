@@ -50,13 +50,15 @@ readme = { file = ["README.md"] }
 dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
 dist = ["build", "twine"]
 doc = [
-    "sphinx",
-    "sphinx-rtd-theme",
+    # TODO remove condition when furo and nbsphinx support Sphinx >= 9
+    "sphinx<8.2",
+    "furo",
     "sphinxcontrib-bibtex",
     "nbsphinx",
     "sphinx-gallery",
+    "ipython",
 
-    # TODO remove when nbsphinx supports Sphinx 8.2
+    # TODO remove when using Sphinx >= 8.2
     "sphinxcontrib-apidoc",
 ]
 
@@ -64,13 +66,15 @@ doc = [
 dev = ["ruff>=0.12", "pre-commit>=4.3", "pytest>=8"]
 dist = ["build", "twine"]
 doc = [
-    "sphinx",
-    "sphinx-rtd-theme",
+    # TODO remove condition when furo and nbsphinx support Sphinx >= 9
+    "sphinx<8.2",
+    "furo",
     "sphinxcontrib-bibtex",
     "nbsphinx",
     "sphinx-gallery",
+    "ipython",
 
-    # TODO remove when nbsphinx supports Sphinx 8.2
+    # TODO remove when using Sphinx >= 8.2
     "sphinxcontrib-apidoc",
 ]
 

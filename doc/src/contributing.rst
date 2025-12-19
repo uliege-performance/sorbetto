@@ -14,9 +14,10 @@ new `pull request <https://github.com/uliege-performance/sorbetto/pulls>`__, and
 we will get in touch with you as soon as possible.
 
 
-.. contents:: Table of Contents
-    :backlinks: none
-    :depth: 4
+.. Not necessary if using furo theme
+.. .. contents:: Table of Contents
+..     :backlinks: none
+..     :depth: 4
 
 
 Setting up the development environment
@@ -155,29 +156,40 @@ everywhere.
 Writing math
 """"""""""""
 
-You can include math in your docstrings, the Latex way! **All backslashes
-must be doubled to avoid failures** (only in docstrings, not rst files).
+You can include math in your docstrings, the Latex way! **You must use raw
+strings (prefix with `r`) to avoid escaping backslashes** (only in docstrings,
+not rst files). If you do not use raw strings, backslashes must be escaped (i.e.
+``\\`` instead of ``\``).
 
-You can use inline math (equivalent to single $):
+You can use inline math (equivalent to single ``$``):
 
-.. code-block:: rst
+.. code-block:: python
 
-    :math:`\\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}`
+    r"""
+    :math:`\tau = \left\{ \frac{\pi}{42} \right\}`
+    """
 
-Or have your equations on a separate line (equivalent to double $$):
+Or have your equations on a separate line (equivalent to double ``$$``),
+**important**: this directive requires a blank line *before* and
+*after* it:
 
-.. code-block:: rst
+.. code-block:: python
+
+    r"""
 
     .. math::
+        \tau = \left\{ \frac{\pi}{42} \right\}
 
-        \\tau = \\left\\{ \\frac{\\pi}{42} \\right\\}
+    """
+
 
 These will be rendered as: 
 
 .. math::
     \tau = \left\{ \frac{\pi}{42} \right\}
 
-In jupyter notebooks, you can use standard $ and $$ in markdown cells.
+
+In jupyter notebooks, you can use standard ``$`` and ``$$`` in markdown cells.
 
 
 Citing references
@@ -293,7 +305,14 @@ figures`_), you can build the documentation locally as follows:
     make html
 
 The resulting documentation in html format will be located at
-``sorbetto/doc/_build/html/index.html``.
+``sorbetto/doc/_build/html/index.html``. If you see any warnings or errors,
+this is probably due to incorrect formatting in the docstrings, which should
+be fixed before any release. Common mistakes include:
+
+* incorrect math directives (missing blank lines before/after)
+* incorrect citation keys (not present in the bibtex file)
+* missing ``r`` prefix for raw strings containing math
+* missing indentation in multiline bullet points
 
 
 Running tests
