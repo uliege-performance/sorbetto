@@ -384,7 +384,7 @@ class PerformanceOrderingsInducedByRankingScores:
         """
         Returns the performance ordering induced by the score *Negative Likelihood Ratio Complement*.
         Negative Likelihood Ratio.
-        References: :cite:t:`Gardner2006Receiver‐operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
+        References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
         assert isinstance(priorPos, float)
