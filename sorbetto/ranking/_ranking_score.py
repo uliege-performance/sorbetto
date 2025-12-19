@@ -37,12 +37,12 @@ from ._importance import Importance, _parse_importance
 
 
 class RankingScore(AbstractScore):
-    """
+    r"""
     Implementation of the family of scores named *ranking scores* (:math:`R_I`),
     introduced in :cite:t:`Pierard2025Foundations`,
     in the particular case of problems assimilated to two-class crisp classification.
     More precisely, this is when the sample space contains four elements
-    (:math:`\\Omega=\\{tn,fp,fn,tp\\}`) and the random variable satisfaction is
+    (:math:`\Omega=\{tn,fp,fn,tp\}`) and the random variable satisfaction is
     0.0 for two of them and 1.0 for the other two:
 
     * :math:`S(tn)=1`;
@@ -53,7 +53,7 @@ class RankingScore(AbstractScore):
     The formula for the scores of this family is:
 
     .. math::
-        R_I(P) = \\frac{E_P[SI]}{E_P[I]} = \\frac{ I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) }{ I(tn) P(\\{tn\\}) + I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) + I(tp) P(\\{tp\\}) }
+        R_I(P) = \frac{E_P[SI]}{E_P[I]} = \frac{ I(tn) P(\{tn\}) + I(tp) P(\{tp\}) }{ I(tn) P(\{tn\}) + I(fp) P(\{fp\}) + I(fn) P(\{fn\}) + I(tp) P(\{tp\}) }
 
 
     """
@@ -178,12 +178,12 @@ class RankingScore(AbstractScore):
         return BilinearCurve(Kab, Ka, Kb, K, "equivalent")
 
     def isCanonical(self, abs_tol: float = 1e-8) -> bool:
-        """
+        r"""
         Tests if this Ranking Score is canonical. This property is related to
         the performance ordering induced by these scores: the ordering is
         insensitive to the relative importance given to the satisfying samples
-        :math:`\\{tn,tp\\}` with respect to the unsatisfying samples
-        :math:`\\{fp,fn\\}`. Therefore, a Ranking Score is said canonical if
+        :math:`\{tn,tp\}` with respect to the unsatisfying samples
+        :math:`\{fp,fn\}`. Therefore, a Ranking Score is said canonical if
         and only if
 
         .. math::
@@ -213,14 +213,14 @@ class RankingScore(AbstractScore):
         show_unbiased: bool = True,
         show_opposite_unbiased: bool = True,
     ) -> None:
-        """
+        r"""
         Displays the ranking score in the ROC space.
         See https://en.wikipedia.org/wiki/Receiver_operating_characteristic
 
         Args:
             fig (Figure): The matplotlib.pyplot Figure to use for drawing.
             ax (Axes): The matplotlib.pyplot Axes to use for drawing.
-            priorPos (float): prior of the positive class :math:`\\pi_+ \\in (0,1)`
+            priorPos (float): prior of the positive class :math:`\pi_+ \in (0,1)`
             show_values_map (bool, optional): show values map. Defaults to True.
             show_iso_value_lines (bool, optional): show iso value lines. Defaults to True.
             show_colorbar (bool, optional): show the colorbar. Defaults to True.
@@ -312,56 +312,56 @@ class RankingScore(AbstractScore):
         )
 
     def toROC(self, priorPos: float) -> LinearFractionalTransformationTwoVariables:
-        """
-        Returns the function :math:`f : \\mathbb{R}^2 \\rightarrow [0,1] : (fpr, tpr) \\mapsto R_I(P)`,
-        under the assumptions that :math:`P(Y=c_+)=\\pi_+`, :math:`FPR(P)=fpr`, and
+        r"""
+        Returns the function :math:`f : \mathbb{R}^2 \rightarrow [0,1] : (fpr, tpr) \mapsto R_I(P)`,
+        under the assumptions that :math:`P(Y=c_+)=\pi_+`, :math:`FPR(P)=fpr`, and
         :math:`TPR(P)=tpr`. Note that this function is extended to allow :math:`fpr` and :math:`tpr`
         to be out of the :math:`[0,1]` range.
 
-        When the class priors are fixed and given by :math:`(\\pi_-, \\pi_+)`,
+        When the class priors are fixed and given by :math:`(\pi_-, \pi_+)`,
         the ranking scores
 
         .. math::
-            R_I(P) = \\frac{
-                I(tn) P(\\{tn\\})
-                + I(tp) P(\\{tp\\})
+            R_I(P) = \frac{
+                I(tn) P(\{tn\})
+                + I(tp) P(\{tp\})
             }{
-                I(tn) P(\\{tn\\})
-                + I(fp) P(\\{fp\\})
-                + I(fn) P(\\{fn\\})
-                + I(tp) P(\\{tp\\})
+                I(tn) P(\{tn\})
+                + I(fp) P(\{fp\})
+                + I(fn) P(\{fn\})
+                + I(tp) P(\{tp\})
             }
 
         can be rewritten as
 
         .. math::
-            R_I(P) = \\frac{
-                I(tn) \\, (1-fpr) \\, \\pi_-
-                + I(tp) \\, tpr \\, \\pi_+
+            R_I(P) = \frac{
+                I(tn) \, (1-fpr) \, \pi_-
+                + I(tp) \, tpr \, \pi_+
             }{
-                I(tn) \\, (1-fpr) \\, \\pi_-
-                + I(fp) \\, fpr \\ \\pi_-
-                + I(fn) \\, (1-tpr) \\, \\pi_+
-                + I(tp) \\, tpr \\, \\pi_+
+                I(tn) \, (1-fpr) \, \pi_-
+                + I(fp) \, fpr \ \pi_-
+                + I(fn) \, (1-tpr) \, \pi_+
+                + I(tp) \, tpr \, \pi_+
             }
 
         and
 
         .. math::
-            R_I(P) = \\frac{
-                fpr [ - I(tn) \\, \\pi_- ]
-                + tpr [ I(tp) \\, \\pi_+ ]
-                + [ I(tn) \\, \\pi_- ]
+            R_I(P) = \frac{
+                fpr [ - I(tn) \, \pi_- ]
+                + tpr [ I(tp) \, \pi_+ ]
+                + [ I(tn) \, \pi_- ]
             }{
-                fpr [ - I(tn) \\, \\pi_- + I(fp) \\, \\pi_- ]
-                + tpr [ I(tp) \\, \\pi_+ - I(fn) \\, \\pi_+ ]
-                + [ I(tn) \\, \\pi_- + I(fn) \\, \\pi_+ ]
+                fpr [ - I(tn) \, \pi_- + I(fp) \, \pi_- ]
+                + tpr [ I(tp) \, \pi_+ - I(fn) \, \pi_+ ]
+                + [ I(tn) \, \pi_- + I(fn) \, \pi_+ ]
             }
 
         which is the returned function.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
 
         Returns:
             LinearFractionalTransformationTwoVariables: The function :math:`f`.
@@ -386,33 +386,33 @@ class RankingScore(AbstractScore):
         return LinearFractionalTransformationTwoVariables(a, b, c, d, e, f)
 
     def getPencilInROC(self, priorPos: float) -> PencilOfLines:
-        """
-        For given class priors :math:`(\\pi_-,\\pi_+)`, the locus of points in
+        r"""
+        For given class priors :math:`(\pi_-,\pi_+)`, the locus of points in
         ROC where the ranking score takes a given value is a line, and all these
         lines form the pencil
 
         .. math::
-            \\lambda_0 ( a_0 FPR + b_0 TPR + c_0 ) + \\lambda_1 ( a_1 FPR + b_1 TPR + c_1 ) = 0
+            \lambda_0 ( a_0 FPR + b_0 TPR + c_0 ) + \lambda_1 ( a_1 FPR + b_1 TPR + c_1 ) = 0
 
         The line :math:`a_0 FPR + b_0 TPR + c_0 = 0` is the locus of performances for which the
         ranking score takes the value :math:`0`. The coefficients are given by
 
-        * :math:`a_0 = - I(tn) \\pi_-`
-        * :math:`b_0 = I(tp) \\pi_+`
-        * :math:`c_0 = I(tn) \\pi_-`
+        * :math:`a_0 = - I(tn) \pi_-`
+        * :math:`b_0 = I(tp) \pi_+`
+        * :math:`c_0 = I(tn) \pi_-`
 
         The line :math:`a_1 FPR + b_1 TPR + c_1 = 0` is the locus of performances for which the
         ranking score takes the value :math:`1`. The coefficients are given by
 
-        * :math:`a_1 = - I(fp) \\pi_-`
-        * :math:`b_1 = I(fn) \\pi_+`
-        * :math:`c_1 = - I(fn) \\pi_+`
+        * :math:`a_1 = - I(fp) \pi_-`
+        * :math:`b_1 = I(fn) \pi_+`
+        * :math:`c_1 = - I(fn) \pi_+`
 
-        By choosing :math:`(\\lambda_0, \\lambda_1) = (1-v, v)`, one obtains a line that is the
+        By choosing :math:`(\lambda_0, \lambda_1) = (1-v, v)`, one obtains a line that is the
         locus of performances for which the ranking score takes the value :math:`v`.
 
         Args:
-            priorPos (float): the prior of the positive class, :math:`pi_+\\in[0.0,1.0]`
+            priorPos (float): the prior of the positive class, :math:`pi_+\in[0.0,1.0]`
 
         Returns:
             PencilOfLines: The pencil of lines.
@@ -607,11 +607,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getTrueNegativeRate() -> "RankingScore":
-        """
+        r"""
         True Negative Rate (TNR).
 
         .. math::
-            TNR : P \\mapsto P(\\{tn\\} | \\{tn, fp\\}) = P(S=1 | Y=c_-)
+            TNR : P \mapsto P(\{tn\} | \{tn, fp\}) = P(S=1 | Y=c_-)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
@@ -620,7 +620,7 @@ class RankingScore(AbstractScore):
         * :math:`I(fp)=1`,
         * :math:`I(fn)=0`,
         * and :math:`I(tp)=0`
-        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+          (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
 
@@ -666,11 +666,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getTruePositiveRate() -> "RankingScore":
-        """
+        r"""
         True Positive Rate (TPR).
 
         .. math::
-            TPR : P \\mapsto P(\\{tp\\} | \\{fn, tp\\}) = P(S=1 | Y=c_+)
+            TPR : P \mapsto P(\{tp\} | \{fn, tp\}) = P(S=1 | Y=c_+)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
@@ -679,7 +679,7 @@ class RankingScore(AbstractScore):
         * :math:`I(fp)=0`,
         * :math:`I(fn)=1`,
         * and :math:`I(tp)=1`
-        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+          (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
 
@@ -716,11 +716,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getNegativePredictiveValue() -> "RankingScore":
-        """
+        r"""
         Negative Predictive Value (NPV).
 
         .. math::
-            NPV : P \\mapsto P(\\{tn\\} | \\{tn, fn\\}) = P(S=1 | \\hat{Y}=c_-)
+            NPV : P \mapsto P(\{tn\} | \{tn, fn\}) = P(S=1 | \hat{Y}=c_-)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
@@ -729,7 +729,7 @@ class RankingScore(AbstractScore):
         * :math:`I(fp)=0`,
         * :math:`I(fn)=1`,
         * and :math:`I(tp)=0`
-        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+          (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
 
@@ -757,11 +757,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getPositivePredictiveValue() -> "RankingScore":
-        """
+        r"""
         Positive Predictive Value (PPV).
 
         .. math::
-            PPV : P \\mapsto P(\\{tp\\} | \\{fp, tp\\}) = P(S=1 | \\hat{Y}=c_+)
+            PPV : P \mapsto P(\{tp\} | \{fp, tp\}) = P(S=1 | \hat{Y}=c_+)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
@@ -770,7 +770,7 @@ class RankingScore(AbstractScore):
         * :math:`I(fp)=1`,
         * :math:`I(fn)=0`,
         * and :math:`I(tp)=1`
-        (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
+          (see :cite:t:`Pierard2025Foundations`, Section A.7.3).
 
         The behavior of this score, in ROC, is as follows.
 
@@ -798,11 +798,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getIntersectionOverUnion() -> "RankingScore":
-        """
+        r"""
         Intersection over Union (IoU).
 
         .. math::
-            IoU : P \\mapsto P(\\{tp\\} | \\{fp, fn, tp\\}) = P(S=1 | Y=c_+ \\vee \\hat{Y}=c_+)
+            IoU : P \mapsto P(\{tp\} | \{fp, fn, tp\}) = P(S=1 | Y=c_+ \vee \hat{Y}=c_+)
 
         This score is a particular case of (non-canonical) ranking score with the importance
         proportional to
@@ -873,11 +873,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getInverseIntersectionOverUnion() -> "RankingScore":
-        """
+        r"""
         Inverse Intersection over Union (IoU).
 
         .. math::
-            IoU-Inv : P \\mapsto P(\\{tn\\} | \\{tn, fp, fn\\}) = P(S=1 | Y=c_- \\vee \\hat{Y}=c_-)
+            IoU-Inv : P \mapsto P(\{tn\} | \{tn, fp, fn\}) = P(S=1 | Y=c_- \vee \hat{Y}=c_-)
 
         This score is a particular case of (non-canonical) ranking score with the importance
         proportional to
@@ -912,22 +912,22 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getF(beta=1.0) -> "RankingScore":
-        """
+        r"""
         The F-score. See https://en.wikipedia.org/wiki/F-score
 
         .. math::
-            F_\\beta : P \\mapsto \\frac{ (1+\\beta^2) P(\\{tp\\}) }{ 1 P(\\{fp\\}) + \\beta^2 P(\\{fn\\}) + (1+\\beta^2) P(\\{tp\\}) }
+            F_\beta : P \mapsto \frac{ (1+\beta^2) P(\{tp\}) }{ 1 P(\{fp\}) + \beta^2 P(\{fn\}) + (1+\beta^2) P(\{tp\}) }
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
 
         * :math:`I(tn)=0`,
         * :math:`I(fp)=1`,
-        * :math:`I(fn)=\\beta^2`,
-        * and :math:`I(tp)=1 + \\beta^2`.
+        * :math:`I(fn)=\beta^2`,
+        * and :math:`I(tp)=1 + \beta^2`.
 
         Args:
-            beta (float, optional): :math:`\\beta \\ge 0`. Defaults to 1.0.
+            beta (float, optional): :math:`\beta \ge 0`. Defaults to 1.0.
 
         Returns:
             RankingScore: the score as a RankingScore object
@@ -945,7 +945,7 @@ class RankingScore(AbstractScore):
             importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
             name = "F-score for β=∞"
             abbreviation = "F∞"
-            symbol = "$F_{\\infty}$"
+            symbol = r"$F_{\infty}$"
         else:
             itn = 0
             ifp = 1
@@ -961,8 +961,8 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getDiceSorensenCoefficient() -> "RankingScore":
-        """
-        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
+        r"""
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Dice-Sørensen coefficient", "DSC")
@@ -970,8 +970,8 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getZijdenbosSimilarityIndex() -> "RankingScore":
-        """
-        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
+        r"""
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Zijdenbos Similarity Index", "ZSI")
@@ -979,8 +979,8 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getCzekanowskiBinaryIndex() -> "RankingScore":
-        """
-        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\\beta=1`.
+        r"""
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
         rs.rename("Czekanowski Binary Index", "CBI")
@@ -988,22 +988,22 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getInverseF(beta=1.0) -> "RankingScore":
-        """
+        r"""
         The inverse F-score.
 
         .. math::
-            F_\\beta-inv : P \\mapsto \\frac{ (1+\\beta^2) P(\\{tn\\}) }{ 1 P(\\{fn\\}) + \\beta^2 P(\\{fp\\}) + (1+\\beta^2) P(\\{tn\\}) }
+            F_\beta-inv : P \mapsto \frac{ (1+\beta^2) P(\{tn\}) }{ 1 P(\{fn\}) + \beta^2 P(\{fp\}) + (1+\beta^2) P(\{tn\}) }
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
 
-        * :math:`I(tn)=1 + \\beta^2`,
-        * :math:`I(fp)=\\beta^2`,
+        * :math:`I(tn)=1 + \beta^2`,
+        * :math:`I(fp)=\beta^2`,
         * :math:`I(fn)=1`,
         * and :math:`I(tp)=0`.
 
         Args:
-            beta (float, optional): :math:`\\beta`. Defaults to 1.0.
+            beta (float, optional): :math:`\beta`. Defaults to 1.0.
 
         Returns:
             RankingScore: the score as a RankingScore object
@@ -1021,7 +1021,7 @@ class RankingScore(AbstractScore):
             importance = Importance(itn=itn, ifp=ifp, ifn=ifn, itp=itp)
             name = "Inverse F-score for β=∞"
             abbreviation = "F∞-Inv"
-            symbol = "$F_{\\infty}$-Inv"
+            symbol = r"$F_{\infty}$-Inv"
         else:
             itn = 1 + beta**2
             ifp = beta**2
@@ -1037,11 +1037,11 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getAccuracy() -> "RankingScore":
-        """
+        r"""
         Accuracy (A).
 
         .. math::
-            A : P \\mapsto P(\\{tn, tp\\}) = P(S=1)
+            A : P \mapsto P(\{tn, tp\}) = P(S=1)
 
         This score is a particular case of canonical ranking score with the importance
         proportional to
@@ -1066,25 +1066,25 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getSimilarityCoefficientsS(theta: float) -> "RankingScore":
-        """
-        Similarity coefficients of the family :math:`S_\\theta`, with :math:`\\theta \\ge 0`
+        r"""
+        Similarity coefficients of the family :math:`S_\theta`, with :math:`\theta \ge 0`
         were defined in :cite:t:`Gower1986Metric` as
 
         .. math::
-            S_\\theta : P \\mapsto \\frac{ P(\\{tn,tp\\}) }{ P(\\{tn,tp\\}) + \\theta P(\\{fp,fn\\}) }
+            S_\theta : P \mapsto \frac{ P(\{tn,tp\}) }{ P(\{tn,tp\}) + \theta P(\{fp,fn\}) }
 
-        These scores are a particular case of (non-canonical, unless :math:`\\theta=1`,
+        These scores are a particular case of (non-canonical, unless :math:`\theta=1`,
         in which case it is the accuracy) ranking score with the importance proportional to
 
         * :math:`I(tn)=1`,
-        * :math:`I(fp)=\\theta`,
-        * :math:`I(fn)=\\theta`,
+        * :math:`I(fp)=\theta`,
+        * :math:`I(fn)=\theta`,
         * and :math:`I(tp)=1`.
 
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
 
         Args:
-            theta (float): the parameter :math:`\\theta \\ge 0`
+            theta (float): the parameter :math:`\theta \ge 0`
 
         Returns:
             RankingScore: the score as a RankingScore object
@@ -1103,25 +1103,25 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getSimilarityCoefficientsT(theta: float) -> "RankingScore":
-        """
-        Similarity coefficients of the family :math:`T_\\theta`, with :math:`\\theta \\ge 0`
+        r"""
+        Similarity coefficients of the family :math:`T_\theta`, with :math:`\theta \ge 0`
         were defined in :cite:t:`Gower1986Metric` as
 
         .. math::
-            T_\\theta : P \\mapsto \\frac{ P(\\{tp\\}) }{ P(\\{tp\\}) + \\theta P(\\{fp,fn\\}) }
+            T_\theta : P \mapsto \frac{ P(\{tp\}) }{ P(\{tp\}) + \theta P(\{fp,fn\}) }
 
-        These scores are a particular case of (non-canonical, unless :math:`\\theta=\\frac12`,
+        These scores are a particular case of (non-canonical, unless :math:`\theta=\frac12`,
         in which case it is the F1 score) ranking score with the importance proportional to
 
         * :math:`I(tn)=0`,
-        * :math:`I(fp)=\\theta`,
-        * :math:`I(fn)=\\theta`,
+        * :math:`I(fp)=\theta`,
+        * :math:`I(fn)=\theta`,
         * and :math:`I(tp)=1`.
 
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
 
         Args:
-            theta (float): the parameter :math:`\\theta \\ge 0`
+            theta (float): the parameter :math:`\theta \ge 0`
 
         Returns:
             RankingScore: the score as a RankingScore object
@@ -1152,27 +1152,28 @@ class RankingScore(AbstractScore):
     # for now, we implement only the beta=1 case.
     @staticmethod
     def getSkewInsensitiveVersionOfF1(priorPos: float) -> "RankingScore":
-        """
+        r"""
         The skew-insensitive version of :math:`F_1`,
         defined in cite:t:`Flach2003TheGeometry`.
 
         .. math::
-            SIVF = \\frac{ 2 TPR }{ TPR + FPR + 1 }
+            SIVF = \frac{ 2 TPR }{ TPR + FPR + 1 }
+
         This score is clearly undefined when one of the class priors is zero,
         as in this case either FPR or TPR is undefined.
 
         When used on performances with the class priors, for the negative and positive
-        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
-        this score becomes a particular case of (non-canonical, unless :math:`\\pi_- = \\pi_+`,
+        classes of :math:`P(Y=c_-)=\pi_-` and :math:`P(Y=c_+)=\pi_+`, respectively,
+        this score becomes a particular case of (non-canonical, unless :math:`\pi_- = \pi_+`,
         in which case it is the F1 score) ranking score with the importance proportional to
 
         * :math:`I(tn)=0`,
-        * :math:`I(fp)=\\pi_+`,
-        * :math:`I(fn)=\\pi_-`,
-        * and :math:`I(tp)=2 \\pi_-`.
+        * :math:`I(fp)=\pi_+`,
+        * :math:`I(fn)=\pi_-`,
+        * and :math:`I(tp)=2 \pi_-`.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
@@ -1208,29 +1209,30 @@ class RankingScore(AbstractScore):
     def getMacroAveragedRecall(
         priorPos: float, weightClassPos: float = 0.5
     ) -> "RankingScore":
-        """
+        r"""
         The macro-averaged recall, with a weighted arithmetic mean, is defined as
 
         .. math::
-            mRe = \\lambda_- Re_- + \\lambda_+ Re_+
+            mRe = \lambda_- Re_- + \lambda_+ Re_+
+
         where :math:`Re_-` is the recall of the negative class (:math:`Re_- = TNR`),
         :math:`Re_+` is the recall of the positive class (:math:`Re_+ = TPR`),
-        and :math:`(\\lambda_-, \\lambda_+)` are the class weights such that
-        :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
+        and :math:`(\lambda_-, \lambda_+)` are the class weights such that
+        :math:`\lambda_- \ge 0`, :math:`\lambda_+ \ge 0`, :math:`\lambda_- + \lambda_+ = 1`.
         This score is clearly undefined when one of the class priors is zero,
         as in this case either :math:`Re_-` or :math:`Re_+` is undefined.
 
         When used on performances with the class priors, for the negative and positive
-        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        classes of :math:`P(Y=c_-)=\pi_-` and :math:`P(Y=c_+)=\pi_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
 
-        * :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
-        * and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
+        * :math:`I(tn) = I(fp) = \frac{ \lambda_- }{ \pi_- }`
+        * and :math:`I(fn) = I(tp) = \frac{ \lambda_+ }{ \pi_+ }`.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
-            weightClassPos (float, optional): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`. Defaults to 0.5.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
+            weightClassPos (float, optional): The weight for the positive class, :math:`\lambda_+\in[0,1]`. Defaults to 0.5.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
@@ -1272,27 +1274,29 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getWeightedAccuracy(priorPos: float, weightClassPos: float) -> "RankingScore":
-        """
+        r"""
         The weighted accuracy is defined as
 
         .. math::
-            WA = \\lambda_- TNR + \\lambda_+ TPR
-        with :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
+            WA = \lambda_- TNR + \lambda_+ TPR
+
+        with :math:`\lambda_- \ge 0`, :math:`\lambda_+ \ge 0`, :math:`\lambda_- + \lambda_+ = 1`.
         This score is clearly undefined when one of the class priors is zero,
         as in this case either TNR or TPR is undefined.
 
         When used on performances with the class priors, for the negative and positive
-        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        classes of :math:`P(Y=c_-)=\pi_-` and :math:`P(Y=c_+)=\pi_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
 
-        * :math:`I(tn) = I(fp) = \\frac{ \\lambda_- }{ \\pi_- }`
-        * and :math:`I(fn) = I(tp) = \\frac{ \\lambda_+ }{ \\pi_+ }`.
+        * :math:`I(tn) = I(fp) = \frac{ \lambda_- }{ \pi_- }`
+        * and :math:`I(fn) = I(tp) = \frac{ \lambda_+ }{ \pi_+ }`.
+
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.4.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
-            weightClassPos (float): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
+            weightClassPos (float): The weight for the positive class, :math:`\lambda_+\in[0,1]`.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
@@ -1310,16 +1314,16 @@ class RankingScore(AbstractScore):
 
     @staticmethod
     def getBalancedAccuracy(priorPos: float) -> "RankingScore":
-        """
+        r"""
         The balanced accuracy (:math:`BA`).
 
         .. math::
-            BA = \\frac12 TNR + \\frac12 TPR
+            BA = \frac12 TNR + \frac12 TPR
 
         See :meth:`sorbetto.ranking.RankingScore.getMacroAveragedRecall`
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only
@@ -1343,29 +1347,30 @@ class RankingScore(AbstractScore):
     def getMacroAveragedPrecision(
         ratePos: float, weightClassPos: float = 0.5
     ) -> "RankingScore":
-        """
+        r"""
         The macro-averaged precision, with a weighted arithmetic mean, is defined as
 
         .. math::
-            mPr = \\lambda_- Pr_- + \\lambda_+ Pr_+
+            mPr = \lambda_- Pr_- + \lambda_+ Pr_+
+
         where :math:`Pr_-` is the precision of the negative class (:math:`Pr_- = NPV`),
         :math:`Pr_+` is the precision of the positive class (:math:`Pr_+ = PPV`),
-        and :math:`(\\lambda_-, \\lambda_+)` are the class weights such that
-        :math:`\\lambda_- \\ge 0`, :math:`\\lambda_+ \\ge 0`, :math:`\\lambda_- + \\lambda_+ = 1`.
+        and :math:`(\lambda_-, \lambda_+)` are the class weights such that
+        :math:`\lambda_- \ge 0`, :math:`\lambda_+ \ge 0`, :math:`\lambda_- + \lambda_+ = 1`.
         This score is clearly undefined when one of the class prediction rates is zero,
         as in this case either :math:`Pr_-` or :math:`Pr_+` is undefined.
 
         When used on performances with the class prediction rates, for the negative and positive
-        classes of :math:`P(\\hat{Y}=c_-)=\\tau_-` and :math:`P(\\hat{Y}=c_+)=\\tau_+`, respectively,
+        classes of :math:`P(\hat{Y}=c_-)=\tau_-` and :math:`P(\hat{Y}=c_+)=\tau_+`, respectively,
         this score becomes a particular case of canonical ranking score with the
         importance proportional to
 
-        * :math:`I(tn) = I(fn) = \\frac{ \\lambda_- }{ \\tau_- }`
-        * and :math:`I(fp) = I(tp) = \\frac{ \\lambda_+ }{ \\tau_+ }`.
+        * :math:`I(tn) = I(fn) = \frac{ \lambda_- }{ \tau_- }`
+        * and :math:`I(fp) = I(tp) = \frac{ \lambda_+ }{ \tau_+ }`.
 
         Args:
-            ratePos (float): The prediction rate of the positive class, :math:`\\tau_+\\in(0,1)`.
-            weightClassPos (float, optional): The weight for the positive class, :math:`\\lambda_+\\in[0,1]`. Defaults to 0.5.
+            ratePos (float): The prediction rate of the positive class, :math:`\tau_+\in(0,1)`.
+            weightClassPos (float, optional): The weight for the positive class, :math:`\lambda_+\in[0,1]`. Defaults to 0.5.
 
         Returns:
             RankingScore: the score as a RankingScore object that can be used only

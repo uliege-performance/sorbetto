@@ -107,7 +107,7 @@ def _setupROC(
         ax.text(
             0.5,
             0.5,
-            "no-skill: $P(Y,\\hat{Y}) = P(Y) P(\\hat{Y})$",
+            r"no-skill: $P(Y,\hat{Y}) = P(Y) P(\hat{Y})$",
             ha="center",
             va="baseline",
             rotation=45,
@@ -132,7 +132,7 @@ def _setupROC(
         ax.text(
             x,
             y,
-            "unbiased\n$P(\\{fp\\}) = P(\\{fn\\})$",
+            r"unbiased\n$P(\{fp\}) = P(\{fn\})$",
             ha="center",
             va="top" if priorPos >= 0.5 else "baseline",
             rotation=a,
@@ -151,7 +151,7 @@ def _setupROC(
         ax.text(
             x,
             y,
-            "opposite unbiased\n$P(\\{tn\\}) = P(\\{tp\\})$",
+            r"opposite unbiased\n$P(\{tn\}) = P(\{tp\})$",
             ha="center",
             va="top" if priorPos < 0.5 else "baseline",
             rotation=a,
@@ -167,7 +167,7 @@ def _setupROC(
     if priorPos is None:
         ax.set_title("ROC space")
     else:
-        ax.set_title("ROC space for $\\pi_+={:g}$".format(priorPos))
+        ax.set_title(r"ROC space for $\pi_+={:g}$".format(priorPos))
 
 
 # TODO rename for clarity

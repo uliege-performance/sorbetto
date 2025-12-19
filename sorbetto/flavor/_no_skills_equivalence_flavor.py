@@ -18,24 +18,27 @@ from ._abstract_numeric_flavor import AbstractNumericFlavor
 
 
 class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
-    """
+    r"""
     The "No-Skill Equivalence Flavor" is a Numeric Flavor that, for any given
     importance values, gives the value of a parameter controling a parametric
     set of performances such that all no-skill performances in this set are put
     on an equal footing (ie, are considered equivalent because the ranking score
     gives the same value to all of them), for any given importance values.
     The no-skill performances are the ones such that
+
     .. math::
-        P(Y, \\hat{Y}) = P(Y) P(\\hat{Y})
+        P(Y, \hat{Y}) = P(Y) P(\hat{Y})
 
     This Flavor can be used with the set of performances that corresponds to
     some fixed prediction rates (the parameter controling the parametric set).
     The set of performance orderings induced by ranking scores that put all
     no-skill performances, for given prediction rates
-    :math:`(P(\\hat{Y}=c_-), P(\\hat{Y}=c_+))=(\\tau_-, \\tau_+)`,
+    :math:`(P(\hat{Y}=c_-), P(\hat{Y}=c_+))=(\tau_-, \tau_+)`,
     on an equal footing is given by
+
     .. math::
-        \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn)
+        \tau_+^2 I(tp) I(fp) = \tau_-^2 I(tn) I(fn)
+
     See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
     See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, right.
 
@@ -43,10 +46,12 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
     some fixed class priors (the parameter controling the parametric set).
     The set of performance orderings induced by ranking scores that put all
     no-skill performances, for given class priors
-    :math:`(P(Y=c_-), P(Y=c_+)) = (\\pi_-, \\pi_+)`,
+    :math:`(P(Y=c_-), P(Y=c_+)) = (\pi_-, \pi_+)`,
     on an equal footing is given
+
     .. math::
-        \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp)
+        \pi_+^2 I(tp) I(fn) = \pi_-^2 I(tn) I(fp)
+
     See Theorem 3 of :cite:t:`Pierard2025TheManifold`.
     See :cite:t:`Pierard2024TheTile-arxiv`, Fig. 6, left.
     """
@@ -67,27 +72,27 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
         name: str | None = None,
         colormap: Any = None,
     ):
-        """
+        r"""
         Constructs a new NoSkillsEquivalenceFlavor.
 
         If `parameter_name` is "negative prediction rate", the Flavor gives the
-        value :math:`\\tau_-` such that all performances :math:`P` satisfying
-        :math:`P(\\hat{Y}=c_-)=\\tau_-` and :math:`P(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`
+        value :math:`\tau_-` such that all performances :math:`P` satisfying
+        :math:`P(\hat{Y}=c_-)=\tau_-` and :math:`P(Y, \hat{Y}) = P(Y) P(\hat{Y})`
         are put on an equal footing by the ranking scores.
 
         If `parameter_name` is "positive prediction rate", the Flavor gives the
-        value :math:`\\tau_+` such that all performances :math:`P` satisfying
-        :math:`P(\\hat{Y}=c_+)=\\tau_+` and :math:`P(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`
+        value :math:`\tau_+` such that all performances :math:`P` satisfying
+        :math:`P(\hat{Y}=c_+)=\tau_+` and :math:`P(Y, \hat{Y}) = P(Y) P(\hat{Y})`
         are put on an equal footing by the ranking scores.
 
         If `parameter_name` is "prior of the negative class", the Flavor gives the
-        value :math:`\\pi_-` such that all performances :math:`P` satisfying
-        :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`
+        value :math:`\pi_-` such that all performances :math:`P` satisfying
+        :math:`P(Y=c_-)=\pi_-` and :math:`P(Y, \hat{Y}) = P(Y) P(\hat{Y})`
         are put on an equal footing by the ranking scores.
 
         If `parameter_name` is "prior of the negative class", the Flavor gives the
-        value :math:`\\pi_+` such that all performances :math:`P` satisfying
-        :math:`P(Y=c_+)=\\pi_+` and :math:`P(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`
+        value :math:`\pi_+` such that all performances :math:`P` satisfying
+        :math:`P(Y=c_+)=\pi_+` and :math:`P(Y, \hat{Y}) = P(Y) P(\hat{Y})`
         are put on an equal footing by the ranking scores.
 
         Args:
@@ -101,13 +106,13 @@ class NoSkillsEquivalenceFlavor(AbstractNumericFlavor):
         if name is None:
             match self._parameter_name:
                 case self.RATE_NEG:
-                    name = "No-Skill Equivalence Flavor ($\\tau_-$)"
+                    name = r"No-Skill Equivalence Flavor ($\tau_-$)"
                 case self.RATE_POS:
-                    name = "No-Skill Equivalence Flavor ($\\tau_+$)"
+                    name = r"No-Skill Equivalence Flavor ($\tau_+$)"
                 case self.PRIOR_NEG:
-                    name = "No-Skill Equivalence Flavor ($\\pi_-$)"
+                    name = r"No-Skill Equivalence Flavor ($\pi_-$)"
                 case self.PRIOR_POS:
-                    name = "No-Skill Equivalence Flavor ($\\pi_+$)"
+                    name = r"No-Skill Equivalence Flavor ($\pi_+$)"
                 case _:
                     assert False
         super().__init__(name=name, colormap=colormap)

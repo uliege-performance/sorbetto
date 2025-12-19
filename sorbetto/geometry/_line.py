@@ -92,9 +92,9 @@ class Line(AbstractGeometricObject2D):
         return y
 
     def getNormalized(self) -> Self:
-        """
+        r"""
         Computes the normalized form of the line, that is :math:`a' x + b' y + c' = 0`
-        such that :math:`a'^2 + b'^2 = 1` and :math:`(a',b',c') \\propto (a,b,c)`.
+        such that :math:`a'^2 + b'^2 = 1` and :math:`(a',b',c') \propto (a,b,c)`.
 
         Returns:
             Line: the line :math:`a' x + b' y + c' = 0`

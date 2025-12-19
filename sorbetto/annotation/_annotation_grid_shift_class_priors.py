@@ -24,21 +24,21 @@ if TYPE_CHECKING:
 
 
 class AnnotationGridShiftClassPriors(AbstractAnnotation):
-    """
+    r"""
     This type of annotation can be used to place a grid on the Tile to show the
     effect of a target shift on the class priors :math:`P(Y)`.
 
     A target shift transforming the class priors
-    from :math:`(\\pi_-, \\pi_+)` to :math:`(\\pi_-', \\pi_+')`, when applied
+    from :math:`(\pi_-, \pi_+)` to :math:`(\pi_-', \pi_+')`, when applied
     to a performance :math:`P`, leads to a performance `P'` such that:
 
-    - :math:`P'(\\{tn\\}) \\propto P(\\{tn\\}) \\frac{ \\pi_-' }{ \\pi_- }`
-    - :math:`P'(\\{fp\\}) \\propto P(\\{fp\\}) \\frac{ \\pi_-' }{ \\pi_- }`
-    - :math:`P'(\\{fn\\}) \\propto P(\\{fn\\}) \\frac{ \\pi_+' }{ \\pi_+ }`
-    - :math:`P'(\\{tp\\}) \\propto P(\\{tp\\}) \\frac{ \\pi_+' }{ \\pi_+ }`
+    - :math:`P'(\{tn\}) \propto P(\{tn\}) \frac{ \pi_-' }{ \pi_- }`
+    - :math:`P'(\{fp\}) \propto P(\{fp\}) \frac{ \pi_-' }{ \pi_- }`
+    - :math:`P'(\{fn\}) \propto P(\{fn\}) \frac{ \pi_+' }{ \pi_+ }`
+    - :math:`P'(\{tp\}) \propto P(\{tp\}) \frac{ \pi_+' }{ \pi_+ }`
 
-    In the particular case in which :math:`(P(Y=c_-), P(Y=c_+))=(\\pi_-, \\pi_+)`,
-    we obtain :math:`(P'(Y=c_-), P'(Y=c_+))=(\\pi_-', \\pi_+')`.
+    In the particular case in which :math:`(P(Y=c_-), P(Y=c_+))=(\pi_-, \pi_+)`,
+    we obtain :math:`(P'(Y=c_-), P'(Y=c_+))=(\pi_-', \pi_+')`.
 
     Tiles are distorted by such a shift: the information placed on it moves.
     The grid is intended to show the resulting displacements on the Tile.
@@ -46,10 +46,10 @@ class AnnotationGridShiftClassPriors(AbstractAnnotation):
     is perfectly compensated by the inverse operation applied to importance values as
     :math:`R_{I'}(P')=R_I(P)` with:
 
-    - :math:`I'(tn) = I(tn) \\frac{ \\pi_- }{ \\pi_-' }`
-    - :math:`I'(fp) = I(fp) \\frac{ \\pi_- }{ \\pi_-' }`
-    - :math:`I'(fn) = I(fn) \\frac{ \\pi_+ }{ \\pi_+' }`
-    - :math:`I'(tp) = I(tp) \\frac{ \\pi_+ }{ \\pi_+' }`
+    - :math:`I'(tn) = I(tn) \frac{ \pi_- }{ \pi_-' }`
+    - :math:`I'(fp) = I(fp) \frac{ \pi_- }{ \pi_-' }`
+    - :math:`I'(fn) = I(fn) \frac{ \pi_+ }{ \pi_+' }`
+    - :math:`I'(tp) = I(tp) \frac{ \pi_+ }{ \pi_+' }`
 
     For more information, see :cite:t:`Pierard2024TheTile-arxiv`, Section A.2.2.
     """

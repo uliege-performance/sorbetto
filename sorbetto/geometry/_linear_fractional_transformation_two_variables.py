@@ -11,11 +11,11 @@ from ._ruler import Ruler
 # TODO: We will need the particular case of one variable for functions in ROC (e.g., ranking scores)
 # TODO: So, do we code several classes, or only one?
 class LinearFractionalTransformationTwoVariables:
-    """
+    r"""
     This class is used to represent linear fractional transformations of two variables.
 
     .. math::
-        f: \\mathbb{R}^2 \\rightarrow \\mathbb{R} : (x,y) \\mapsto f(x,y) = \\frac{ a x + b y + c }{ d x + e y + f }
+        f: \mathbb{R}^2 \rightarrow \mathbb{R} : (x,y) \mapsto f(x,y) = \frac{ a x + b y + c }{ d x + e y + f }
 
     See https://en.wikipedia.org/wiki/Linear_fractional_transformation
     """
@@ -118,7 +118,7 @@ class LinearFractionalTransformationTwoVariables:
         return (a * x + b * y + c) / (d * x + e * y + f)
 
     def getPencil(self) -> PencilOfLines:
-        """
+        r"""
         Returns the pencil of lines corresponding to the various values taken
         by this function.
 
@@ -126,7 +126,7 @@ class LinearFractionalTransformationTwoVariables:
         and all these lines form the pencil
 
         .. math::
-            \\lambda_0 ( a_0 x + b_0 y + c_0 ) + \\lambda_1 ( a_1 x + b_1 y + c_1 ) = 0
+            \lambda_0 ( a_0 x + b_0 y + c_0 ) + \lambda_1 ( a_1 x + b_1 y + c_1 ) = 0
 
         The line :math:`a_0 x + b_0 y + c_0 = 0` is the locus of points for which the
         function takes the value :math:`0`. The coefficients are given by
@@ -142,7 +142,7 @@ class LinearFractionalTransformationTwoVariables:
         * :math:`b_1 = b - e`
         * :math:`c_1 = c - f`
 
-        By choosing :math:`(\\lambda_0, \\lambda_1) = (1-v, v)`, one obtains a line that is the
+        By choosing :math:`(\lambda_0, \lambda_1) = (1-v, v)`, one obtains a line that is the
         locus of points for which the function takes the value :math:`v`.
 
         Returns:

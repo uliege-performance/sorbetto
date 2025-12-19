@@ -10,11 +10,11 @@ from typing import Self
 # TODO: We will need the particular case of one variable for functions in ROC (e.g., ranking scores)
 # TODO: So, do we code several classes, or only one?
 class LinearFractionalTransformation:
-    """
+    r"""
     This class is used to represent linear fractional transformations.
 
     .. math::
-        f : \\mathbb{R} \\rightarrow \\mathbb{R} : x \\mapsto \\frac{ a x + b }{ c x + d }
+        f : \mathbb{R} \rightarrow \mathbb{R} : x \mapsto \frac{ a x + b }{ c x + d }
 
     See https://en.wikipedia.org/wiki/Linear_fractional_transformation
     """

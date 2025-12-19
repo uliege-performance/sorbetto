@@ -41,21 +41,21 @@ class UniformDistributionOfTwoClassClassificationPerformancesForFixedPredictionR
 
     @property
     def ratePos(self) -> float:
-        """
+        r"""
         The rate of predictions for the positive class.
 
         Returns:
-            ratePos: :math:`\\tau_+ = P( \\{ fp, tp \\} )`
+            ratePos: :math:`\tau_+ = P( \{ fp, tp \} )`
         """
         return self._ratePos
 
     @property
     def rateNeg(self) -> float:
-        """
+        r"""
         The rate of predictions for the negative class.
 
         Returns:
-            rateNeg: :math:`\\tau_- = P( \\{ tn, fn \\} )`
+            rateNeg: :math:`\tau_- = P( \{ tn, fn \} )`
         """
         return 1.0 - self._ratePos
 

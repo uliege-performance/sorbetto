@@ -284,30 +284,30 @@ class PerformanceOrderingsInducedByRankingScores:
 
     @staticmethod
     def getSimilarityCoefficientsS() -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by all the scores *Similarity Coefficients S*.
-        Similarity coefficients of the family :math:`S_\\theta`, as defined in :cite:t:`Gower1986Metric`.
+        Similarity coefficients of the family :math:`S_\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         to_mimic = RankingScore.getAccuracy()
         name = "Similarity Coefficients S"
         abbreviation = None
-        symbol = "$S_\\theta$"
+        symbol = r"$S_\theta$"
         return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
             to_mimic, name, abbreviation, symbol
         )
 
     @staticmethod
     def getSimilarityCoefficientsT() -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by all the scores *Similarity Coefficients T*.
-        Similarity coefficients of the family :math:`T_\\theta`, as defined in :cite:t:`Gower1986Metric`.
+        Similarity coefficients of the family :math:`T_\theta`, as defined in :cite:t:`Gower1986Metric`.
         See :cite:t:`Gower1986Metric` and :cite:t:`Pierard2024TheTile-arxiv`, Section 4.2.
         """
         to_mimic = RankingScore.getJaccard()
         name = "Similarity Coefficients T"
         abbreviation = None
-        symbol = "$T_\\theta$"
+        symbol = r"$T_\theta$"
         return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
             to_mimic, name, abbreviation, symbol
         )
@@ -325,12 +325,12 @@ class PerformanceOrderingsInducedByRankingScores:
     def getStandardizedNegativePredictiveValue(
         priorPos,
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score *Standardized Negative Predictive Value*.
         The Standardized Negative Predictive Value (SNPV) is defined in :cite:t:`Heston2011Standardizing` as
 
         .. math::
-            SNPV=\\frac{TNR}{TNR+FNR}=\\frac{NPV \\pi_+ }{NPV( \\pi_+ - \\pi_- )+ \\pi_- }
+            SNPV=\frac{TNR}{TNR+FNR}=\frac{NPV \pi_+ }{NPV( \pi_+ - \pi_- )+ \pi_- }
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
@@ -353,12 +353,12 @@ class PerformanceOrderingsInducedByRankingScores:
     def getStandardizedPositivePredictiveValue(
         priorPos,
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score *Standardized Positive Predictive Value*.
         Standardized Positive Predictive Value (SPPV) is defined in :cite:t:`Heston2011Standardizing` as
 
         .. math::
-            SPPV=\\frac{ TPR }{ FPR + TPR }=\\frac{ PPV  \\pi_- }{ PPV ( \\pi_- - \\pi_+ )+ \\pi_+ }
+            SPPV=\frac{ TPR }{ FPR + TPR }=\frac{ PPV  \pi_- }{ PPV ( \pi_- - \pi_+ )+ \pi_+ }
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
@@ -535,33 +535,33 @@ class PerformanceOrderingsInducedByRankingScores:
     def getCohenCorrected(
         rankingScore: RankingScore, priorPos: float
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         When correcting a ranking score :math:`R_I` in the same way as Cohen did with
         the accuracy in :cite:t:`Cohen1960ACoefficient`, we obtain the score
 
         .. math::
-            X = \\frac{ R_I - R_I \\circ noskill }{ 1 - R_I \\circ noskill }
+            X = \frac{ R_I - R_I \circ noskill }{ 1 - R_I \circ noskill }
 
         where :math:`noskill` denotes the operation that transforms a performance
-        :math:`P` into :math:`P'` such that :math:`P'(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`.
+        :math:`P` into :math:`P'` such that :math:`P'(Y, \hat{Y}) = P(Y) P(\hat{Y})`.
 
         The score :math:`X` is not a ranking score. However, when
         used on performances with the class priors, for the negative and positive
-        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
+        classes of :math:`P(Y=c_-)=\pi_-` and :math:`P(Y=c_+)=\pi_+`, respectively,
         the performance ordering induced by :math:`X` is the same as the one
         induced by the ranking score :math:`R_{I'}` with the importance
         :math:`I'` proportional to
 
-        * :math:`I'(tn) = \\pi_+^2 I(fn)`,
+        * :math:`I'(tn) = \pi_+^2 I(fn)`,
         * :math:`I'(fp) = I(fp)`,
         * :math:`I'(fn) = I(fn)`,
-        * and :math:`I'(tp) = \\pi_-^2 I(fp)`.
+        * and :math:`I'(tp) = \pi_-^2 I(fp)`.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
 
         Args:
             rankingScore (RankingScore): a ranking score :math:`R_I`
-            priorPos (float): the prior of the positive class, :math:`\\pi_+ \\in [0, 1]`
+            priorPos (float): the prior of the positive class, :math:`\pi_+ \in [0, 1]`
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced by the Cohen-corrected version of :math:`R_I`, :math:`X`.
@@ -589,28 +589,28 @@ class PerformanceOrderingsInducedByRankingScores:
     def getCohenKappa(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score *Cohen Kappa*
-        (:math:`\\kappa`), also called *Kappa statistic*. It is defined in
+        (:math:`\kappa`), also called *Kappa statistic*. It is defined in
         :cite:t:`Cohen1960ACoefficient` as
 
         .. math::
-            \\kappa = \\frac{ A - A \\circ noskill }{ 1 - A \\circ noskill }
+            \kappa = \frac{ A - A \circ noskill }{ 1 - A \circ noskill }
 
         where :math:`noskill` denotes the operation that transforms a performance
-        :math:`P` into :math:`P'` such that :math:`P'(Y, \\hat{Y}) = P(Y) P(\\hat{Y})`.
+        :math:`P` into :math:`P'` such that :math:`P'(Y, \hat{Y}) = P(Y) P(\hat{Y})`.
 
-        The score :math:`\\kappa` is not a ranking score. However, when
+        The score :math:`\kappa` is not a ranking score. However, when
         used on performances with the class priors, for the negative and positive
-        classes of :math:`P(Y=c_-)=\\pi_-` and :math:`P(Y=c_+)=\\pi_+`, respectively,
-        the performance ordering induced by :math:`\\kappa` is the same as the one
+        classes of :math:`P(Y=c_-)=\pi_-` and :math:`P(Y=c_+)=\pi_+`, respectively,
+        the performance ordering induced by :math:`\kappa` is the same as the one
         induced by the ranking score :math:`R_{I}` with the importance
         :math:`I` proportional to
 
-        * :math:`I(tn) = \\pi_+^2`,
+        * :math:`I(tn) = \pi_+^2`,
         * :math:`I(fp) = 1`,
         * :math:`I(fn) = 1`,
-        * and :math:`I(tp) = \\pi_-^2`.
+        * and :math:`I(tp) = \pi_-^2`.
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section 4.4.
 
@@ -636,7 +636,7 @@ class PerformanceOrderingsInducedByRankingScores:
                 to_mimic = RankingScore(importance, constraint=constraint)
                 name = "Cohen's kappa"
                 abbreviation = "Cohen"
-                symbol = "$\\kappa$"
+                symbol = r"$\kappa$"
                 return (
                     PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
                         to_mimic, name, abbreviation, symbol
@@ -658,7 +658,7 @@ class PerformanceOrderingsInducedByRankingScores:
                 to_mimic = RankingScore(importance, constraint=constraint)
                 name = "Cohen's kappa"
                 abbreviation = "Cohen"
-                symbol = "$\\kappa$"
+                symbol = r"$\kappa$"
                 return (
                     PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
                         to_mimic, name, abbreviation, symbol
@@ -689,9 +689,9 @@ class PerformanceOrderingsInducedByRankingScores:
     def getEquitableThreatScore(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the Equitable Threat Score (ETS).
-        :math:`ETS = \\frac{\\kappa}{2-\\kappa}`
+        :math:`ETS = \frac{\kappa}{2-\kappa}`
         """
         to_mimic = PerformanceOrderingsInducedByRankingScores.getCohenKappa(
             priorPos=priorPos, ratePos=ratePos
@@ -724,27 +724,27 @@ class PerformanceOrderingsInducedByRankingScores:
     def getProbabilityTrueNegative(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score "Probability of True Negative".
         It is defined as
 
         .. math::
-            PTN : \\mathbb{P} \\rightarrow [0,1] : P \\mapsto PTN(P) = P(\\{tn\\})
+            PTN : \mathbb{P} \rightarrow [0,1] : P \mapsto PTN(P) = P(\{tn\})
 
-        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
-        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTN = TNR \\pi_-`, so the
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\pi_- \ne 0`
+        and :math:`P(Y=c_+)=\pi_+ \ne 0`, we have :math:`PTN = TNR \pi_-`, so the
         performance ordering induced by :math:`PTN` is the same as the one induced
         by the canonical ranking score :math:`TNR`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4.
 
-        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
-        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`PTN = NPV \\tau_-`, so the
+        When the prediction rates are fixed, and given by :math:`P(\hat{Y}=c_-)=\tau_- \ne 0`
+        and :math:`P(\hat{Y}=c_+)=\tau_+ \ne 0`, we have :math:`PTN = NPV \tau_-`, so the
         performance ordering induced by :math:`PTN` is the same as the one induced
         by the canonical ranking score :math:`NPV`.
 
         Args:
-            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
+            priorPos (float | None): The prior of the positive class, :math:`\pi_+ = P(Y=c_+) \in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\tau_+ = P(\hat{Y}=c_+) \in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -810,26 +810,26 @@ class PerformanceOrderingsInducedByRankingScores:
     def getProbabilityFalsePositiveComplement(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score "Complement of the Probability of False Positive".
         It is defined as
 
         .. math::
-            (1-PFP)(P) = P(\\{tn,fn,tp\\}
+            (1-PFP)(P) = P(\{tn,fn,tp\}
 
-        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
-        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`(1-PFP) = \\pi_+ + TNR \\pi_-`, so the
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\pi_- \ne 0`
+        and :math:`P(Y=c_+)=\pi_+ \ne 0`, we have :math:`(1-PFP) = \pi_+ + TNR \pi_-`, so the
         performance ordering induced by :math:`(1-PFP)` is the same as the one induced
         by the canonical ranking score :math:`TNR`.
 
-        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
-        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`(1-PFP) = \\tau_- + PPV \\tau_+`, so the
+        When the prediction rates are fixed, and given by :math:`P(\hat{Y}=c_-)=\tau_- \ne 0`
+        and :math:`P(\hat{Y}=c_+)=\tau_+ \ne 0`, we have :math:`(1-PFP) = \tau_- + PPV \tau_+`, so the
         performance ordering induced by :math:`(1-PFP)` is the same as the one induced
         by the canonical ranking score :math:`PPV`.
 
         Args:
-            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
+            priorPos (float | None): The prior of the positive class, :math:`\pi_+ = P(Y=c_+) \in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\tau_+ = P(\hat{Y}=c_+) \in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -875,26 +875,26 @@ class PerformanceOrderingsInducedByRankingScores:
     def getProbabilityFalseNegativeComplement(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score "Complement of the Probability of False Negative".
         It is defined as
 
         .. math::
-            (1-PFN)(P) = P(\\{tn,fp,tp\\}
+            (1-PFN)(P) = P(\{tn,fp,tp\}
 
-        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
-        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`(1-PFN) = \\pi_- + TPR \\pi_+`, so the
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\pi_- \ne 0`
+        and :math:`P(Y=c_+)=\pi_+ \ne 0`, we have :math:`(1-PFN) = \pi_- + TPR \pi_+`, so the
         performance ordering induced by :math:`(1-PFN)` is the same as the one induced
         by the canonical ranking score :math:`TPR`.
 
-        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
-        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`(1-PFN) = \\tau_+ + NPV \\tau_-`, so the
+        When the prediction rates are fixed, and given by :math:`P(\hat{Y}=c_-)=\tau_- \ne 0`
+        and :math:`P(\hat{Y}=c_+)=\tau_+ \ne 0`, we have :math:`(1-PFN) = \tau_+ + NPV \tau_-`, so the
         performance ordering induced by :math:`(1-PFN)` is the same as the one induced
         by the canonical ranking score :math:`NPV`.
 
         Args:
-            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
+            priorPos (float | None): The prior of the positive class, :math:`\pi_+ = P(Y=c_+) \in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\tau_+ = P(\hat{Y}=c_+) \in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -940,27 +940,27 @@ class PerformanceOrderingsInducedByRankingScores:
     def getProbabilityTruePositive(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the score "Probability of True Positive".
         It is defined as
 
         .. math::
-            PTP : \\mathbb{P} \\rightarrow [0,1] : P \\mapsto PTP(P) = P(\\{tp\\})
+            PTP : \mathbb{P} \rightarrow [0,1] : P \mapsto PTP(P) = P(\{tp\})
 
-        When the class priors are fixed, and given by :math:`P(Y=c_-)=\\pi_- \\ne 0`
-        and :math:`P(Y=c_+)=\\pi_+ \\ne 0`, we have :math:`PTP = TPR \\pi_+`, so the
+        When the class priors are fixed, and given by :math:`P(Y=c_-)=\pi_- \ne 0`
+        and :math:`P(Y=c_+)=\pi_+ \ne 0`, we have :math:`PTP = TPR \pi_+`, so the
         performance ordering induced by :math:`PTP` is the same as the one induced
         by the canonical ranking score :math:`TPR`.
         See :cite:t:`Pierard2025Foundations`, Section A.7.4.
 
-        When the prediction rates are fixed, and given by :math:`P(\\hat{Y}=c_-)=\\tau_- \\ne 0`
-        and :math:`P(\\hat{Y}=c_+)=\\tau_+ \\ne 0`, we have :math:`PTP = PPV \\tau_+`, so the
+        When the prediction rates are fixed, and given by :math:`P(\hat{Y}=c_-)=\tau_- \ne 0`
+        and :math:`P(\hat{Y}=c_+)=\tau_+ \ne 0`, we have :math:`PTP = PPV \tau_+`, so the
         performance ordering induced by :math:`PTP` is the same as the one induced
         by the canonical ranking score :math:`PPV`.
 
         Args:
-            priorPos (float | None): The prior of the positive class, :math:`\\pi_+ = P(Y=c_+) \\in (0,1)`. Defaults to None.
-            ratePos (float | None): The prediction rate of the positive class, :math:`\\tau_+ = P(\\hat{Y}=c_+) \\in (0,1)`. Defaults to None.
+            priorPos (float | None): The prior of the positive class, :math:`\pi_+ = P(Y=c_+) \in (0,1)`. Defaults to None.
+            ratePos (float | None): The prediction rate of the positive class, :math:`\tau_+ = P(\hat{Y}=c_+) \in (0,1)`. Defaults to None.
 
         Returns:
             PerformanceOrderingInducedByOneScore: the performance ordering induced
@@ -1067,37 +1067,37 @@ class PerformanceOrderingsInducedByRankingScores:
     def getNormalizedConfusionMatrixDeterminant(
         *, priorPos: float | None = None, ratePos: float | None = None
     ) -> "PerformanceOrderingInducedByOneScore":
-        """
+        r"""
         Returns the performance ordering induced by the determinant of the normalized
         confusion matrix.
 
         .. math::
-            |\\mathcal{C}| = PTN \\, PTP - PFP \\, PFN
+            |\mathcal{C}| = PTN \, PTP - PFP \, PFN
 
         This score is a skill score in the sense that:
 
         * it takes the zero value for all no-skill performances
-         (:math:`P(Y,\\hat{Y}) = P(Y) P(\\hat{Y}) \\Rightarrow |\\mathcal{C}| = 0`);
+          (:math:`P(Y,\hat{Y}) = P(Y) P(\hat{Y}) \Rightarrow |\mathcal{C}| = 0`);
         * a negative value for the worst performances
-         (:math:`P(S=0)=1 \\Rightarrow |\\mathcal{C}|<0`);
+          (:math:`P(S=0)=1 \Rightarrow |\mathcal{C}|<0`);
         * and a positive value for the best performances
-         (:math:`P(S=1)=1 \\Rightarrow |\\mathcal{C}|>0`).
+          (:math:`P(S=1)=1 \Rightarrow |\mathcal{C}|>0`).
 
-        Denoting the class priors by :math:`\\pi_- = P(Y=c_-)` and :math:`\\pi_+ = P(Y=c_+)`,
+        Denoting the class priors by :math:`\pi_- = P(Y=c_-)` and :math:`\pi_+ = P(Y=c_+)`,
         and assuming none of these two quantities is zero, we have
 
         .. math::
-            |\\mathcal{C}| = \\pi_- \\pi_+ ( TNR + TPR - 1 ) = \\pi_- \\pi_+ ( 2 mRe - 1 )
+            |\mathcal{C}| = \pi_- \pi_+ ( TNR + TPR - 1 ) = \pi_- \pi_+ ( 2 mRe - 1 )
 
         Thus, when the class priors are fixed, the performance ordering induced
         by the determinant of the confusion matrix is the same as the one induced
         by the macro-averaged recall :math:`mRe` (a.k.a. Peirce Skill Score).
 
-        Denoting the prediction rates by :math:`\\tau_- = P(\\hat{Y}=c_-)` and :math:`\\tau_+ = P(\\hat{Y}=c_+)`,
+        Denoting the prediction rates by :math:`\tau_- = P(\hat{Y}=c_-)` and :math:`\tau_+ = P(\hat{Y}=c_+)`,
         and assuming none of these two quantities is zero, we have
 
         .. math::
-            |\\mathcal{C}| = \\tau_- \\tau_+ ( NPV + PPV - 1 ) = \\tau_- \\tau_+ ( 2 mPr - 1 )
+            |\mathcal{C}| = \tau_- \tau_+ ( NPV + PPV - 1 ) = \tau_- \tau_+ ( 2 mPr - 1 )
 
         Thus, when the prediction rates are fixed, the performance ordering induced
         by the determinant of the confusion matrix is the same as the one induced
@@ -1119,7 +1119,7 @@ class PerformanceOrderingsInducedByRankingScores:
                 to_mimic = RankingScore.getMacroAveragedPrecision(ratePos=ratePos)
                 name = "Normalized Confusion Matrix Determinant"
                 abbreviation = None
-                symbol = "$|\\mathcal{C}|$"
+                symbol = r"$|\mathcal{C}|$"
                 return (
                     PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
                         to_mimic, name, abbreviation, symbol
@@ -1133,7 +1133,7 @@ class PerformanceOrderingsInducedByRankingScores:
                 to_mimic = RankingScore.getMacroAveragedRecall(priorPos=priorPos)
                 name = "Normalized Confusion Matrix Determinant"
                 abbreviation = None
-                symbol = "$|\\mathcal{C}|$"
+                symbol = r"$|\mathcal{C}|$"
                 return (
                     PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
                         to_mimic, name, abbreviation, symbol

@@ -103,19 +103,19 @@ class ParameterizationDefault(AbstractParameterization):
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
         self, priorPos: float
     ) -> BilinearCurve:
-        """
+        r"""
         The set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
+        performances, for given class priors :math:`(\pi_-, \pi_+)`, on an equal footing is given by
 
         .. math:
-             \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
+             \left\{ \pi_+^2 I(tp) I(fn) = \pi_-^2 I(tn) I(fp) \right\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
         See Theorem 3 of :cite:t:`Pierard2025TheManifold`.
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
 
         Args:
-            priorPos (float): the prior of the positive class, :math:`\\pi_+`
+            priorPos (float): the prior of the positive class, :math:`\pi_+`
 
         Returns:
             BilinearCurve: The locus (a curve).
@@ -146,18 +146,18 @@ class ParameterizationDefault(AbstractParameterization):
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
         self, ratePos: float
     ) -> BilinearCurve:
-        """
+        r"""
         The set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
+        performances, for given prediction rates :math:`(\tau_-, \tau_+)`, on an equal footing is given by
 
         .. math:
-            \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
+            \left\{ \tau_+^2 I(tp) I(fp) = \tau_-^2 I(tn) I(fn) \right\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
 
         Args:
-            ratePos (float): the prediction rate for the positive class, :math:`\\tau_+`
+            ratePos (float): the prediction rate for the positive class, :math:`\tau_+`
 
         Returns:
             AbstractGeometricObject2D: The locus (a curve).
@@ -241,9 +241,9 @@ class ParameterizationDefault(AbstractParameterization):
     def getParameter1ForValueZeroInROC(
         priorPos: float,
     ) -> LinearFractionalTransformationTwoVariables:
-        """
-        Returns the function :math:`f : \\mathbb{R}^2 \\rightarrow [0,1] : (fpr, tpr) \\mapsto a(I)`,
-        under the assumptions that :math:`R_I(P)=0`, :math:`P(Y=c_+)=\\pi_+`, :math:`FPR(P)=fpr`, and
+        r"""
+        Returns the function :math:`f : \mathbb{R}^2 \rightarrow [0,1] : (fpr, tpr) \mapsto a(I)`,
+        under the assumptions that :math:`R_I(P)=0`, :math:`P(Y=c_+)=\pi_+`, :math:`FPR(P)=fpr`, and
         :math:`TPR(P)=tpr`. Note that this function is extended to allow :math:`fpr` and :math:`tpr`
         to be out of the :math:`[0,1]` range.
 
@@ -251,24 +251,24 @@ class ParameterizationDefault(AbstractParameterization):
 
         .. math::
             R_I ( P ) = 0
-            \\Leftrightarrow
-            I(tn) P(\\{tn\\}) + I(tp) P(\\{tp\\}) = 0
+            \Leftrightarrow
+            I(tn) P(\{tn\}) + I(tp) P(\{tp\}) = 0
 
         so that
 
         .. math::
-            \\underbrace{
-                \\frac{
+            \underbrace{
+                \frac{
                     I(tp)
                 }{
                     I(tn) + I(tp)
                 }
             }_{=a(I)}
-            = \\underbrace{
-                \\frac{
-                    P(\\{tn\\})
+            = \underbrace{
+                \frac{
+                    P(\{tn\})
                 }{
-                    P(\\{tn\\}) - P(\\{tp\\})
+                    P(\{tn\}) - P(\{tp\})
                 }
             }_{=f(P)}
 
@@ -276,16 +276,16 @@ class ParameterizationDefault(AbstractParameterization):
         and the right hand side depends only on the performance :math:`P` and
         is an expected value ratio score.
 
-        When the class priors are fixed and given by :math:`(\\pi_-, \\pi_+)`,
+        When the class priors are fixed and given by :math:`(\pi_-, \pi_+)`,
 
         .. math::
-            f(P) = \\frac{ (1-fpr) \\, \\pi_- }{ (1-fpr) \\, \\pi_- - tpr \\, \\pi_+}
+            f(P) = \frac{ (1-fpr) \, \pi_- }{ (1-fpr) \, \pi_- - tpr \, \pi_+}
 
         which is the returned function. When :math:`a` is known, one can use this
         function to retrieve the line in ROC where :math:`R_I(P)=0`.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
 
         Returns:
             LinearFractionalTransformationTwoVariables: The function :math:`f`.
@@ -358,9 +358,9 @@ class ParameterizationDefault(AbstractParameterization):
     def getParameter2ForValueOneInROC(
         priorPos: float,
     ) -> LinearFractionalTransformationTwoVariables:
-        """
-        Returns the function :math:`f : \\mathbb{R}^2 \\rightarrow [0,1] : (fpr, tpr) \\mapsto b(I)`,
-        under the assumptions that :math:`R_I(P)=1`, :math:`P(Y=c_+)=\\pi_+`, :math:`FPR(P)=fpr`, and
+        r"""
+        Returns the function :math:`f : \mathbb{R}^2 \rightarrow [0,1] : (fpr, tpr) \mapsto b(I)`,
+        under the assumptions that :math:`R_I(P)=1`, :math:`P(Y=c_+)=\pi_+`, :math:`FPR(P)=fpr`, and
         :math:`TPR(P)=tpr`. Note that this function is extended to allow :math:`fpr` and :math:`tpr`
         to be out of the :math:`[0,1]` range.
 
@@ -368,24 +368,24 @@ class ParameterizationDefault(AbstractParameterization):
 
         .. math::
             R_I ( P ) = 1
-            \\Leftrightarrow
-            I(fp) P(\\{fp\\}) + I(fn) P(\\{fn\\}) = 0
+            \Leftrightarrow
+            I(fp) P(\{fp\}) + I(fn) P(\{fn\}) = 0
 
         so that
 
         .. math::
-            \\underbrace{
-                \\frac{
+            \underbrace{
+                \frac{
                     I(fn)
                 }{
                     I(fp) + I(fn)
                 }
             }_{=b(I)}
-            = \\underbrace{
-                \\frac{
-                    P(\\{fp\\})
+            = \underbrace{
+                \frac{
+                    P(\{fp\})
                 }{
-                    P(\\{fp\\}) - P(\\{fn\\})
+                    P(\{fp\}) - P(\{fn\})
                 }
             }_{=f(P)}
 
@@ -393,16 +393,16 @@ class ParameterizationDefault(AbstractParameterization):
         and the right hand side depends only on the performance :math:`P` and
         is an expected value ratio score.
 
-        When the class priors are fixed and given by :math:`(\\pi_-, \\pi_+)`,
+        When the class priors are fixed and given by :math:`(\pi_-, \pi_+)`,
 
         .. math::
-            f(P) = \\frac{ fpr \\, \\pi_- }{ fpr \\, \\pi_- - (1-tpr) \\, \\pi_+}
+            f(P) = \frac{ fpr \, \pi_- }{ fpr \, \pi_- - (1-tpr) \, \pi_+}
 
         which is the returned function. When :math:`b` is known, one can use this
         function to retrieve the line in ROC where :math:`R_I(P)=1`.
 
         Args:
-            priorPos (float): The prior of the positive class, :math:`\\pi_+\\in(0,1)`.
+            priorPos (float): The prior of the positive class, :math:`\pi_+\in(0,1)`.
 
         Returns:
             LinearFractionalTransformationTwoVariables: The function :math:`f`.

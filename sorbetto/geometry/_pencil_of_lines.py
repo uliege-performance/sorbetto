@@ -13,21 +13,21 @@ from ._point import Point
 
 
 class PencilOfLines(AbstractGeometricObject2D):
-    """
+    r"""
     This class is used to represent pencils of lines.
-    :math:`\\lambda_1 ( a_1 x + b_1 y + c_1 ) + \\lambda_2 ( a_2 x + b_2 y + c_2 ) = 0`
+    :math:`\lambda_1 ( a_1 x + b_1 y + c_1 ) + \lambda_2 ( a_2 x + b_2 y + c_2 ) = 0`
     See https://en.wikipedia.org/wiki/Pencil_(geometry)
     """
 
     def __init__(
         self, line_1: Line, line_2: Line, name: str | None = None, *assumptions
     ):
-        """
+        r"""
         Constructs a new pencil of lines on two lines.
 
         Args:
-            line_1 (Line): the line corresponding to :math:`(\\lambda_1, \\lambda_2)=(1, 0)`
-            line_2 (Line): the line corresponding to :math:`(\\lambda_1, \\lambda_2)=(0, 1)`
+            line_1 (Line): the line corresponding to :math:`(\lambda_1, \lambda_2)=(1, 0)`
+            line_2 (Line): the line corresponding to :math:`(\lambda_1, \lambda_2)=(0, 1)`
             name (str | None, optional): _description_. Defaults to None.
         """
 
@@ -39,8 +39,8 @@ class PencilOfLines(AbstractGeometricObject2D):
 
     @property
     def line_1(self) -> Line:
-        """
-        The line corresponding to :math:`(\\lambda_1, \\lambda_2)=(1, 0)`
+        r"""
+        The line corresponding to :math:`(\lambda_1, \lambda_2)=(1, 0)`
 
         Returns:
             Line: :math:`a_1 x + b_1 y + c_1 = 0`
@@ -49,8 +49,8 @@ class PencilOfLines(AbstractGeometricObject2D):
 
     @property
     def line_2(self) -> Line:
-        """
-        The line corresponding to :math:`(\\lambda_1, \\lambda_2)=(0, 1)`
+        r"""
+        The line corresponding to :math:`(\lambda_1, \lambda_2)=(0, 1)`
 
         Returns:
             Line: :math:`a_2 x + b_2 y + c_2 = 0`
@@ -68,12 +68,12 @@ class PencilOfLines(AbstractGeometricObject2D):
         return all_assumptions
 
     def getLine(self, lambda_1: float, lambda_2: float) -> Line:
-        """
-        The line corresponding to :math:`(\\lambda_1, \\lambda_2)`.
+        r"""
+        The line corresponding to :math:`(\lambda_1, \lambda_2)`.
 
         Args:
-            lambda_1 (float): the value of :math:`\\lambda_1`
-            lambda_2 (float): the value of :math:`\\lambda_2`
+            lambda_1 (float): the value of :math:`\lambda_1`
+            lambda_2 (float): the value of :math:`\lambda_2`
 
         Returns:
             Line: the chosen line of the pixel

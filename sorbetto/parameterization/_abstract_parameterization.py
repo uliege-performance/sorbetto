@@ -65,29 +65,29 @@ class AbstractParameterization(ABC):
 
     @abstractmethod
     def getBoundsParameter1(self) -> tuple[float, float]:
-        """
+        r"""
         Returns the bounds for the first parameter (the horizontal coordinate, :math:`x`, in Tiles)
 
         Returns:
-            tuple[float, float]: The bounds :math:`(\\min_x, \\max_x)` for the first parameter, with :math:`\\min_x < \\max_x`.
+            tuple[float, float]: The bounds :math:`(\min_x, \max_x)` for the first parameter, with :math:`\min_x < \max_x`.
         """
         ...
 
     @abstractmethod
     def getBoundsParameter2(self) -> tuple[float, float]:
-        """
+        r"""
         Returns the bounds for the second parameter (the vertical coordinate, :math:`y`, in Tiles)
 
         Returns:
-            tuple[float, float]: The bounds :math:`(\\min_y, \\max_y)` for the second parameter, with :math:`\\min_y < \\max_y`.
+            tuple[float, float]: The bounds :math:`(\min_y, \max_y)` for the second parameter, with :math:`\min_y < \max_y`.
         """
         ...
 
     def getExtent(self) -> tuple[float, float, float, float]:
-        """
-        The axis-aligned bounding box, :math:`(\\min_x, \\max_x, \\min_y, \\max_y)`,
+        r"""
+        The axis-aligned bounding box, :math:`(\min_x, \max_x, \min_y, \max_y)`,
         of Tiles with this parameterization :math:`(x, y)`. This bounding box is
-        such that :math:`\\min_x < \\max_x` and :math:`\\min_y < \\max_y`.
+        such that :math:`\min_x < \max_x` and :math:`\min_y < \max_y`.
 
         Returns:
             tuple[float, float, float, float]: The axis-aligned bounding box.
@@ -200,12 +200,12 @@ class AbstractParameterization(ABC):
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedClassPriors(
         self, priorPos: float
     ) -> AbstractGeometricObject2D:
-        """
+        r"""
         Locates the set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given class priors :math:`(\\pi_-, \\pi_+)`, on an equal footing is given by
+        performances, for given class priors :math:`(\pi_-, \pi_+)`, on an equal footing is given by
 
         .. math::
-            \\left\\{ \\pi_+^2 I(tp) I(fn) = \\pi_-^2 I(tn) I(fp) \\right\\}
+            \left\{ \pi_+^2 I(tp) I(fn) = \pi_-^2 I(tn) I(fp) \right\}
 
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
@@ -213,7 +213,7 @@ class AbstractParameterization(ABC):
         # See :cite:t:`Pierard2024TheTile-arxiv`, Figure 8.
 
         Args:
-            priorPos (float): the prior of the positive class, :math:`\\pi_+`
+            priorPos (float): the prior of the positive class, :math:`\pi_+`
 
         Returns:
             AbstractGeometricObject2D: The locus (a curve).
@@ -224,18 +224,18 @@ class AbstractParameterization(ABC):
     def locateOrderingsPuttingNoSkillPerformancesOnAnEqualFootingForFixedPredictionRates(
         self, ratePos: float
     ) -> AbstractGeometricObject2D:
-        """
+        r"""
         Locates the set of performance orderings induced by ranking scores that put all no-skill
-        performances, for given prediction rates :math:`(\\tau_-, \\tau_+)`, on an equal footing is given by
+        performances, for given prediction rates :math:`(\tau_-, \tau_+)`, on an equal footing is given by
 
         .. math::
-            \\left\\{ \\tau_+^2 I(tp) I(fp) = \\tau_-^2 I(tn) I(fn) \\right\\}
+            \left\{ \tau_+^2 I(tp) I(fp) = \tau_-^2 I(tn) I(fn) \right\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
         # See Theorem 4 of :cite:t:`Pierard2025TheManifold`.
 
         Args:
-            ratePos (float): the prediction rate for the positive class, :math:`\\tau_+`
+            ratePos (float): the prediction rate for the positive class, :math:`\tau_+`
 
         Returns:
             AbstractGeometricObject2D: The locus (a curve).
@@ -244,62 +244,62 @@ class AbstractParameterization(ABC):
 
     @abstractmethod
     def locateOrderingsInvertedWithOpChangePredictedClass(self) -> Conic:
-        """
+        r"""
         Locates the set of performance orderings induced by ranking scores
         that are inverted when the operation that consists in changing the
         predicted class is applied to all performances.
-        :math:`\\hat{Y}=c_-` becomes :math:`\\hat{Y}=c_+` and vice-versa.
+        :math:`\hat{Y}=c_-` becomes :math:`\hat{Y}=c_+` and vice-versa.
         A performance :math:`P` becomes a performance :math:`P'` such that:
 
-        - :math:`P'(\\{tn\\}) = P(\\{fp\\})`
-        - :math:`P'(\\{fp\\}) = P(\\{tn\\})`
-        - :math:`P'(\\{fn\\}) = P(\\{tp\\})`
-        - :math:`P'(\\{tp\\}) = P(\\{fn\\})`
+        - :math:`P'(\{tn\}) = P(\{fp\})`
+        - :math:`P'(\{fp\}) = P(\{tn\})`
+        - :math:`P'(\{fn\}) = P(\{tp\})`
+        - :math:`P'(\{tp\}) = P(\{fn\})`
 
         As demonstrated in Theorem 1 of :cite:t:`Pierard2025TheManifold`,
         the set is
 
         .. math::
-            \\left\\{ I: I(tp) I(fp) = I(tn) I(fn) \\right\\}
+            \left\{ I: I(tp) I(fp) = I(tn) I(fn) \right\}
         """
         ...
 
     @abstractmethod
     def locateOrderingsInvertedWithOpChangeGroundtruthClass(self) -> Conic:
-        """
+        r"""
         Locates the set of performance orderings induced by ranking scores
         that are inverted when the operation that consists in changing the
         groundtruth class is applied to all performances.
         :math:`Y=c_-` becomes :math:`Y=c_+` and vice-versa.
         A performance :math:`P` becomes a performance :math:`P'` such that:
 
-        - :math:`P'(\\{tn\\}) = P(\\{fn\\})`
-        - :math:`P'(\\{fp\\}) = P(\\{tp\\})`
-        - :math:`P'(\\{fn\\}) = P(\\{tn\\})`
-        - :math:`P'(\\{tp\\}) = P(\\{fp\\})`
+        - :math:`P'(\{tn\}) = P(\{fn\})`
+        - :math:`P'(\{fp\}) = P(\{tp\})`
+        - :math:`P'(\{fn\}) = P(\{tn\})`
+        - :math:`P'(\{tp\}) = P(\{fp\})`
 
         As demonstrated in Theorem 2 of :cite:t:`Pierard2025TheManifold`,
         the set is
 
         .. math::
-            \\left\\{ I: I(tp) I(fn) = I(tn) I(fp) \\right\\}
+            \left\{ I: I(tp) I(fn) = I(tn) I(fp) \right\}
         """
         ...
 
     @abstractmethod
     def locateRelativeImportanceSatisfying(self, itn: float, itp: float) -> Line:
-        """
+        r"""
         Locates the set of performance orderings induced by the ranking scores
         corresponding to some given values of importance for the satisfying samples
-        (the elements :math:`\\omega` of the sample space :math:`\\Omega` such that
-        :math:`S(\\omega)=1` are :math:`S^{-1}(1)=\\{tn, tp\\}`). The importance
+        (the elements :math:`\omega` of the sample space :math:`\Omega` such that
+        :math:`S(\omega)=1` are :math:`S^{-1}(1)=\{tn, tp\}`). The importance
         values :math:`I(tn)` and :math:`I(tp)` are provided up to a positive
         scale factor. This is related to the first parameter (the horizontal
         coordinate, :math:`x`, in Tiles).
 
         Args:
-            itn (float): The (relative) importance given to the true negatives, :math:`I(tn) \\ge 0`
-            itp (float): The (relative) importance given to the true positives, :math:`I(tp) \\ge 0`
+            itn (float): The (relative) importance given to the true negatives, :math:`I(tn) \ge 0`
+            itp (float): The (relative) importance given to the true positives, :math:`I(tp) \ge 0`
 
         Returns:
             AbstractGeometricObject2D: The locus on the Tile.
@@ -308,18 +308,18 @@ class AbstractParameterization(ABC):
 
     @abstractmethod
     def locateRelativeImportanceUnsatisfying(self, ifp: float, ifn: float) -> Line:
-        """
+        r"""
         Locates the set of performance orderings induced by the ranking scores
         corresponding to some given values of importance for the unsatisfying samples
-        (the elements :math:`\\omega` of the sample space :math:`\\Omega` such that
-        :math:`S(\\omega)=0` are :math:`S^{-1}(0)=\\{fp, fn\\}`). The importance
+        (the elements :math:`\omega` of the sample space :math:`\Omega` such that
+        :math:`S(\omega)=0` are :math:`S^{-1}(0)=\{fp, fn\}`). The importance
         values :math:`I(fp)` and :math:`I(fn)` are provided up to a positive
         scale factor. This is related to the second parameter (the vertical
         coordinate, :math:`y`, in Tiles).
 
         Args:
-            ifp (float): The (relative) importance given to the true negatives, :math:`I(fp) \\ge 0`
-            ifn (float): The (relative) importance given to the true positives, :math:`I(fn) \\ge 0`
+            ifp (float): The (relative) importance given to the true negatives, :math:`I(fp) \ge 0`
+            ifn (float): The (relative) importance given to the true positives, :math:`I(fn) \ge 0`
 
         Returns:
             AbstractGeometricObject2D: The locus on the Tile.

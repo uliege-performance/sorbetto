@@ -16,9 +16,16 @@ from ._abstract_performance import AbstractPerformance
 
 
 class TwoClassClassificationPerformance(AbstractPerformance):
-    """A two-class (crisp) classification performance :math:`P` is a probability measure over the measurable space :math:`(\\Omega,\\Sigma)` where the sample (a.k.a. universe) is :math:`\\Omega=\\{tn,fp,fn,tp\\}` and the event space is :math:`\\Sigma=2^\\Omega`.
-    By convention, :math:`tn`, :math:`fp`, :math:`fn`, and :math:`tp` represent the four cases that can arise: a true negative, a false positive, a false negative, and a true positive, respectively.
-    The four elementary probability measures :math:`P(\\{tn\\})`, :math:`P(\\{fp\\})`, :math:`P(\\{fn\\})`, and :math:`P(\\{tp\\})` are the elements of the normalized confusion matrix.
+    r"""
+    A two-class (crisp) classification performance :math:`P` is a probability
+    measure over the measurable space :math:`(\Omega,\Sigma)` where the sample
+    (a.k.a. universe) is :math:`\Omega=\{tn,fp,fn,tp\}` and the event space is
+    :math:`\Sigma=2^\Omega`.  By convention, :math:`tn`, :math:`fp`, :math:`fn`,
+    and :math:`tp` represent the four cases that can arise: a true negative, a
+    false positive, a false negative, and a true positive, respectively.  The
+    four elementary probability measures :math:`P(\{tn\})`, :math:`P(\{fp\})`,
+    :math:`P(\{fn\})`, and :math:`P(\{tp\})` are the elements of the normalized
+    confusion matrix.
 
     See :cite:t:`Pierard2025Foundations` for more information on this topic."""
 
@@ -57,41 +64,41 @@ class TwoClassClassificationPerformance(AbstractPerformance):
 
     @property
     def ptn(self) -> float:
-        """
-        The probability of a true negative, :math:`P( \\{ tn \\} )`.
+        r"""
+        The probability of a true negative, :math:`P( \{ tn \} )`.
 
         Returns:
-            float: The probability of a true negative, :math:`P( \\{ tn \\} )`.
+            float: The probability of a true negative, :math:`P( \{ tn \} )`.
         """
         return self._ptn
 
     @property
     def pfp(self) -> float:
-        """
-        The probability of a false positive, :math:`P( \\{ fp \\} )`.
+        r"""
+        The probability of a false positive, :math:`P( \{ fp \} )`.
 
         Returns:
-            float: The probability of a false positive, :math:`P( \\{ fp \\} )`.
+            float: The probability of a false positive, :math:`P( \{ fp \} )`.
         """
         return self._pfp
 
     @property
     def pfn(self) -> float:
-        """
-        The probability of a false negative, :math:`P( \\{ fn \\} )`.
+        r"""
+        The probability of a false negative, :math:`P( \{ fn \} )`.
 
         Returns:
-            float: The probability of a false negative, :math:`P( \\{ fn \\} )`.
+            float: The probability of a false negative, :math:`P( \{ fn \} )`.
         """
         return self._pfn
 
     @property
     def ptp(self) -> float:
-        """
-        The probability of a true positive, :math:`P( \\{ tp \\} )`.
+        r"""
+        The probability of a true positive, :math:`P( \{ tp \} )`.
 
         Returns:
-            float: The probability of a true positive, :math:`P( \\{ tp \\} )`.
+            float: The probability of a true positive, :math:`P( \{ tp \} )`.
         """
         return self._ptp
 
@@ -152,16 +159,16 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         ratePos: float | None = None,
         name: str | None = None,
     ) -> Self:
-        """
+        r"""
         Computes the performance of the no-skill classifier fo the given class
         priors and the prediction rates. A performance :math:`P` is said "no-skill"
-        if and only if :math:`P(Y,\\hat{Y}) = P(Y) P(\\hat{Y})`.
+        if and only if :math:`P(Y,\hat{Y}) = P(Y) P(\hat{Y})`.
 
         Args:
-            priorNeg (float | None, optional): The prior of the negative class, :math:`\\pi_- = P( Y=c_- )`. If set to None, it is computed as :math:`1-\\pi_+`. Defaults to None.
-            priorPos (float | None, optional): The prior of the positive class, :math:`\\pi_+ = P( Y=c_+ )`. If set to None, it is computed as :math:`1-\\pi_-`. Defaults to None.
-            rateNeg (float | None, optional): The rate of negative predictions, :math:`\\tau_- = P( \\hat{Y}=c_- )`. If set to None, it is computed as :math:`1-\\tau_+`. Defaults to None.
-            ratePos (float | None, optional): The rate of negative predictions, :math:`\\tau_+ = P( \\hat{Y}=c_+ )`. If set to None, it is computed as :math:`1-\\tau_-`. Defaults to None.
+            priorNeg (float | None, optional): The prior of the negative class, :math:`\pi_- = P( Y=c_- )`. If set to None, it is computed as :math:`1-\pi_+`. Defaults to None.
+            priorPos (float | None, optional): The prior of the positive class, :math:`\pi_+ = P( Y=c_+ )`. If set to None, it is computed as :math:`1-\pi_-`. Defaults to None.
+            rateNeg (float | None, optional): The rate of negative predictions, :math:`\tau_- = P( \hat{Y}=c_- )`. If set to None, it is computed as :math:`1-\tau_+`. Defaults to None.
+            ratePos (float | None, optional): The rate of negative predictions, :math:`\tau_+ = P( \hat{Y}=c_+ )`. If set to None, it is computed as :math:`1-\tau_-`. Defaults to None.
             name (str | None, optional): _description_. The name of the no-skill performance. Defaults to None.
 
         Returns:
@@ -393,12 +400,12 @@ class TwoClassClassificationPerformance(AbstractPerformance):
                 else:
                     ax.text(x, y, label, ha="right", va="top", color=color)
 
-        drawPointAndLabel(fpr, tpr, "$\\mathcal{C}$", color_classifier)
+        drawPointAndLabel(fpr, tpr, r"$\mathcal{C}$", color_classifier)
         drawPointAndLabel(
-            1.0 - fpr, 1.0 - tpr, "$\\overline{\\mathcal{C}}$", color_classifier_opp
+            1.0 - fpr, 1.0 - tpr, r"$\overline{\mathcal{C}}$", color_classifier_opp
         )
-        drawPointAndLabel(0.0, 0.0, "$\\mathcal{C}_-$", color_classifier_neg)
-        drawPointAndLabel(1.0, 1.0, "$\\mathcal{C}_+$", color_classifier_pos)
+        drawPointAndLabel(0.0, 0.0, r"$\mathcal{C}_-$", color_classifier_neg)
+        drawPointAndLabel(1.0, 1.0, r"$\mathcal{C}_+$", color_classifier_pos)
 
         return fig, ax
 
