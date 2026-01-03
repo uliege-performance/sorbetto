@@ -211,6 +211,9 @@ class TwoClassClassificationPerformance(AbstractPerformance):
         Returns the no-skill performance that is considered as achievable by
         chance by Cohen in his definition of the score kappa.
 
+        For SciPy users, this is what `scipy.stats.contingency.expected_freq`
+        computes when fed with a normalized confusion matrix.
+
         Returns:
             Self: the computed no-skill performance.
         """

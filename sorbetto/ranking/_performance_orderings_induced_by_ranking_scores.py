@@ -407,6 +407,12 @@ class PerformanceOrderingsInducedByRankingScores:
         """
         Returns the performance ordering induced by the score *Positive Likelihood Ratio*.
         Positive Likelihood Ratio.
+
+        For SciPy users, this score is what `scipy.stats.contingency.relative_risk`
+        computes when `exposed_cases` is the number of true positives, `exposed_total`
+        is the number of real positives, `control_cases` is the number of false positives,
+        and `control_total` is the number of real negatives.
+
         References: :cite:t:`Gardner2006Receiver-operating,Glas2003TheDiagnosticOddsRatio,Powers2020Evaluation-arxiv,Brown2006ROC,Altman1994Diagnostic`
         See :cite:t:`Pierard2025Foundations`, Section A.7.4, and :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
@@ -417,6 +423,22 @@ class PerformanceOrderingsInducedByRankingScores:
         to_mimic = RankingScore.getPositivePredictiveValue()
         name = "Positive Likelihood Ratio"
         abbreviation = "PLR"
+        symbol = None
+        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
+            to_mimic, name, abbreviation, symbol
+        )
+        # FIXME: We should add a constraint to the result: this is correct if and
+        # only if the priors are fixed, but no matter what these priors are. But,
+        # we do not have yet any mechanism to encode it in the library ...
+
+    @staticmethod
+    def getRelativeRisk(self) -> "PerformanceOrderingInducedByOneScore":
+        """
+        See getPositiveLikelihoodRatio
+        """
+        to_mimic = RankingScore.getPositivePredictiveValue()
+        name = "Relative Risk"
+        abbreviation = "RR"
         symbol = None
         return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
             to_mimic, name, abbreviation, symbol
