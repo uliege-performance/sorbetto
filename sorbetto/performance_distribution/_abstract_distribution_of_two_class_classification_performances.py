@@ -9,6 +9,10 @@ from sorbetto.performance import (
     TwoClassClassificationPerformance,
 )
 
+# TODO: maybe should we add a method "getRecommendedParameterization()" in a future
+# version of the library? Or the other way around: a parameterization that can be
+# built from any distribution?
+
 
 class AbstractDistributionOfTwoClassClassificationPerformances(ABC, Named):
     """
