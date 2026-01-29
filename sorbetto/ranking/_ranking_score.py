@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -965,7 +965,16 @@ class RankingScore(AbstractScore):
         See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\beta=1`.
         """
         rs = RankingScore.getF(beta=1.0)
-        rs.rename("Dice-Sørensen coefficient", "DSC")
+        rs.rename("Dice-Sørensen Coefficient", "DSC")
+        return rs
+
+    @staticmethod
+    def getDiceSimilarityCoefficient() -> "RankingScore":
+        r"""
+        See :meth:`sorbetto.ranking.RankingScore.getF` with :math:`\beta=1`.
+        """
+        rs = RankingScore.getF(beta=1.0)
+        rs.rename("Dice Similarity Coefficient", "DSC")
         return rs
 
     @staticmethod
