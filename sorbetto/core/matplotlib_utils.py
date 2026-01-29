@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -82,6 +82,14 @@ def _setupROC(
         assert priorPos >= 0.0
         assert priorPos <= 1.0
         priorNeg = 1.0 - priorPos
+        if priorNeg < 1e-8:
+            message = "The prior of the negative class is {:g}".format(priorNeg)
+            message += "ROC coordinates are unreliable with such a low value."
+            logging.warning(message)
+        if priorPos < 1e-8:
+            message = "The prior of the positive class is {:g}".format(priorPos)
+            message += "ROC coordinates are unreliable with such a low value."
+            logging.warning(message)
     else:
         show_priors = False
         show_unbiased = False
@@ -92,15 +100,6 @@ def _setupROC(
     assert isinstance(show_priors, bool)
     assert isinstance(show_unbiased, bool)
     assert isinstance(show_opposite_unbiased, bool)
-
-    if priorNeg < 1e-8:
-        message = "The prior of the negative class is {:g}".format(priorNeg)
-        message += "ROC coordinates are unreliable with such a low value."
-        logging.warning(message)
-    if priorNeg < 1e-8:
-        message = "The prior of the positive class is {:g}".format(priorPos)
-        message += "ROC coordinates are unreliable with such a low value."
-        logging.warning(message)
 
     if show_no_skills:
         ax.plot([0, 1], [0, 1], "--", c="palevioletred")
