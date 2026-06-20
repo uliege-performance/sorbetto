@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 from ._abstract_annotation import AbstractAnnotation
@@ -15,6 +15,9 @@ from ._annotation_importance_compass import AnnotationImportanceCompass
 from ._annotation_isovalue_curves import AnnotationIsovalueCurves
 from ._annotation_max import AnnotationMax
 from ._annotation_min import AnnotationMin
+from ._annotation_negative_skill_zones_fixed_class_priors import (
+    AnnotationNegativeSkillZonesFixedClassPriors,
+)
 from ._annotation_symbols import AnnotationSymbols
 from ._annotation_text import AnnotationText
 
@@ -31,6 +34,7 @@ __all__ = [
     "AnnotationIsovalueCurves",
     "AnnotationMin",
     "AnnotationMax",
+    "AnnotationNegativeSkillZonesFixedClassPriors",
     "AnnotationSymbols",
     "AnnotationText",
 ]
