@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any
@@ -34,6 +34,12 @@ class Entity(Named):
         """
 
         if color is None:
+            # TODO: It's particularly annoying that colors change each time we run code.
+            #  Idea: create a hash with the method name. From that hash,
+            #  derive then the color. Like that, the color will be deterministic
+            #  and entities with the name but different performances will have the
+            #  same color. This is what we want for the performances of a given
+            #  method that has been evaluated on different sources of data.
             color = list(np.random.random(3))
         self._color = color
         self._performance = performance

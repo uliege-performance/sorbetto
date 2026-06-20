@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import io
@@ -421,7 +421,7 @@ class Tile(Named):
         return global_constraint
 
     def getGlobalConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
-        """Returns the global constraint on the prediction rates, or None if
+        """Returns the global constraint on the class priors, or None if
         there is no such constraint. The global constraint includes all
         constraints related to the annotations.
 
