@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -278,6 +278,9 @@ class NumericTile(Tile):
         else:
             colormap = self.flavor.colormap
 
+        # TODO: this code does not allow to hide the colorbar (as with colorbar_mode=="off")
+        #  and to display the flavor with the colors between the min and the max values
+        #  (as with colorbar_mode=="pyplot_default")
         if self._colorbar_mode == "pyplot_default":
             ax.imshow(
                 self.mat_value,
