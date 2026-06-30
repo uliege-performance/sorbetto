@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -25,20 +25,36 @@ if TYPE_CHECKING:
 
 class AnnotationIsovalueCurves(AbstractAnnotation):
     """
-    This type of annotation can be used to draw isovalue curves on numeric tile.
+    This type of annotation can be used to draw isovalue curves with value labels
+    on numeric tile.
     """
 
-    def __init__(self, levels=None, name: str | None = None, **plt_kwargs):
+    def __init__(
+        self, levels: list | str | None = None, name: str | None = None, **plt_kwargs
+    ):
         """_summary_
 
         Args:
-            levels (_type_, optional): _description_. Defaults to None.
-            name (str | None, optional): _description_. Defaults to None.
+            levels(list | str | None): a list of floating point values,
+                "auto-values", "auto-areas", or None. Defaults to None,
+                the default behavior, which is currently the same as "auto-values".
+                With "auto-values", the levels are "pretty" values linearly spread
+                approximately between the minimum and maximum values of the Tile.
+                With "auto-areas", the levels are chosen in such a way that the
+                area on the Tile between consecutive levels is approximately constant.
+            name (str | None, optional): the annotation's name. Defaults to None.
+            plt_kwargs: options to pass to matplotlib.pyplot.
         """
 
-        if levels is not None:
-            assert isinstance(levels, list)
-            assert all(isinstance(x, float) for x in levels)
+        if levels is None:
+            levels = "auto-values"
+        else:
+            if isinstance(levels, list):
+                assert all(isinstance(x, float) for x in levels)
+            elif isinstance(levels, str):
+                assert levels in ["auto-values", "auto-areas"]
+            else:
+                assert False
         self._levels = levels
 
         if name is None:
@@ -51,17 +67,25 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
 
         AbstractAnnotation.__init__(self, name)
 
-    @staticmethod
-    def _get_auto_levels(mat_values: np.ndarray) -> np.ndarray:
-        max_val = np.nanmax(mat_values)
-        min_val = np.nanmin(mat_values)
+    def _get_levels(self, mat_values: np.ndarray) -> np.ndarray:
+        levels = self._levels
+        if isinstance(levels, list):
+            return levels
+        if levels == "auto-values":
+            max_val = np.nanmax(mat_values)
+            min_val = np.nanmin(mat_values)
 
-        if np.abs(max_val - min_val) < 1e-6:
-            return np.empty(0)
+            if np.abs(max_val - min_val) < 1e-6:
+                return np.empty(0)
 
-        locator = ticker.MaxNLocator(nbins=20)
-        levels = locator.tick_values(min_val, max_val)
-        return levels
+            locator = ticker.MaxNLocator(nbins=20)
+            levels = locator.tick_values(min_val, max_val)
+            return levels
+        if levels == "auto-areas":
+            qs = np.linspace(0, 100, 11)
+            levels = [np.nanpercentile(mat_values, q) for q in qs]
+            return levels
+        assert False
 
     def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
         from sorbetto.tile import NumericTile
@@ -78,9 +102,7 @@ class AnnotationIsovalueCurves(AbstractAnnotation):
             return
         assert isinstance(mat_values, np.ndarray)
 
-        levels = self._levels
-        if levels is None:
-            levels = self._get_auto_levels(mat_values)
+        levels = self._get_levels(mat_values)
 
         vec_x = tile._vec_x
         assert isinstance(vec_x, np.ndarray)
