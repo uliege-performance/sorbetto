@@ -57,6 +57,8 @@ and referenced from text using \autoref{fig:example}.
 
 This is the state of field.
 
+[comment]: # (Seb found this project [Thieu2024PerMetrics] that is obviously related to ours: https://permetrics.readthedocs.io/latest/)
+
 # Mention 
 [comment]: # (Representative set of past or ongoing research projects using the software and recent scholarly publications enabled by it.)
 
