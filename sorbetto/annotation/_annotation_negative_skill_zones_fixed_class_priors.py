@@ -164,7 +164,7 @@ class AnnotationNegativeSkillZonesFixedClassPriors(AbstractAnnotation):
         for inequality in inequalities:
             a, b, c, name = inequality
             v = a * x + b * y + c
-            if v < 0 and not math.isclose(v, 0.0):
+            if v < 0 and not math.isclose(v, 0.0, abs_tol=1e-8):
                 return False
         return True
 
@@ -202,6 +202,8 @@ class AnnotationNegativeSkillZonesFixedClassPriors(AbstractAnnotation):
         try:
             hull = ConvexHull(points)
         except:  # noqa: E722
+            # print("What happens ???????")
+            # print(points)
             return None
         if math.isclose(prior_pos, 0.5):
             points = points[hull.vertices, :]
@@ -487,16 +489,48 @@ class AnnotationNegativeSkillZonesFixedClassPriors(AbstractAnnotation):
     def isCompatibleWithConstraintOnImportances(
         self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
     ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
         return True
 
     def isCompatibleWithConstraintOnClassPriors(
         self, constraint: ConstraintFixedClassPriors
     ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
         return True
 
     def isCompatibleWithConstraintOnPredictionRates(
         self, constraint: ConstraintFixedPredictionRates
     ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
         return True
 
     def getConstraintOnImportances(
