@@ -18,6 +18,7 @@ from ._annotation_min import AnnotationMin
 from ._annotation_negative_skill_zones_fixed_class_priors import (
     AnnotationNegativeSkillZonesFixedClassPriors,
 )
+from ._annotation_no_skill_fixed_class_priors import AnnotationNoSkillFixedClassPriors
 from ._annotation_symbols import AnnotationSymbols
 from ._annotation_text import AnnotationText
 
@@ -35,6 +36,7 @@ __all__ = [
     "AnnotationMin",
     "AnnotationMax",
     "AnnotationNegativeSkillZonesFixedClassPriors",
+    "AnnotationNoSkillFixedClassPriors",
     "AnnotationSymbols",
     "AnnotationText",
 ]

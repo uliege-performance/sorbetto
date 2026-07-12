@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import numpy as np
@@ -13,6 +13,9 @@ from sorbetto.performance import (
     ConstraintFixedClassPriors,
     ConstraintFixedPredictionRates,
 )
+from sorbetto.performance._two_class_classification_performance import (
+    TwoClassClassificationPerformance,
+)
 from sorbetto.ranking import Importance, RankingScore
 
 from ._abstract_parameterization import (
@@ -21,8 +24,12 @@ from ._abstract_parameterization import (
 
 
 class ParameterizationDefault(AbstractParameterization):
-    """
-    This is the parameterization described in :cite:t:`Pierard2024TheTile-arxiv`.
+    r"""
+    This is the parameterization described in :cite:t:`Pierard2024TheTile-arxiv`:
+
+    $$a = \frac{ I(tp) }{ I(tn) + I(tp) } $$
+
+    $$b = \frac{ I(fn) }{ I(fp) + I(fn) } $$
     """
 
     def __init__(self):
@@ -236,6 +243,109 @@ class ParameterizationDefault(AbstractParameterization):
         c = ifn / (ifp + ifn)
         name = "relative importance of unsatisfying"
         return Line(a, b, c, name=name)
+
+    def _locateEqualFooting(
+        self,
+        p1: TwoClassClassificationPerformance,
+        p2: TwoClassClassificationPerformance,
+        name: str,
+        *assumptions,
+    ) -> BilinearCurve:
+        """
+        Locate the performance orderings induced by ranking scores that put the
+        two given performances on an equal footing.
+
+        Args:
+            p1 (TwoClassClassificationPerformance): the first performance
+            p2 (TwoClassClassificationPerformance): the second performance
+
+        Returns:
+            BilinearCurve: The locus (a curve)
+        """
+
+        ptn1 = p1.ptn
+        pfp1 = p1.pfp
+        pfn1 = p1.pfn
+        ptp1 = p1.ptp
+
+        ptn2 = p2.ptn
+        pfp2 = p2.pfp
+        pfn2 = p2.pfn
+        ptp2 = p2.ptp
+
+        #     [ (1-a) ptn1 + a ptp1 ] / [ (1-b) pfp1 + b pfn1 ] = [ (1-a) ptn2 + a ptp2 ] / [ (1-b) pfp2 + b pfn2 ]
+        # <=> [ (1-a) ptn1 + a ptp1 ] [ (1-b) pfp2 + b pfn2 ] - [ (1-a) ptn2 + a ptp2 ] [ (1-b) pfp1 + b pfn1 ] = 0
+        # <=> [ a (ptp1-ptn1) + ptn1 ] [ b (pfn2-pfp2) + pfp2 ] - [ a (ptp2-ptn2) + ptn2 ] [ b (pfn1-pfp1) + pfp1 ] = 0
+        # <=> [ a Xa1 + Ya1 ] [ b Xb2 + Yb2 ] - [ a Xa2 + Ya2 ] [ b Xb1 + Yb1 ] = 0
+
+        Xa1 = ptp1 - ptn1
+        Ya1 = ptn1
+        Xb1 = pfn1 - pfp1
+        Yb1 = pfp1
+
+        Xa2 = ptp2 - ptn2
+        Ya2 = ptn2
+        Xb2 = pfn2 - pfp2
+        Yb2 = pfp2
+
+        # <=> [ a Xa1 + Ya1 ] [ b Xb2 + Yb2 ] - [ a Xa2 + Ya2 ] [ b Xb1 + Yb1 ] = 0
+        # <=> [ Xa1 Xb2 - Xa2 Xb1 ] a b + [ Xa1 Yb2 - Xa2 Yb1 ] a + [ Ya1 Xb2 - Ya2 Xb1 ] b + [ Ya1 Yb2 - Ya2 Yb1 ] = 0
+        # <=> Kab a b + Ka a + Kb b + K = 0
+
+        Kab = Xa1 * Xb2 - Xa2 * Xb1
+        Ka = Xa1 * Yb2 - Xa2 * Yb1
+        Kb = Ya1 * Xb2 - Ya2 * Xb1
+        K = Ya1 * Yb2 - Ya2 * Yb1
+
+        return BilinearCurve(Kab, Ka, Kb, K, name, *assumptions)
+
+    def _locateNoSkillForNegativeClassFixedClassPriors(
+        self, performance: TwoClassClassificationPerformance
+    ) -> BilinearCurve:
+        """
+        Locate the performance orderings induced by ranking scores that put the
+        given performance on an equal footing with the one of the classifier
+        predicting always the negative class, for the same class priors.
+        Args:
+            performance (TwoClassClassificationPerformance): the performance
+
+        Returns:
+            BilinearCurve: The locus (a curve)
+        """
+        prior_neg = performance._prior_neg()
+        prior_pos = performance._prior_pos()
+        ptn = prior_neg
+        pfp = 0.0
+        pfn = prior_pos
+        ptp = 0.0
+        name = "no-skill neg"
+        no_skill_neg = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
+        assumption = ConstraintFixedClassPriors(prior_pos)
+        return self._locateEqualFooting(performance, no_skill_neg, name, assumption)
+
+    def _locateNoSkillForPositiveClassFixedClassPriors(
+        self, performance: TwoClassClassificationPerformance
+    ) -> BilinearCurve:
+        """
+        Locate the performance orderings induced by ranking scores that put the
+        given performance on an equal footing with the one of the classifier
+        predicting always the positive class, for the same class priors.
+        Args:
+            performance (TwoClassClassificationPerformance): the performance
+
+        Returns:
+            BilinearCurve: The locus (a curve)
+        """
+        prior_neg = performance._prior_neg()
+        prior_pos = performance._prior_pos()
+        ptn = 0.0
+        pfp = prior_neg
+        pfn = 0.0
+        ptp = prior_pos
+        name = "no-skill pos"
+        no_skill_pos = TwoClassClassificationPerformance(ptn, pfp, pfn, ptp, name)
+        assumption = ConstraintFixedClassPriors(prior_pos)
+        return self._locateEqualFooting(performance, no_skill_pos, name, assumption)
 
     @staticmethod
     def getParameter1ForValueZeroInROC(
