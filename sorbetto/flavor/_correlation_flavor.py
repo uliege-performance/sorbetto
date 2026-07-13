@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
@@ -59,8 +59,8 @@ class CorrelationFlavor(AbstractNumericFlavor):
 
         Args:
             performances (FiniteSetOfTwoClassClassificationPerformances): _description_
-            score (Callable[ [ TwoClassClassificationPerformance  |  FiniteSetOfTwoClassClassificationPerformances ], np.ndarray, ]): _description_
-            correlation_coefficient (Literal[ &quot;pearson_r&quot;, &quot;spearman_rho&quot;, &quot;kendall_tau&quot; ], optional): _description_. Defaults to "pearson_r".
+            other_score (Callable[ [ TwoClassClassificationPerformance  |  FiniteSetOfTwoClassClassificationPerformances ], np.ndarray, ]): _description_
+            correlation_coefficient_name (Literal[ &quot;pearson_r&quot;, &quot;spearman_rho&quot;, &quot;kendall_tau&quot; ], optional): _description_. Defaults to "pearson_r".
             name (str, optional): _description_. Defaults to "Correlation Flavor".
             colormap (Any, optional): _description_. Defaults to None.
         """
