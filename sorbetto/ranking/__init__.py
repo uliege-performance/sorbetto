@@ -1,18 +1,18 @@
 # Copyright (c) 2025-2025, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
-from .abstract_ranking import AbstractRanking
-from .constraint_canonical import ConstraintCanonical
-from .constraint_relative_importance_satisfying_unsatisfying import (
+from ._abstract_ranking import AbstractRanking
+from ._constraint_canonical import ConstraintCanonical
+from ._constraint_relative_importance_satisfying_unsatisfying import (
     ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
-from .entity import Entity
-from .importance import Importance
-from .performance_orderings_induced_by_ranking_scores import (
+from ._entity import Entity
+from ._importance import Importance
+from ._performance_orderings_induced_by_ranking_scores import (
     PerformanceOrderingsInducedByRankingScores,
 )
-from .ranking_induced_by_score import RankingInducedByScore
-from .ranking_score import RankingScore
+from ._ranking_induced_by_score import RankingInducedByScore
+from ._ranking_score import RankingScore
 
 __all__ = [
     "AbstractRanking",

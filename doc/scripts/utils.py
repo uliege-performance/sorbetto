@@ -10,7 +10,7 @@ matplotlib.use("svg")
 
 import matplotlib.pyplot as plt
 
-FIG_PATH = pathlib.Path(__file__).parent.parent / "src" / "figures"
+FIG_PATH = pathlib.Path(__file__).parent.parent / "figures"
 logging.basicConfig(level=logging.INFO)
 
 
