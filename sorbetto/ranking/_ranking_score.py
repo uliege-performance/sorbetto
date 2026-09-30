@@ -756,6 +756,30 @@ class RankingScore(AbstractScore):
         return rs
 
     @staticmethod
+    def getStandardizedNegativePredictiveValue(
+        priorPos: float,
+    ) -> "RankingScore":
+        r"""
+        Returns the performance ordering induced by the score *Standardized Negative Predictive Value*.
+        The Standardized Negative Predictive Value (SNPV) is defined in :cite:t:`Heston2011Standardizing` as
+
+        .. math::
+            SNPV=\frac{TNR}{TNR+FNR}=\frac{NPV \pi_+ }{NPV( \pi_+ - \pi_- )+ \pi_- }
+
+        See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
+        """
+
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+        priorNeg = 1.0 - priorPos
+
+        importance = Importance(itn=priorPos, ifp=0, ifn=priorNeg, itp=0)
+        name = "Standardized Negative Predictive Value"
+        abbreviation = "SNPV"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
+
+    @staticmethod
     def getPositivePredictiveValue() -> "RankingScore":
         r"""
         Positive Predictive Value (PPV).
@@ -795,6 +819,28 @@ class RankingScore(AbstractScore):
         rs = RankingScore.getPositivePredictiveValue()
         rs.rename("Precision", "Pr")
         return rs
+
+    @staticmethod
+    def getStandardizedPositivePredictiveValue(
+        priorPos: float,
+    ) -> "RankingScore":
+        r"""
+        Returns the *Standardized Positive Predictive Value*.
+        Standardized Positive Predictive Value (SPPV) is defined in :cite:t:`Heston2011Standardizing` as
+
+        .. math::
+            SPPV=\frac{ TPR }{ FPR + TPR }=\frac{ PPV  \pi_- }{ PPV ( \pi_- - \pi_+ )+ \pi_+ }
+        """
+
+        assert isinstance(priorPos, float)
+        assert priorPos >= 0.0
+        assert priorPos <= 1.0
+        priorNeg = 1.0 - priorPos
+
+        importance = Importance(itn=0, ifp=priorPos, ifn=0, itp=priorNeg)
+        name = "Standardized Positive Predictive Value"
+        abbreviation = "SPPV"
+        return RankingScore(importance, name=name, abbreviation=abbreviation)
 
     @staticmethod
     def getIntersectionOverUnion() -> "RankingScore":

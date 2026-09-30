@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import Any
@@ -334,20 +334,8 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        assert isinstance(priorPos, float)
-        assert priorPos >= 0.0
-        assert priorPos <= 1.0
-
-        to_mimic = RankingScore.getNegativePredictiveValue()
-        name = "Standardized Negative Predictive Value"
-        abbreviation = "SNPV"
-        symbol = None
-        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
-            to_mimic, name, abbreviation, symbol
-        )
-        # FIXME: We should add a constraint to the result: this is correct if and
-        # only if the priors are fixed, but no matter what these priors are. But,
-        # we do not have yet any mechanism to encode it in the library ...
+        score = RankingScore.getStandardizedNegativePredictiveValue(priorPos)
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getStandardizedPositivePredictiveValue(
@@ -362,20 +350,8 @@ class PerformanceOrderingsInducedByRankingScores:
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
-        assert isinstance(priorPos, float)
-        assert priorPos >= 0.0
-        assert priorPos <= 1.0
-
-        to_mimic = RankingScore.getPositivePredictiveValue()
-        name = "Standardized Positive Predictive Value"
-        abbreviation = "SPPV"
-        symbol = None
-        return PerformanceOrderingsInducedByRankingScores._copyPerformanceOrdering(
-            to_mimic, name, abbreviation, symbol
-        )
-        # FIXME: We should add a constraint to the result: this is correct if and
-        # only if the priors are fixed, but no matter what these priors are. But,
-        # we do not have yet any mechanism to encode it in the library ...
+        score = RankingScore.getStandardizedPositivePredictiveValue(priorPos)
+        return PerformanceOrderingInducedByOneScore(score)
 
     @staticmethod
     def getNegativeLikelihoodRatioComplement(
