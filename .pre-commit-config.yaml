@@ -8,18 +8,18 @@ repos:
       args: [ --fix ]
     # Run isort.
     - id: ruff-check
-      types_or: [ python, pyi ]
+      types_or: [ python, pyi, jupyter]
       args: [ --select, I, --fix ]
     # Run the formatter.
     - id: ruff-format
       # args: [--diff]
-      types_or: [ python, pyi ]
-  - repo: https://github.com/conda-incubator/pre-commit-mirrors-insert-license
-    rev: 1.3.0
+      types_or: [ python, pyi, jupyter ]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
     hooks:
     - id: insert-license
       types: [ python ]
       args:
-        - --dynamic-years
-        - --license-base64
-        - "Q29weXJpZ2h0IChjKSB7eWVhcl9zdGFydH0te3llYXJfZW5kfSwgU2ViYXN0aWVuIFBpZXJhcmQgZXQgYWwuClNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBBcGFjaGUtMi4wCg=="
+        - --use-current-year
+        - --license-filepath
+        - doc/license_header.txt

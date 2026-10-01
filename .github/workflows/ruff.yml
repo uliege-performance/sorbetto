@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '**.py'
+      - '**.ipynb'
       - .github/workflows/ruff.yml
 
 jobs:
