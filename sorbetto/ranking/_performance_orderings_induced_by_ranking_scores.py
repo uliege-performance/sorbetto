@@ -13,6 +13,10 @@ from ._importance import Importance
 from ._ranking_score import RankingScore
 
 # FIXME: for many of the scores listed here, the behavior is different from ranking scores !!!!
+# TODO: _copyPerformanceOrdering is used for too many things. We should create a method _declareSynonym.
+# .      we should also create a class with the linear transformations of ranking scores, that would
+# .      inherit from AbstractScore, so that we could compute values and retrieve the coefficients of
+# .      the linear transformation as well as the underlying ranking score.
 
 
 class PerformanceOrderingsInducedByRankingScores:
