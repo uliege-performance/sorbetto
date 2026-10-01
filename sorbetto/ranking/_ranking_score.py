@@ -119,7 +119,7 @@ class RankingScore(AbstractScore):
         """
         return self._importance
 
-    @property
+    @property  # TODO: move this in parent class "AbstractScore".
     def constraint(self) -> Callable[[TwoClassClassificationPerformance], bool] | None:
         """
         The constraint over the performances for which this ranking score is.
@@ -765,8 +765,6 @@ class RankingScore(AbstractScore):
 
         .. math::
             SNPV=\frac{TNR}{TNR+FNR}=\frac{NPV \pi_+ }{NPV( \pi_+ - \pi_- )+ \pi_- }
-
-        See :cite:t:`Pierard2024TheTile-arxiv`, Section A.3.5.
         """
 
         assert isinstance(priorPos, float)
