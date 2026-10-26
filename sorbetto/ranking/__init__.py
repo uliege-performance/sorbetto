@@ -6,6 +6,9 @@ from ._constraint_canonical import ConstraintCanonical
 from ._constraint_importance_adapted_to_class_priors import (
     ConstraintImportanceAdaptedToClassPriors,
 )
+from ._constraint_importance_adapted_to_prediction_rates import (
+    ConstraintImportanceAdaptedToPredictionRates,
+)
 from ._constraint_linear_homogeneous_on_importance import (
     ConstraintLinearHomogeneousOnImportance,
 )
@@ -24,6 +27,7 @@ __all__ = [
     "AbstractRanking",
     "ConstraintCanonical",
     "ConstraintImportanceAdaptedToClassPriors",
+    "ConstraintImportanceAdaptedToPredictionRates",
     "ConstraintLinearHomogeneousOnImportance",
     "ConstraintRelativeImportanceSatisfyingUnsatisfying",
     "Entity",
