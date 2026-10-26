@@ -47,7 +47,7 @@ our documentation [here](https://sorbetto.readthedocs.io/en/stable/src/citing.ht
 
 ## License
 
-Copyright 2025 Sebastien Pierard, Anais Halin, Francois Marelli, Simon Pernas, Jerome Pierre
+Copyright 2025-2026 Sebastien Pierard, Anais Halin, Francois Marelli, Simon Pernas, Jerome Pierre
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
