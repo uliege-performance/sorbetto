@@ -50,6 +50,12 @@ class ConstraintImportanceAdaptedToClassPriors(ConstraintLinearHomogeneousOnImpo
             self, priorNeg, -priorNeg, -priorPos, priorPos
         )
 
+    def getPriorNeg(self):
+        return 1.0 - self._priorPos
+
+    def getPriorPos(self):
+        return self._priorPos
+
     def __str__(self) -> str:
         priorPos = self._priorPos
         priorNeg = 1.0 - priorPos

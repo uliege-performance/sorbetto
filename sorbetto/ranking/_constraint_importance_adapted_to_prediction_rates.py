@@ -50,6 +50,12 @@ class ConstraintImportanceAdaptedToPredictionRates(
             self, rateNeg, -ratePos, -rateNeg, ratePos
         )
 
+    def getRateNeg(self):
+        return 1.0 - self._ratePos
+
+    def getRatePos(self):
+        return self._ratePos
+
     def __str__(self) -> str:
         ratePos = self._ratePos
         rateNeg = 1.0 - ratePos
