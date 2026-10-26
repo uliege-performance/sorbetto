@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import math
@@ -9,6 +9,22 @@ if TYPE_CHECKING:
 
 
 class ConstraintRelativeImportanceSatisfyingUnsatisfying:
+    r"""
+    This class represents a constraint on importance values such that the relative
+    importances given to the satisfying samples (tn and tp) and to the unsatisfying
+    samples (fp and fn) are proportional to, respectively, :math:`I(tn)+I(tp)` and
+    :math:`I(fp)+I(fn)`. This constraint is linear and homogeneous:
+
+    .. math::
+        \left(\begin{array}{c}
+        I(tn)+I(tp)\\
+        I(fp)+I(fn)
+        \end{array}\right)\propto\left(\begin{array}{c}
+        \lambda_{S=1}\\
+        \lambda_{S=0}
+        \end{array}\right)\Leftrightarrow\lambda_{S=0}I(tn)-\lambda_{S=1}I(fp)-\lambda_{S=1}I(fn)+\lambda_{S=0}I(tp)=0
+    """
+
     def __init__(
         self, relativeImportanceSatisfying: float, relativeImportanceUnsatisfying: float
     ):
