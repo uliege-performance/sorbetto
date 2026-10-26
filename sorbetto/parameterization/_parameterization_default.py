@@ -27,9 +27,11 @@ class ParameterizationDefault(AbstractParameterization):
     r"""
     This is the parameterization described in :cite:t:`Pierard2024TheTile-arxiv`:
 
-    $$a = \frac{ I(tp) }{ I(tn) + I(tp) } $$
+    .. math::
+        a = \frac{ I(tp) }{ I(tn) + I(tp) }
 
-    $$b = \frac{ I(fn) }{ I(fp) + I(fn) } $$
+    .. math::
+        b = \frac{ I(fn) }{ I(fp) + I(fn) }
     """
 
     def __init__(self):
@@ -114,7 +116,7 @@ class ParameterizationDefault(AbstractParameterization):
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given class priors :math:`(\pi_-, \pi_+)`, on an equal footing is given by
 
-        .. math:
+        .. math::
              \left\{ \pi_+^2 I(tp) I(fn) = \pi_-^2 I(tn) I(fp) \right\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, left.
@@ -157,7 +159,7 @@ class ParameterizationDefault(AbstractParameterization):
         The set of performance orderings induced by ranking scores that put all no-skill
         performances, for given prediction rates :math:`(\tau_-, \tau_+)`, on an equal footing is given by
 
-        .. math:
+        .. math::
             \left\{ \tau_+^2 I(tp) I(fp) = \tau_-^2 I(tn) I(fn) \right\}
 
         See :cite:t:`Pierard2024TheTile-arxiv`, Figure 6, right.
