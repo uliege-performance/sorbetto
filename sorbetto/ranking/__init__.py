@@ -1,8 +1,11 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 from ._abstract_ranking import AbstractRanking
 from ._constraint_canonical import ConstraintCanonical
+from ._constraint_linear_homogeneous_on_importance import (
+    ConstraintLinearHomogeneousOnImportance,
+)
 from ._constraint_relative_importance_satisfying_unsatisfying import (
     ConstraintRelativeImportanceSatisfyingUnsatisfying,
 )
@@ -17,6 +20,7 @@ from ._ranking_score import RankingScore
 __all__ = [
     "AbstractRanking",
     "ConstraintCanonical",
+    "ConstraintLinearHomogeneousOnImportance",
     "ConstraintRelativeImportanceSatisfyingUnsatisfying",
     "Entity",
     "Importance",
