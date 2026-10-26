@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 import math
@@ -103,6 +103,8 @@ class Importance(Named):
         Returns:
             bool: True if the Importance is canonical, False otherwise.
         """
+        # TODO: Should we build a ConstraintCanonical object and call it on self ?
+        # Like this, both implementation would become coherent.
         itn = self._itn
         ifp = self._ifp
         ifn = self._ifn
