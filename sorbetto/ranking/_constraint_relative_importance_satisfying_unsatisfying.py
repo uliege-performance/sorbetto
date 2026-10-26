@@ -2,13 +2,20 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import math
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from ._importance import Importance
+from sorbetto.ranking._constraint_linear_homogeneous_on_importance import (
+    ConstraintLinearHomogeneousOnImportance,
+)
+
+# from typing import TYPE_CHECKING
+
+# if TYPE_CHECKING:
+#     from ._importance import Importance
 
 
-class ConstraintRelativeImportanceSatisfyingUnsatisfying:
+class ConstraintRelativeImportanceSatisfyingUnsatisfying(
+    ConstraintLinearHomogeneousOnImportance
+):
     r"""
     This class represents a constraint on importance values such that the relative
     importances given to the satisfying samples (tn and tp) and to the unsatisfying
@@ -36,40 +43,48 @@ class ConstraintRelativeImportanceSatisfyingUnsatisfying:
         assert math.isfinite(relativeImportanceUnsatisfying)
         assert relativeImportanceUnsatisfying >= 0.0
 
-        sum = relativeImportanceSatisfying + relativeImportanceUnsatisfying
-        self._relativeImportanceSatisfying = relativeImportanceSatisfying / sum
-        self._relativeImportanceUnsatisfying = relativeImportanceUnsatisfying / sum
+        # sum = relativeImportanceSatisfying + relativeImportanceUnsatisfying
+        # self._relativeImportanceSatisfying = relativeImportanceSatisfying / sum
+        # self._relativeImportanceUnsatisfying = relativeImportanceUnsatisfying / sum
 
-    def __call__(self, importance: "Importance") -> bool:
-        from ._importance import Importance
-
-        assert isinstance(importance, Importance)
-        importanceSatisfying = importance.itn + importance.itp
-        importanceUnsatisfying = importance.ifp + importance.ifn
-        sum = importanceSatisfying + importanceUnsatisfying
-        relativeImportanceSatisfying = importanceSatisfying / sum
-        if not math.isclose(
-            relativeImportanceSatisfying,
-            self._relativeImportanceSatisfying,
-            abs_tol=1e-6,
-        ):
-            return False
-        relativeImportanceUnsatisfying = importanceUnsatisfying / sum
-        if not math.isclose(
+        ConstraintLinearHomogeneousOnImportance.__init__(
+            self,
             relativeImportanceUnsatisfying,
-            self._relativeImportanceUnsatisfying,
-            abs_tol=1e-6,
-        ):
-            return False
-        return True
+            -relativeImportanceSatisfying,
+            -relativeImportanceSatisfying,
+            relativeImportanceUnsatisfying,
+        )
+
+    # def __call__(self, importance: "Importance") -> bool:
+    #     from ._importance import Importance
+    #
+    #     assert isinstance(importance, Importance)
+    #     importanceSatisfying = importance.itn + importance.itp
+    #     importanceUnsatisfying = importance.ifp + importance.ifn
+    #     sum = importanceSatisfying + importanceUnsatisfying
+    #     relativeImportanceSatisfying = importanceSatisfying / sum
+    #     if not math.isclose(
+    #         relativeImportanceSatisfying,
+    #         self._relativeImportanceSatisfying,
+    #         abs_tol=1e-6,
+    #     ):
+    #         return False
+    #     relativeImportanceUnsatisfying = importanceUnsatisfying / sum
+    #     if not math.isclose(
+    #         relativeImportanceUnsatisfying,
+    #         self._relativeImportanceUnsatisfying,
+    #         abs_tol=1e-6,
+    #     ):
+    #         return False
+    #     return True
 
     def __str__(self):
         return "constraint: relative importance of satisfying vs. unsatisfying"
 
-    def __eq__(self, other):
-        if not isinstance(other, ConstraintRelativeImportanceSatisfyingUnsatisfying):
-            return NotImplemented
-        else:
-            return math.isclose(
-                self._relativeImportanceSatisfying, other._relativeImportanceSatisfying
-            )
+    # def __eq__(self, other):
+    #     if not isinstance(other, ConstraintRelativeImportanceSatisfyingUnsatisfying):
+    #         return NotImplemented
+    #     else:
+    #         return math.isclose(
+    #             self._relativeImportanceSatisfying, other._relativeImportanceSatisfying
+    #         )
