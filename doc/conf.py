@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 # Configuration file for the Sphinx documentation builder.
@@ -61,6 +61,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "undoc-members": True,
     "members": True,
+    "special-members": "__and__, __call__, __eq__, __getitem__, __init__, __invert__, __iter__, __len__, __ne__, __or__, __str__",
 }
 
 
