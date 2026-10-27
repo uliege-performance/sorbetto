@@ -15,13 +15,30 @@ from ._two_class_classification_performance import (
 class ConstraintFixedPredictionRates(
     ConstraintLinearOnTwoClassClassificationPerformance
 ):
+    """
+    This class represents constraints on two-class classification performances
+    corresponding to fixed prediction rates: :math:`\\tau_-` for the negative class,
+    :math:`\\tau_+` for the positive class, with :math:`\\tau_- \\ge 0`,
+    :math:`\\tau_+ \\ge 0`, and :math:`\\tau_- + \\tau_+ = 1`. A performance
+    :math:`P` satisfies such a constraint if and only if
+
+    .. math::
+        P(\\{tn,fn\\}) = \\tau_- \\Leftrightarrow P(\\{fp,tp\\}) = \\tau_+
+
+    or, equivalently,
+
+    .. math::
+        \\tau_+ P(\\{tn\\}) - \\tau_- P(\\{fp\\}) + \\tau_+ P(\\{fn\\}) - \\tau_- P(\\{tp\\}) = 0
+
+    """
+
     def __init__(self, ratePos: float):
         assert isinstance(ratePos, float)
         assert ratePos >= 0.0
         assert ratePos <= 1.0
         self._ratePos = ratePos
         ConstraintLinearOnTwoClassClassificationPerformance.__init__(
-            0.0, 1.0, 0.0, 1.0, ratePos
+            self, 0.0, 1.0, 0.0, 1.0, ratePos
         )
 
     def __call__(self, performance: TwoClassClassificationPerformance) -> bool:
@@ -31,9 +48,15 @@ class ConstraintFixedPredictionRates(
         return math.isclose(value, self._ratePos, abs_tol=1e-8)
 
     def getRateNeg(self):
+        """
+        Returns the fixed prediction rate for the negative class, :math:`\\tau_-`.
+        """
         return 1.0 - self._ratePos
 
     def getRatePos(self):
+        """
+        Returns the fixed prediction rate for the positive class, :math:`\\tau_+`.
+        """
         return self._ratePos
 
     def __str__(self):
