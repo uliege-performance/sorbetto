@@ -13,14 +13,14 @@ class ConstraintLinearOnTwoClassClassificationPerformance:
     This class represents linear constraints on two-class classification performances:
 
     .. math::
-        \\lambda_{tn} P({tn}) + \\lambda_{fp} P({fp}) + \\lambda_{fn} P({fn}) + \\lambda_{tp} P({tp}) = \\lambda_0
+        \\lambda_{tn} P(\\{tn\\}) + \\lambda_{fp} P(\\{fp\\}) + \\lambda_{fn} P(\\{fn\\}) + \\lambda_{tp} P(\\{tp\\}) = \\lambda_0
 
-    Note that, as :math:`P({tn}) + P({fp}) + P({fn}) + P({tp}) = 1`, this is equivalent to
+    Note that, as :math:`P(\\{tn\\}) + P(\\{fp\\}) + P(\\{fn\\}) + P(\\{tp\\}) = 1`, this is equivalent to
 
     .. math::
-        (\\lambda_{tn}-\\lambda_0) P({tn}) + (\\lambda_{fp}-\\lambda_0) P({fp}) + (\\lambda_{fn}-\\lambda_0) P({fn}) + (\\lambda_{tp}-\\lambda_0) P({tp}) = 0
+        (\\lambda_{tn}-\\lambda_0) P(\\{tn\\}) + (\\lambda_{fp}-\\lambda_0) P(\\{fp\\}) + (\\lambda_{fn}-\\lambda_0) P(\\{fn\\}) + (\\lambda_{tp}-\\lambda_0) P(\\{tp\\}) = 0
 
-    So, all linear constraints can be converted into homogeneous linear constraints.
+    So, internally, all linear constraints are converted into homogeneous linear constraints.
     """
 
     def __init__(
@@ -47,6 +47,14 @@ class ConstraintLinearOnTwoClassClassificationPerformance:
         # Is the Euclidean norm the best choice?
 
     def __call__(self, performance: "TwoClassClassificationPerformance") -> bool:
+        """Test if a given two-class classification performance satisfies the constraint.
+
+        Args:
+            performance (TwoClassClassificationPerformance): the two-class classification performance to test
+
+        Returns:
+            bool: True if and only if the two-class classification performance satisfies the constraint. A numerical tolerance is used in the test.
+        """
         from ._TwoClassClassificationPerformance import (
             TwoClassClassificationPerformance,
         )
@@ -63,7 +71,7 @@ class ConstraintLinearOnTwoClassClassificationPerformance:
         substrings = []
 
         coefs = [self._lambda_tn, self._lambda_fp, self._lambda_fn, self._lambda_tp]
-        vars = ["P({tn})", "P({fp})", "P({fn})", "P({tp})"]
+        vars = ["P(\\{tn\\})", "P(\\{fp\\})", "P(\\{fn\\})", "P(\\{tp\\})"]
         for coef, var in zip(coefs, vars):
             if coef == 0.0:
                 continue

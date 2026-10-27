@@ -26,7 +26,8 @@ class ConstraintImportanceAdaptedToPredictionRates(
     Following a line of reasoning similar to that presented in
     :cite:t:`Pierard2026TheOptimal-arxiv`, it can be shown that linearly
     interpolating the importances in this plane leads to shortest path
-    (geodesics) in terms of Kendall's distance :math:`d_\\tau=\\frac{1-\\tau}{2}`.
+    (geodesics) in terms of Kendall's distance :math:`d_\\tau=\\frac{1-\\tau}{2}`
+    (:math:`\\tau` is Kendall's rank correlation).
     In other words, if :math:`I_A` and :math:`I_B` satisfy this constraint and
     if :math:`I = w_A I_A + w_B I_B` with :math:`w_A\\ge0`, :math:`w_B\\ge0`,
     and :math:`w_A + w_B = 1`, then (assuming no tie)
