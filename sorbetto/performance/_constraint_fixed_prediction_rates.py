@@ -33,6 +33,11 @@ class ConstraintFixedPredictionRates(
     """
 
     def __init__(self, ratePos: float):
+        """Instantiate a constraint object based on the prediction rate for the positive class.
+
+        Args:
+            ratePos (float): The prediction rate for the positive class, :math:`\\tau_+ \\in [0,1]`.
+        """
         assert isinstance(ratePos, float)
         assert ratePos >= 0.0
         assert ratePos <= 1.0

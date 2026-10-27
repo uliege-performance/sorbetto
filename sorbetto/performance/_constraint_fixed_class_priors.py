@@ -31,6 +31,11 @@ class ConstraintFixedClassPriors(ConstraintLinearOnTwoClassClassificationPerform
     """
 
     def __init__(self, priorPos: float):
+        """Instantiate a constraint object based on the prior of the positive class.
+
+        Args:
+            priorPos (float): The prior of the positive class, :math:`\\pi_+ \\in [0,1]`.
+        """
         assert isinstance(priorPos, float)
         assert priorPos >= 0.0
         assert priorPos <= 1.0

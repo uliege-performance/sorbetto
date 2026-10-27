@@ -34,6 +34,10 @@ class ConstraintLinearHomogeneousOnImportance:
         self._lambda_fn = lambda_fn
         self._lambda_tp = lambda_tp
 
+        # TODO: Do we want to normalize the coefficients? The sum of the coefficients
+        # can be zero. So, do not divide them by the sum. Instead, divide by a norm.
+        # Is the Euclidean norm the best choice?
+
     def isValid(self) -> bool:
         """
         A linear constraint is valid if and only if it corresponds to a
@@ -209,6 +213,14 @@ class ConstraintLinearHomogeneousOnImportance:
         return i
 
     def __call__(self, importance: "Importance") -> bool:
+        """Test if a given two-class importance satisfies the constraint.
+
+        Args:
+            importance (Importance): the importance to test
+
+        Returns:
+            bool: True if and only if the importance satisfies the constraint. A numerical tolerance is used in the test.
+        """
         from ._importance import Importance
 
         assert isinstance(importance, Importance)
