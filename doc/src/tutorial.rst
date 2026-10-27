@@ -15,7 +15,7 @@ concepts.
     :glob:
     :numbered: 2
 
-    tuto/hello_sorbetto
+    tutorials/01_hello_sorbetto
 
 
 .. TODO write the tutorials

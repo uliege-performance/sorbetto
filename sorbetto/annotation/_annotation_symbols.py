@@ -1,0 +1,173 @@
+# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# SPDX-License-Identifier: Apache-2.0
+
+from typing import TYPE_CHECKING
+
+import numpy as np
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from scipy.ndimage import generate_binary_structure, label
+
+from sorbetto.core import Named
+from sorbetto.core.matplotlib_utils import filter_properties_for_text
+from sorbetto.performance import (
+    ConstraintFixedClassPriors,
+    ConstraintFixedPredictionRates,
+)
+from sorbetto.ranking import (
+    ConstraintRelativeImportanceSatisfyingUnsatisfying,
+)
+
+from ._abstract_annotation import AbstractAnnotation
+
+if TYPE_CHECKING:
+    from sorbetto.tile import Tile
+
+
+class AnnotationSymbols(AbstractAnnotation):
+    """
+    This type of annotation can be used to write over a SymbolicTile the names
+    of the symbols that are present in this Tile, above them, for the large
+    enough connected components.
+    """
+
+    def __init__(
+        self,
+        **plt_kwargs,
+    ):
+        """
+        Initializes the annotation.
+        """
+
+        self._plt_kwargs = plt_kwargs
+
+        AbstractAnnotation.__init__(self, "symbols")
+
+    def draw(self, tile: "Tile", fig: Figure, ax: Axes) -> None:
+        from sorbetto.tile import SymbolicTile, Tile
+
+        assert isinstance(tile, Tile)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
+
+        if not isinstance(tile, SymbolicTile):
+            message = "Trying to draw an annotation of type AnnotationSymbols on a Tile that is not a SymbolicTile. This makes no sense."
+            raise RuntimeError(message)
+
+        options_for_text = filter_properties_for_text(self._plt_kwargs)
+
+        options_for_text_bis = dict()
+        options_for_text_bis["ha"] = "center"
+        options_for_text_bis["va"] = "center"
+        options_for_text_bis["fontsize"] = 6
+        options_for_text_bis["color"] = "black"
+        if options_for_text is not None:
+            options_for_text_bis.update(options_for_text)
+
+        # parameterization = tile.parameterization
+        # min_x, max_x = parameterization.getBoundsParameter1()
+        # min_y, max_y = parameterization.getBoundsParameter2()
+
+        struct = generate_binary_structure(2, 3)
+
+        vec_x = tile._vec_x
+        vec_j = np.linspace(0, vec_x.size - 1, vec_x.size)
+        vec_y = tile._vec_y
+        vec_i = np.linspace(0, vec_y.size - 1, vec_y.size)
+        mat_value = tile._mat_value
+
+        values = np.unique(mat_value)
+        for value in values:
+            symbol = tile.flavor.reverse_mapper(value)
+
+            # find each connected component (cc) and label its gravity center
+            labeled_array, num_cc = label(mat_value == value, structure=struct)
+            for cc in range(1, num_cc + 1):
+                all_i, all_j = np.where(labeled_array == cc)
+
+                # compute the relative size of the zone in the Tile
+                coverage = all_i.size / mat_value.size
+                if coverage >= 0.025:  # large enough
+                    # compute the gravity center in matrix coordinates
+                    mean_i = all_i.mean()
+                    mean_j = all_j.mean()
+                    i = int(np.round(mean_i))
+                    j = int(np.round(mean_j))
+                    if mat_value[i, j] != value:
+                        # the gravity center does not belong to the zone :-(
+                        # let's find the point of the zone that is the closest to the gravity center.
+                        di = all_i - i
+                        dj = all_j - j
+                        d2 = di * di + dj * dj
+                        k = np.where(d2 == np.min(d2))
+                        j = all_j[k][0]
+                        i = all_i[k][0]
+                        # TODO: now, (i, j) is on the border of the the zone. We can still improve it
+                        # by "pushing" the point inside the zone.
+                    x = np.interp(mean_j, vec_j, vec_x)
+                    y = np.interp(mean_i, vec_i, vec_y)
+                    if isinstance(symbol, Named):
+                        text = symbol.name
+                    else:
+                        text = str(symbol)
+                    ax.text(x, y, text, **options_for_text_bis)
+
+    def isCompatibleWithConstraintOnImportances(
+        self, constraint: ConstraintRelativeImportanceSatisfyingUnsatisfying
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintRelativeImportanceSatisfyingUnsatisfying): a constraint on importances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(
+            constraint, ConstraintRelativeImportanceSatisfyingUnsatisfying
+        )
+        return True
+
+    def isCompatibleWithConstraintOnClassPriors(
+        self, constraint: ConstraintFixedClassPriors
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedClassPriors): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedClassPriors)
+        return True
+
+    def isCompatibleWithConstraintOnPredictionRates(
+        self, constraint: ConstraintFixedPredictionRates
+    ) -> bool:
+        """
+        There is no known compatibility issues.
+
+        Args:
+            constraint (ConstraintFixedPredictionRates): a constraint on performances.
+
+        Returns:
+            bool: True
+        """
+        assert isinstance(constraint, ConstraintFixedPredictionRates)
+        return True
+
+    def getConstraintOnImportances(
+        self,
+    ) -> ConstraintRelativeImportanceSatisfyingUnsatisfying | None:
+        return None
+
+    def getConstraintOnClassPriors(self) -> ConstraintFixedClassPriors | None:
+        return None
+
+    def getConstraintOnPredictionRates(
+        self,
+    ) -> ConstraintFixedPredictionRates | None:
+        return None

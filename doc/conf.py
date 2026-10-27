@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 # Configuration file for the Sphinx documentation builder.
@@ -61,6 +61,7 @@ autodoc_default_options = {
     "show-inheritance": True,
     "undoc-members": True,
     "members": True,
+    "special-members": "__and__, __call__, __eq__, __getitem__, __init__, __invert__, __iter__, __len__, __ne__, __or__, __str__",
 }
 
 
@@ -70,12 +71,8 @@ bibtex_default_style = "plain"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 # html_static_path = ["_static"]
 html_logo = "images/sorbetto_banner.svg"
 html_favicon = "images/sorbetto_logo.svg"
-html_theme_options = {
-    "logo_only": True,
-    "collapse_navigation": False,
-    "titles_only": True,
-}
+html_show_sourcelink = False

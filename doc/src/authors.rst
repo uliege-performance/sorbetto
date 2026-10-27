@@ -8,6 +8,7 @@ Summer Workshop on Artificial Intelligence
 
 
 .. _Authors:
+
 Authors
 -------
 

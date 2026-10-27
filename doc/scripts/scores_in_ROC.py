@@ -6,7 +6,7 @@ import inspect
 import matplotlib.pyplot as plt
 from utils import run_and_save
 
-from sorbetto.ranking.ranking_score import RankingScore
+from sorbetto.ranking import RankingScore
 
 
 def draws_in_ROC(ranking_score: RankingScore):
