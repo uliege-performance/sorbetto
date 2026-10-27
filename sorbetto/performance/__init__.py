@@ -1,10 +1,13 @@
-# Copyright (c) 2025-2025, Sebastien Pierard et al.
+# Copyright (c) 2025-2026, Sebastien Pierard et al.
 # SPDX-License-Identifier: Apache-2.0
 
 from ._abstract_performance import AbstractPerformance
 from ._abstract_score import AbstractScore
 from ._constraint_fixed_class_priors import ConstraintFixedClassPriors
 from ._constraint_fixed_prediction_rates import ConstraintFixedPredictionRates
+from ._constraint_linear_on_two_class_classification_performance import (
+    ConstraintLinearOnTwoClassClassificationPerformance,
+)
 from ._finite_set_of_two_class_classification_performances import (
     FiniteSetOfTwoClassClassificationPerformances,
 )
@@ -18,6 +21,7 @@ __all__ = [
     "AbstractScore",
     "ConstraintFixedClassPriors",
     "ConstraintFixedPredictionRates",
+    "ConstraintLinearOnTwoClassClassificationPerformance",
     "FiniteSetOfTwoClassClassificationPerformances",
     "PerformanceOrderingInducedByOneScore",
     "TwoClassClassificationPerformance",
